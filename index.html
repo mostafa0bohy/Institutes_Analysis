@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مركز تقارير المعاهد والاستراتيجيات</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0f172a;
+            --secondary: #1e293b;
+            --accent: #ea580c;
+            --bg: #f8fafc;
+        }
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: var(--bg);
+            color: var(--primary);
+            margin: 0;
+            padding: 0;
+        }
+        .header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 50px 20px;
+            text-align: center;
+            border-radius: 0 0 30px 30px;
+        }
+        .header h1 { margin: 0; font-size: 2.3rem; font-weight: 800; }
+        .header p { opacity: 0.8; margin-top: 10px; }
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        .report-card {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .report-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+        }
+        .report-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--secondary);
+            margin-0 0 10px 0;
+        }
+        .report-desc {
+            color: #64748b;
+            font-size: 0.95rem;
+            margin-bottom: 20px;
+            flex-grow: 1;
+        }
+        .btn {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            text-align: center;
+            padding: 12px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+        .btn:hover {
+            background: var(--accent);
+        }
+        .tag {
+            align-self: flex-start;
+            background: #ffedd5;
+            color: #c2410c;
+            padding: 4px 12px;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>بوابة التقارير الاستراتيجية للمعاهد</h1>
+    <p>منصة موحدة لاستعراض التحليلات الجدولة الزمنية والأداء المالي</p>
+</div>
+
+<div class="container">
+    <div class="grid">
+        
+        <div class="report-card">
+            <span class="tag">محدث (2026)</span>
+            <div class="report-title">هندسة المواعيد والمواسم</div>
+            <div class="report-desc">تحليل تفاعلي عميق لأثر تداخل المعاهد وزحف المواسم الإسلامية على كفاءة التحصيل المالي.</div>
+            <a href="institutes-timeline.html" class="btn">عرض التقرير التفاعلي</a>
+        </div>
+
+        <div class="report-card">
+            <span class="tag" style="background:#dcfce7; color:#15803d;">مالي</span>
+            <div class="report-title">تقرير الأداء المالي السنوي</div>
+            <div class="report-desc">رصد الإيرادات الشهرية ومقارنة التدفقات النقدية بين الأعوام (2021 - 2025).</div>
+            <a href="financial-report.html" class="btn">عرض التقرير المالي</a>
+        </div>
+
+        <div class="report-card">
+            <span class="tag" style="background:#e0f2fe; color:#0369a1;">تخطيط</span>
+            <div class="report-title">خطة توزيع المعاهد المقترحة</div>
+            <div class="report-desc">الجدول الزمني الهرمي المقترح لمنع تآكل الإيرادات وحماية النوافذ البيعية الكبرى.</div>
+            <a href="marketing-analysis.html" class="btn">عرض خطة التوزيع</a>
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>
