@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar" dir="rtl" data-theme="light">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -17,29 +17,54 @@
       --red:#EF4444;
       --bg:#F4F7FB;
       --surface:#FFFFFF;
+      --surface2:#F8FBFF;
       --text:#0F172A;
       --muted:#64748B;
       --border:#E2E8F0;
       --shadow:0 12px 34px rgba(15,23,42,.08);
     }
+    html[data-theme="dark"]{
+      --bg:#07111f;
+      --surface:#0b1728;
+      --surface2:#0f2139;
+      --text:#e5eefc;
+      --muted:#a9bad6;
+      --border:#20334f;
+      --shadow:0 14px 38px rgba(0,0,0,.32);
+      --primary:#4b84df;
+      --primary-dark:#d9e8ff;
+      --gold:#d4af37;
+    }
     *{box-sizing:border-box}
     html,body{margin:0;padding:0}
     body{
       font-family:'Cairo',sans-serif;
-      background:linear-gradient(180deg,#f8fbff 0,#eef4fb 100%);
+      background:
+        radial-gradient(circle at top right, rgba(212,175,55,.09), transparent 20%),
+        linear-gradient(180deg,var(--bg) 0, var(--bg) 100%);
       color:var(--text);
       direction:rtl;
     }
-    .wrap{max-width:1540px;margin:0 auto;padding:18px}
+    .wrap{max-width:1600px;margin:0 auto;padding:18px}
     .hero{
       background:linear-gradient(135deg,var(--primary-dark),var(--primary));
       color:#fff;
       border-bottom:4px solid var(--gold);
-      border-radius:24px;
+      border-radius:26px;
       padding:18px 20px;
       box-shadow:var(--shadow);
       position:relative;
       overflow:hidden;
+    }
+    .hero::after{
+      content:"";
+      position:absolute;
+      left:-120px;
+      bottom:-120px;
+      width:320px;height:320px;
+      border-radius:50%;
+      background:rgba(255,255,255,.06);
+      pointer-events:none;
     }
     .hero-top{
       display:flex;
@@ -52,24 +77,27 @@
     }
     .brand{display:flex;align-items:center;gap:14px}
     .logo-box{
-      width:58px;height:58px;
+      width:62px;height:62px;
       border-radius:18px;
       background:rgba(255,255,255,.12);
       display:grid;place-items:center;
-      font-size:1.15rem;
+      font-size:1.05rem;
       font-weight:900;
       color:var(--gold);
       border:1px solid rgba(255,255,255,.16);
+      overflow:hidden;
       flex:0 0 auto;
     }
-    .brand h1{margin:0;font-size:1.38rem;line-height:1.2}
+    .logo-box img{width:100%;height:100%;object-fit:cover;display:block}
+    .brand h1{margin:0;font-size:1.44rem;line-height:1.2}
     .brand p{margin:3px 0 0;color:#dbeafe;font-size:.95rem}
     .sync{
       display:flex;align-items:center;gap:10px;
       background:rgba(255,255,255,.12);
       padding:10px 14px;border-radius:999px;
       border:1px solid rgba(255,255,255,.12);
-      white-space:nowrap
+      white-space:nowrap;
+      backdrop-filter:blur(6px)
     }
     .dot{width:10px;height:10px;border-radius:50%;background:#94a3b8}
     .dot.live{background:var(--green);box-shadow:0 0 0 0 rgba(16,185,129,.5);animation:pulse 1.8s infinite}
@@ -96,6 +124,7 @@
       cursor:pointer;background:#fff;color:var(--primary-dark);font-weight:800
     }
     .btn.primary{background:var(--gold);color:#1e293b}
+    .btn.ghost{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.22)}
     .select,.search{
       background:rgba(255,255,255,.96);
       color:#0f172a;
@@ -114,6 +143,18 @@
       border-radius:18px;
       box-shadow:var(--shadow);
       padding:16px
+    }
+    .kpi{
+      position:relative;
+      overflow:hidden;
+    }
+    .kpi::before{
+      content:"";
+      position:absolute;
+      inset:auto -25px -25px auto;
+      width:90px;height:90px;
+      border-radius:50%;
+      background:rgba(26,84,168,.06);
     }
     .kpi .t{color:var(--muted);font-size:.92rem;font-weight:700}
     .kpi .v{font-size:2rem;font-weight:900;margin-top:8px;line-height:1.1}
@@ -161,18 +202,18 @@
     th{
       position:sticky;
       top:0;
-      background:#f8fbff;
+      background:var(--surface2);
       z-index:1;
       color:var(--primary-dark)
     }
     .insight{
-      background:#f8fbff;
+      background:var(--surface2);
       border:1px solid var(--border);
       border-right:5px solid var(--gold);
       border-radius:16px;
       padding:14px;
       margin-bottom:10px;
-      line-height:1.6
+      line-height:1.7
     }
     .insight b{color:var(--primary-dark)}
     .subgrid{
@@ -192,6 +233,31 @@
       color:var(--muted);
       font-size:.88rem
     }
+    .badge{
+      display:inline-block;
+      padding:6px 10px;
+      border-radius:999px;
+      background:#ecfdf5;
+      color:#047857;
+      border:1px solid #bbf7d0;
+      font-weight:800;
+      font-size:.82rem
+    }
+    .section-title{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom:10px;
+      flex-wrap:wrap
+    }
+    .section-title .left{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .section-title h3{margin:0}
     @media (max-width:1200px){
       .kpis{grid-template-columns:repeat(3,1fr)}
       .grid,.grid2,.grid3,.subgrid{grid-template-columns:1fr}
@@ -208,10 +274,10 @@
   <div class="hero">
     <div class="hero-top">
       <div class="brand">
-        <div class="logo-box">K</div>
+        <div class="logo-box" id="logoBox">K</div>
         <div>
           <h1>لوحة متابعة معهد خليل 2026</h1>
-          <p>متابعة التسجيلات والتحصيل والأداء التشغيلي والتسويقي من Google Sheets بشكل حي</p>
+          <p>Executive dashboard for registrations, payments, marketing and operations</p>
         </div>
       </div>
       <div class="sync">
@@ -226,6 +292,7 @@
       <button class="tab-btn" data-tab="ops">التشغيل</button>
       <button class="btn primary" id="refreshBtn">تحديث الآن</button>
       <button class="btn" id="exportCsv">تصدير ملخص CSV</button>
+      <button class="btn ghost" id="themeToggle">Dark mode</button>
       <select class="select" id="countryFilter"><option value="all">كل الدول</option></select>
       <select class="select" id="sourceFilter"><option value="all">كل المصادر</option></select>
       <input class="search" id="searchBox" placeholder="بحث بالاسم / الهاتف / البريد / الدولة" />
@@ -244,25 +311,33 @@
   <div class="section active" id="overview">
     <div class="grid">
       <div class="card panel">
-        <h3>اتجاه التسجيل والتحصيل عبر الزمن</h3>
-        <p class="small">توضح حركة التسجيلات والمدفوعات والتوقيتات التي تشهد نشاطًا أعلى.</p>
+        <div class="section-title">
+          <div class="left">
+            <h3>اتجاه التسجيل والتحصيل عبر الزمن</h3>
+            <span class="badge">Live</span>
+          </div>
+        </div>
+        <p class="small">Registrations versus payments over time.</p>
         <div class="canvas"><canvas id="trendChart"></canvas></div>
       </div>
 
       <div class="card panel">
-        <h3>مؤشرات وتوصيات تلقائية</h3>
-        <p class="small">ملاحظات مختصرة ومباشرة للإدارة والتسويق والتشغيل.</p>
+        <div class="section-title">
+          <h3>مؤشرات وتوصيات تلقائية</h3>
+          <span class="badge">Insights</span>
+        </div>
+        <p class="small">Quick insights for management, marketing and operations.</p>
         <div id="insights"></div>
       </div>
     </div>
 
     <div class="grid2" style="margin-top:14px;">
       <div class="card panel">
-        <h3>أفضل مصادر التسجيل</h3>
+        <div class="section-title"><h3>أفضل مصادر التسجيل</h3></div>
         <div class="canvas sm"><canvas id="sourceChart"></canvas></div>
       </div>
       <div class="card panel">
-        <h3>أكثر الدول تسجيلاً</h3>
+        <div class="section-title"><h3>أكثر الدول تسجيلاً</h3></div>
         <div class="canvas sm"><canvas id="countryChart"></canvas></div>
       </div>
     </div>
@@ -341,7 +416,7 @@ const SHEET_URLS = {
 };
 
 const COLORS=['#1A54A8','#D4AF37','#10B981','#F59E0B','#EF4444','#8B5CF6','#06B6D4','#64748B'];
-let charts={},all=[],filtered=[];
+let charts={},all=[],filtered=[],themeState='light';
 const $=s=>document.querySelector(s);
 const $$=s=>document.querySelectorAll(s);
 
@@ -506,7 +581,6 @@ function render(){
 
   const src=groupCount(filtered,'source');
   const sLabels=Object.keys(src).sort((a,b)=>src[b]-src[a]).slice(0,8);
-
   chart('sourceChart','doughnut',{
     labels:sLabels,
     datasets:[{data:sLabels.map(x=>src[x]),backgroundColor:COLORS}]
@@ -620,6 +694,20 @@ function exportSummary(){
   a.click();
 }
 
+function setTheme(next){
+  themeState=next;
+  document.documentElement.setAttribute('data-theme', next);
+  $('#themeToggle').textContent = next==='dark' ? 'Light mode' : 'Dark mode';
+  localStorage.setItem('khalil_theme', next);
+  Object.values(charts).forEach(ch=>{
+    if(ch && ch.options){
+      ch.options.plugins = ch.options.plugins || {};
+      ch.options.plugins.legend = ch.options.plugins.legend || {};
+      ch.update();
+    }
+  });
+}
+
 $$('.tab-btn').forEach(b=>b.onclick=()=>{
   $$('.tab-btn').forEach(x=>x.classList.remove('active'));
   b.classList.add('active');
@@ -632,6 +720,10 @@ $('#exportCsv').onclick=exportSummary;
 $('#countryFilter').onchange=render;
 $('#sourceFilter').onchange=render;
 $('#searchBox').oninput=render;
+$('#themeToggle').onclick=()=>setTheme(themeState==='light'?'dark':'light');
+
+const savedTheme=localStorage.getItem('khalil_theme') || 'light';
+setTheme(savedTheme);
 
 refresh();
 setInterval(refresh,60000);
