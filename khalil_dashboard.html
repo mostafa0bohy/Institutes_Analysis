@@ -41,15 +41,6 @@
       position:relative;
       overflow:hidden;
     }
-    .hero::after{
-      content:"";
-      position:absolute;
-      inset:auto -120px -120px auto;
-      width:280px;height:280px;
-      border-radius:50%;
-      background:rgba(255,255,255,.07);
-      pointer-events:none;
-    }
     .hero-top{
       display:flex;
       align-items:center;
@@ -344,19 +335,18 @@
 </div>
 
 <script>
-const SHEET_ID='10BT1405GJLNm1sY_3zCpP9mTb7Q6xHQRvEjBiAv-QEA';
-const SHEETS={app:'new_applicants',pay:'paymentss'};
+const SHEET_URLS = {
+  app: "https://docs.google.com/spreadsheets/d/e/2PACX-1vR39Euzrn9aeftSlgqNXJv7MkqFXBwxwLQnVnx5UFFfKcwDMoNEoqOWnkFZDTvYtalBio34JajkC1Id/pub?output=csv&gid=0",
+  pay: "https://docs.google.com/spreadsheets/d/e/2PACX-1vR39Euzrn9aeftSlgqNXJv7MkqFXBwxwLQnVnx5UFFfKcwDMoNEoqOWnkFZDTvYtalBio34JajkC1Id/pub?output=csv&gid=230227072"
+};
+
 const COLORS=['#1A54A8','#D4AF37','#10B981','#F59E0B','#EF4444','#8B5CF6','#06B6D4','#64748B'];
 let charts={},all=[],filtered=[];
 const $=s=>document.querySelector(s);
 const $$=s=>document.querySelectorAll(s);
 
-const fmt=n=>new Intl.NumberFormat('ar-EG').format(n||0);
-const money=n=>new Intl.NumberFormat('ar-EG',{maximumFractionDigits:0}).format(n||0);
-
-function csvUrl(sheet){
-  return `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(sheet)}`;
-}
+const fmt=n=>new Intl.NumberFormat('en-US').format(Number(n||0));
+const money=n=>new Intl.NumberFormat('en-US',{maximumFractionDigits:0}).format(Number(n||0));
 
 function parseCSV(text){
   const rows=[];
@@ -375,7 +365,8 @@ function parseCSV(text){
 }
 
 function normalize(rows,source){
-  const h=rows[0].map(x=>x.toLowerCase());
+  if(!rows || !rows.length) return [];
+  const h=rows[0].map(x=>String(x).toLowerCase());
   const idx=(...keys)=>h.findIndex(v=>keys.some(k=>v.includes(k)));
 
   const iName=idx('name','full name','الاسم');
@@ -390,9 +381,9 @@ function normalize(rows,source){
   return rows.slice(1).map(r=>({
     sheet:source,
     name:r[iName]||'',
-    country:r[iCountry]||'غير محدد',
+    country:r[iCountry]||'Unknown',
     source:r[iSource]||source,
-    status:r[iStatus]||'موجود في الشيت',
+    status:r[iStatus]||'In sheet',
     amount:Number(String(r[iAmount]||0).replace(/[^\d.-]/g,''))||0,
     date:r[iDate]||'',
     phone:r[iPhone]||'',
@@ -400,9 +391,18 @@ function normalize(rows,source){
   }));
 }
 
-async function loadSheet(sheet){
-  const text=await fetch(csvUrl(sheet),{cache:'no-store'}).then(r=>r.text());
-  return normalize(parseCSV(text),sheet);
+async function loadSheet(url,source){
+  try{
+    const res=await fetch(url,{cache:'no-store'});
+    const text=await res.text();
+    if(!res.ok) return [];
+    if(text.toLowerCase().includes('<html')) return [];
+    const rows=parseCSV(text);
+    if(rows.length<=1) return [];
+    return normalize(rows,source);
+  }catch(e){
+    return [];
+  }
 }
 
 function groupCount(arr,key){
@@ -455,10 +455,7 @@ function chart(id,type,data,opts={}){
       maintainAspectRatio:false,
       plugins:{
         legend:{display:opts.legend??true,position:opts.legendPos||'bottom'},
-        tooltip:{
-          rtl:true,
-          callbacks:opts.tooltipCallbacks||{}
-        }
+        tooltip:{rtl:true}
       },
       scales:opts.scales||{},
       ...opts.extra
@@ -476,10 +473,6 @@ function render(){
   const paidCount=pays.length;
   const unpaid=Math.max(regs.length-paidCount,0);
   const aov=paidCount?rev/paidCount:0;
-  const days=Object.keys(byDate(regs)).sort();
-  const first=days[0]||'';
-  const last=days.at(-1)||'';
-  const growth=days.length>1?`فترة البيانات من ${first} إلى ${last}`:'فترة البيانات محدودة';
 
   $('#kTotalReg').textContent=fmt(regs.length);
   $('#kRevenue').textContent=money(rev);
@@ -487,10 +480,10 @@ function render(){
   $('#kUnpaid').textContent=fmt(unpaid);
   $('#kAov').textContent=money(aov);
   $('#kLast').textContent=latestDate(regs).split('T')[0]||'-';
-  $('#kLastAt').textContent=`آخر تحديث للبيانات: ${new Date().toLocaleString('ar-EG')}`;
-  $('#kPaidRate').textContent=`معدل الدفع: ${pct(paidCount,regs.length)}%`;
-  $('#kUnpaidRate').textContent=`معدل غير المدفوع: ${pct(unpaid,regs.length)}%`;
-  $('#kRegGrowth').textContent=growth;
+  $('#kLastAt').textContent=`Last sync: ${new Date().toLocaleString('en-US')}`;
+  $('#kPaidRate').textContent=`Paid rate: ${pct(paidCount,regs.length)}%`;
+  $('#kUnpaidRate').textContent=`Unpaid rate: ${pct(unpaid,regs.length)}%`;
+  $('#kRegGrowth').textContent='See timeline below';
 
   const dates=byDate(regs);
   const dLabels=Object.keys(dates).sort();
@@ -501,18 +494,19 @@ function render(){
   chart('trendChart','line',{
     labels:dLabels,
     datasets:[
-      {label:'التسجيلات',data:dVals,borderColor:COLORS[0],backgroundColor:'rgba(26,84,168,.14)',fill:true,tension:.3},
-      {label:'المدفوعات',data:pVals,borderColor:COLORS[2],backgroundColor:'rgba(16,185,129,.12)',fill:true,tension:.3}
+      {label:'Registrations',data:dVals,borderColor:COLORS[0],backgroundColor:'rgba(26,84,168,.14)',fill:true,tension:.3},
+      {label:'Payments',data:pVals,borderColor:COLORS[2],backgroundColor:'rgba(16,185,129,.12)',fill:true,tension:.3}
     ]
   },{scales:{y:{beginAtZero:true}}});
 
   chart('mTrendChart','bar',{
     labels:dLabels.slice(-12),
-    datasets:[{label:'آخر الفترات',data:dVals.slice(-12),backgroundColor:COLORS[1]}]
+    datasets:[{label:'Recent periods',data:dVals.slice(-12),backgroundColor:COLORS[1]}]
   },{scales:{y:{beginAtZero:true}}});
 
   const src=groupCount(filtered,'source');
   const sLabels=Object.keys(src).sort((a,b)=>src[b]-src[a]).slice(0,8);
+
   chart('sourceChart','doughnut',{
     labels:sLabels,
     datasets:[{data:sLabels.map(x=>src[x]),backgroundColor:COLORS}]
@@ -520,7 +514,7 @@ function render(){
 
   chart('mSourceChart','bar',{
     labels:sLabels,
-    datasets:[{label:'التسجيلات حسب المصدر',data:sLabels.map(x=>src[x]),backgroundColor:COLORS[0]}]
+    datasets:[{label:'Registrations by source',data:sLabels.map(x=>src[x]),backgroundColor:COLORS[0]}]
   },{scales:{y:{beginAtZero:true}}});
 
   const countries=groupCount(filtered,'country');
@@ -528,12 +522,12 @@ function render(){
 
   chart('countryChart','bar',{
     labels:cLabels,
-    datasets:[{label:'الدول',data:cLabels.map(x=>countries[x]),backgroundColor:COLORS[3]}]
+    datasets:[{label:'Countries',data:cLabels.map(x=>countries[x]),backgroundColor:COLORS[3]}]
   },{scales:{y:{beginAtZero:true}}});
 
   const statusData={
-    'مسجل في new_applicants': regs.length,
-    'مدفوع / ناجح': pays.length
+    'Registered in new_applicants': regs.length,
+    'Paid / Successful': pays.length
   };
 
   chart('statusChart','pie',{
@@ -542,7 +536,7 @@ function render(){
   });
 
   chart('conversionChart','doughnut',{
-    labels:['مدفوع','غير مدفوع'],
+    labels:['Paid','Unpaid'],
     datasets:[{data:[paidCount,unpaid],backgroundColor:[COLORS[2],COLORS[4]]}]
   });
 
@@ -556,51 +550,54 @@ function render(){
       <td>${x.amount?money(x.amount):'-'}</td>
       <td>${(x.date||'-').split('T')[0].split(' ')[0]}</td>
     </tr>
-  `).join('') || '<tr><td colspan="6">لا توجد نتائج مطابقة</td></tr>';
+  `).join('') || '<tr><td colspan="6">No matching results</td></tr>';
 
-  const topCountry=cLabels[0]||'غير متاح';
-  const topSource=sLabels[0]||'غير متاح';
+  const topCountry=cLabels[0]||'N/A';
+  const topSource=sLabels[0]||'N/A';
   const topCountryCount=cLabels[0]?countries[cLabels[0]]:0;
   const topSourceCount=sLabels[0]?src[sLabels[0]]:0;
 
   $('#insights').innerHTML=[
-    `<div class="insight"><b>ملاحظة إدارية:</b> أعلى حجم حالياً من ${topCountry} بعدد ${fmt(topCountryCount)} تسجيل، مع ضرورة مقارنة هذا العدد بالمحصل النهائي.</div>`,
-    `<div class="insight"><b>ملاحظة تسويقية:</b> أفضل مصدر ظاهرًا هو ${topSource} بعدد ${fmt(topSourceCount)} تسجيل، وهو المرشح الأول للمضاعفة إن كان التحويل جيدًا.</div>`,
-    `<div class="insight"><b>ملاحظة تشغيلية:</b> بما أن كل صف في paymentss يمثل دفعًا ناجحًا، فإن إجمالي هذا الشيت هو مرجع التحصيل الأساسي.</div>`
+    `<div class="insight"><b>Executive note:</b> ${topCountry} is currently the highest-volume country with ${fmt(topCountryCount)} registrations.</div>`,
+    `<div class="insight"><b>Marketing note:</b> The strongest source is ${topSource} with ${fmt(topSourceCount)} registrations.</div>`,
+    `<div class="insight"><b>Operations note:</b> Every row in paymentss is treated as a successful payment, so that sheet is your main collection reference.</div>`
   ].join('');
 
   $('#marketingInsights').innerHTML=[
-    `<div class="insight"><b>أداء القنوات:</b> القنوات الأعلى في الفلاتر الحالية هي ${sLabels.slice(0,3).join('، ') || 'غير متاح'}.</div>`,
-    `<div class="insight"><b>فرصة تحسين:</b> راقب القنوات التي تجلب تسجيلات كثيرة لكن لا يظهر مقابلها نمو كافٍ في paymentss.</div>`,
-    `<div class="insight"><b>التوصية:</b> خصص المتابعة اليومية لأفضل 3 مصادر بدل توزيع الجهد بالتساوي على كل المصادر.</div>`
+    `<div class="insight"><b>Channel performance:</b> Current top channels are ${sLabels.slice(0,3).join(', ') || 'N/A'}.</div>`,
+    `<div class="insight"><b>Optimization opportunity:</b> Watch sources that bring many registrations but low payment volume.</div>`,
+    `<div class="insight"><b>Recommendation:</b> Focus daily follow-up on the top 3 sources.</div>`
   ].join('');
 
   $('#opsInsights').innerHTML=[
-    `<div class="insight"><b>المديرون:</b> راقبوا الفجوة بين عدد التسجيلات وعدد المدفوعات، لأنها تمثل أول مكان محتمل لفقد الإيراد.</div>`,
-    `<div class="insight"><b>التشغيل:</b> إذا كانت التواريخ مركزة في أيام بعينها، فالأفضل جدولة المراجعة والمتابعة في تلك الأيام.</div>`,
-    `<div class="insight"><b>التحصيل:</b> متوسط قيمة الدفع الحالي هو ${money(aov)}، ويصلح كمرجع سريع عند مقارنة الفترات.</div>`
+    `<div class="insight"><b>Management:</b> Track the gap between registrations and payments; it is the earliest sign of revenue leakage.</div>`,
+    `<div class="insight"><b>Operations:</b> If dates cluster on specific days, schedule follow-up effort around those days.</div>`,
+    `<div class="insight"><b>Collections:</b> Current average payment value is ${money(aov)}.</div>`
   ].join('');
 
-  $('#adminNote').textContent=`الإجمالي الحالي ${fmt(regs.length)} تسجيل، وتحويل ناجح ${fmt(paidCount)}، وإيراد محصل ${money(rev)}.`;
-  $('#opsNote').textContent=`أكبر تركّز حالي من ${topCountry}، وأعلى مصدر هو ${topSource}. راجع الفلترة يوميًا لمتابعة الذروة.`;
+  $('#adminNote').textContent=`Current totals: ${fmt(regs.length)} registrations, ${fmt(paidCount)} successful payments, ${money(rev)} collected.`;
+  $('#opsNote').textContent=`Top country: ${topCountry}. Top source: ${topSource}. Review filters daily to spot peaks.`;
 }
 
 async function refresh(){
   try{
     $('#syncDot').className='dot';
-    $('#syncText').textContent='جارِ التحديث...';
-    const [a,p]=await Promise.all([loadSheet(SHEETS.app),loadSheet(SHEETS.pay)]);
+    $('#syncText').textContent='Refreshing...';
+    const [a,p]=await Promise.all([
+      loadSheet(SHEET_URLS.app,'new_applicants'),
+      loadSheet(SHEET_URLS.pay,'paymentss')
+    ]);
     all=[
       ...a.map(x=>({...x,sheet:'new_applicants'})),
-      ...p.map(x=>({...x,sheet:'paymentss',status:'مدفوع / ناجح'}))
+      ...p.map(x=>({...x,sheet:'paymentss',status:'Paid / Successful'}))
     ];
     setOptions();
     $('#syncDot').className='dot live';
-    $('#syncText').textContent=`تم التحديث بنجاح • ${new Date().toLocaleTimeString('ar-EG')}`;
+    $('#syncText').textContent=`Synced successfully • ${new Date().toLocaleTimeString('en-US')}`;
     render();
   }catch(e){
     $('#syncDot').className='dot bad';
-    $('#syncText').textContent='تعذر جلب البيانات';
+    $('#syncText').textContent='Could not fetch data';
     console.error(e);
   }
 }
