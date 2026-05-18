@@ -3,321 +3,279 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لوحة التحكم الحية - معهد خليل للفقه</title>
+    <title>الداشبورد الحية - معهد خليل للفقه</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
-            --khalil-main: #1A54A8;      /* الأزرق الملكي للمعهد */
-            --khalil-dark: #0f346a;      /* الكحلي العميق */
-            --khalil-gold: #D4AF37;      /* الذهبي الفقهي التراثي */
-            --khalil-light: #f0f5ff;     /* خلفية العناصر الخفيفة */
-            --success: #15803d; --danger: #b91c1c; --text: #1e293b; --bg: #f8fafc;
+            --primary: #1A54A8; /* أزرق خليل */
+            --dark: #0f346a;
+            --gold: #D4AF37; /* ذهبي خليل */
+            --bg: #f8fafc;
+            --surface: #ffffff;
+            --text: #1e293b;
         }
-        * { box-sizing: border-box; }
-        body { font-family: 'Cairo', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 0; line-height: 1.6; }
+        body { font-family: 'Cairo', sans-serif; background: var(--bg); color: var(--text); margin: 0; }
         
-        /* الهيدر العلوي */
-        .header { background: linear-gradient(135deg, var(--khalil-dark), var(--khalil-main)); color: white; padding: 30px 40px; border-bottom: 5px solid var(--khalil-gold); box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
-        .header-content { display: flex; justify-content: space-between; align-items: center; max-width: 1400px; margin: 0 auto; flex-wrap: wrap; gap: 20px; }
-        .logo-area h1 { margin: 0; font-size: 1.8rem; font-weight: 800; display: flex; align-items: center; gap: 10px; }
-        .logo-area h1 span { color: var(--khalil-gold); }
-        .logo-area p { margin: 5px 0 0 0; opacity: 0.8; font-size: 0.95rem; }
-        .live-status { background: rgba(255,255,255,0.1); padding: 8px 16px; border-radius: 50px; border: 1px solid rgba(255,255,255,0.2); font-size: 0.85rem; display: flex; align-items: center; gap: 8px; }
-        .pulse-dot { width: 10px; height: 10px; background: #34d399; border-radius: 50%; animation: pulse 1.5s infinite; }
+        /* شريط علوي */
+        .header { background: var(--dark); color: white; padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; border-bottom: 5px solid var(--gold); }
+        .logo { font-size: 1.5rem; font-weight: 800; display: flex; align-items: center; gap: 10px; }
+        .logo span { color: var(--gold); }
         
-        @keyframes pulse { 0% { transform: scale(0.9); opacity: 0.7; } 50% { transform: scale(1.2); opacity: 1; } 100% { transform: scale(0.9); opacity: 0.7; } }
+        /* حالة المزامنة */
+        .sync-status { display: flex; align-items: center; gap: 10px; font-size: 0.9rem; background: rgba(255,255,255,0.1); padding: 8px 15px; border-radius: 20px; }
+        .dot { width: 10px; height: 10px; border-radius: 50%; background: #94a3b8; }
+        .dot.live { background: #10b981; animation: pulse 1.5s infinite; }
+        .dot.error { background: #ef4444; }
+        @keyframes pulse { 0% { transform: scale(0.9); opacity: 0.7; } 50% { transform: scale(1.3); opacity: 1; } 100% { transform: scale(0.9); opacity: 0.7; } }
 
-        .container { max-width: 1400px; margin: 30px auto; padding: 0 20px; }
+        /* تابات التنقل */
+        .tabs { display: flex; justify-content: center; gap: 15px; margin: 30px 0; }
+        .tab-btn { background: white; border: 1px solid #cbd5e1; color: var(--text); padding: 10px 30px; border-radius: 8px; cursor: pointer; font-family: 'Cairo'; font-weight: 700; font-size: 1rem; transition: 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+        .tab-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
 
-        /* كروت المؤشرات الرئيسية KPI */
-        .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; margin-bottom: 35px; }
-        .kpi-card { background: white; padding: 25px; border-radius: 16px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02), 0 2px 4px -1px rgba(0,0,0,0.02); border-right: 5px solid var(--khalil-main); position: relative; overflow: hidden; }
-        .kpi-card.gold { border-right-color: var(--khalil-gold); }
-        .kpi-card.success { border-right-color: var(--success); }
-        .kpi-card.danger { border-right-color: var(--danger); }
-        .kpi-title { font-size: 0.95rem; font-weight: 600; color: #64748b; }
-        .kpi-value { font-size: 2.2rem; font-weight: 800; color: var(--khalil-dark); margin: 10px 0; }
-        .kpi-sub { font-size: 0.8rem; color: #94a3b8; display: flex; align-items: center; gap: 5px; }
+        .container { max-width: 1300px; margin: 0 auto; padding: 0 20px 40px; }
+        .tab-content { display: none; animation: fadeIn 0.3s; }
+        .tab-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* تنظيم الجريد للتشارتات */
-        .charts-row { display: grid; grid-template-columns: 2fr 1fr; gap: 25px; margin-bottom: 25px; }
-        .charts-equal-row { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; margin-bottom: 35px; }
-        
-        @media (max-width: 992px) {
-            .charts-row, .charts-equal-row { grid-template-columns: 1fr; }
-        }
+        /* الكروت */
+        .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .kpi-card { background: var(--surface); padding: 25px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); border-right: 5px solid var(--primary); }
+        .kpi-title { font-size: 0.9rem; color: #64748b; font-weight: 700; margin-bottom: 10px; }
+        .kpi-val { font-size: 2.2rem; font-weight: 800; color: var(--dark); }
 
-        .chart-card { background: white; pading: 30px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.02); border: 1px solid #e2e8f0; padding: 25px; }
-        .chart-card h3 { margin-top: 0; color: var(--khalil-dark); font-size: 1.2rem; font-weight: 700; border-bottom: 1px solid #f1f5f9; padding-bottom: 15px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
-        .chart-card h3 small { font-size: 0.8rem; font-weight: 400; color: #64748b; background: var(--khalil-light); padding: 4px 10px; border-radius: 6px; }
-        .chart-container { position: relative; height: 320px; width: 100%; }
-
-        /* التنبيهات والإرشادات الاستراتيجية */
-        .insights-box { background: #fffbeb; border: 1px solid #fef3c7; border-right: 6px solid var(--khalil-gold); border-radius: 12px; padding: 20px; margin-bottom: 35px; }
-        .insights-box h4 { margin: 0 0 10px 0; color: #92400e; font-size: 1.1rem; }
-        .insights-list { margin: 0; padding-right: 20px; font-size: 0.95rem; color: #78350f; }
-        .insights-list li { margin-bottom: 8px; }
+        /* التشارتات */
+        .chart-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 20px; }
+        .chart-box { background: var(--surface); padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+        .chart-box h3 { margin-top: 0; color: var(--dark); border-bottom: 1px solid #e2e8f0; padding-bottom: 10px; font-size: 1.1rem; }
+        .canvas-container { height: 300px; position: relative; }
     </style>
 </head>
 <body>
 
-<div class="header">
-    <div class="header-content">
-        <div class="logo-area">
-            <h1>معهد خليل للفقه | <span>لوحة المتابعة الحية</span></h1>
-            <p>تحليل فوري ومدمج لبيانات التسجيل والتحصيل المالي من واقع السجلات المباشرة</p>
-        </div>
-        <div class="live-status">
-            <div class="pulse-dot"></div>
-            <span id="sync-status">جاري الاتصال بجداول جوجل الحية...</span>
-        </div>
-    </div>
-</div>
-
-<div class="container">
-    
-    <div class="insights-box">
-        <h4>📊 رؤى استراتيجية فورية وموجّهة (Insights):</h4>
-        <ul class="insights-list">
-            <li><strong>للتسويق والمبيعات:</strong> راقب "منحنى التسجيل اليومي"؛ إذا استقر المنحنى لأكثر من 3 أيام متتالية، فهذا مؤشر يستدعي ضخ حملات إعلانية جديدة أو تفعيل مبيعات "إعادة الاستهداف".</li>
-            <li><strong>للإدارة والتشغيل:</strong> توزيع الدول يمنحكم رؤية واضحة لتوقيت المحاضرات المباشرة وبوابات الدفع الأكثر طلباً بناءً على جغرافية الطلاب الأكثر تسجيلاً.</li>
-        </ul>
-    </div>
-
-    <div class="kpi-grid">
-        <div class="kpi-card">
-            <div class="kpi-title">إجمالي طلبات التسجيل</div>
-            <div class="kpi-value" id="kpi-leads">0</div>
-            <div class="kpi-sub">👥 الطلاب المهتمين والمسجلين بالشيت</div>
-        </div>
-        <div class="kpi-card success">
-            <div class="kpi-title">إجمالي الإيرادات المحصلة</div>
-            <div class="kpi-value" id="kpi-revenue">$0</div>
-            <div class="kpi-sub">💰 المبالغ المؤكد تحصيلها فعلياً</div>
-        </div>
-        <div class="kpi-card gold">
-            <div class="kpi-title">نسبة تحويل المبيعات (Conversion)</div>
-            <div class="kpi-value" id="kpi-conv">0%</div>
-            <div class="kpi-sub">📈 نسبة المسددين من إجمالي المسجلين</div>
-        </div>
-        <div class="kpi-card danger">
-            <div class="kpi-title">معدل التسجيل اليومي</div>
-            <div class="kpi-value" id="kpi-daily-rate">0</div>
-            <div class="kpi-sub">⚡ متوسط عدد الطلاب الجدد يومياً</div>
+    <div class="header">
+        <div class="logo">معهد <span>خليل</span></div>
+        <div class="sync-status">
+            <div class="dot" id="status-dot"></div>
+            <span id="status-text">جاري الاتصال بقاعدة البيانات...</span>
         </div>
     </div>
 
-    <div class="charts-row">
-        <div class="chart-card">
-            <h3>منحنى نمو التسجيل المتراكم واليومي <small>فريق التسويق والمبيعات</small></h3>
-            <div class="chart-container">
-                <canvas id="trendChart"></canvas>
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('overview')">الإدارة والملخص</button>
+        <button class="tab-btn" onclick="switchTab('marketing')">أداء التسويق</button>
+        <button class="tab-btn" onclick="switchTab('ops')">التشغيل والطلاب</button>
+    </div>
+
+    <div class="container">
+        <div id="overview" class="tab-content active">
+            <div class="kpi-grid">
+                <div class="kpi-card" style="border-color: var(--primary);">
+                    <div class="kpi-title">إجمالي المسجلين بالاستمارة</div>
+                    <div class="kpi-val" id="kpi-leads">0</div>
+                </div>
+                <div class="kpi-card" style="border-color: var(--gold);">
+                    <div class="kpi-title">إجمالي الإيرادات (تقريبي)</div>
+                    <div class="kpi-val" id="kpi-rev">$0</div>
+                </div>
+                <div class="kpi-card" style="border-color: #10b981;">
+                    <div class="kpi-title">إجمالي المسددين أو المحولين</div>
+                    <div class="kpi-val" id="kpi-paid">0</div>
+                </div>
+            </div>
+            <div class="chart-box">
+                <h3>مؤشر نمو التسجيل الزمني</h3>
+                <div class="canvas-container"><canvas id="timelineChart"></canvas></div>
             </div>
         </div>
-        <div class="chart-card">
-            <h3>أداء قنوات التسويق والإعلانات <small>فريق المبيعات</small></h3>
-            <div class="chart-container">
-                <canvas id="sourceChart"></canvas>
+
+        <div id="marketing" class="tab-content">
+            <div class="chart-grid">
+                <div class="chart-box">
+                    <h3>مصادر الإعلانات (من أين يأتي الطلاب؟)</h3>
+                    <div class="canvas-container"><canvas id="sourceChart"></canvas></div>
+                </div>
+                <div class="chart-box">
+                    <h3>حالات التسجيل والمتابعة</h3>
+                    <div class="canvas-container"><canvas id="statusChart"></canvas></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="ops" class="tab-content">
+            <div class="chart-box">
+                <h3>أكثر الدول تسجيلاً (لضبط مواعيد المحاضرات)</h3>
+                <div class="canvas-container"><canvas id="countryChart"></canvas></div>
             </div>
         </div>
     </div>
-
-    <div class="charts-equal-row">
-        <div class="chart-card">
-            <h3>التوزيع الجغرافي للطلاب (أعلى الدول) <small>فريق التشغيل والتعليم</small></h3>
-            <div class="chart-container">
-                <canvas id="countryChart"></canvas>
-            </div>
-        </div>
-        <div class="chart-card">
-            <h3>حالات الدفع والتحصيل <small>الإدارة المالية</small></h3>
-            <div class="chart-container">
-                <canvas id="statusChart"></canvas>
-            </div>
-        </div>
-    </div>
-
-</div>
 
 <script>
-    // تعديل معرفات الشيت الخاصة بك لضمان السحب المباشر والآمن
-    const SHEET_1_ID = '1Y-65yP5D4jBWTBBsSL4lPWZJa-o_ISU4kgPOU9t80BM';
-    const SHEET_2_ID = '1GxaqZLTzAOTVDqmfLdbEdHuHHpCiCiwgEGQ5FWPL5Ds';
+    // =================================================================
+    // ⚙️ إعدادات الربط الأوتوماتيكي بشيت جوجل
+    // =================================================================
+    const SHEET_ID = '10BT1405GJLNm1sY_3zCpP9mTb7Q6xHQRvEjBiAv-QEA'; 
+    
+    // ⚠️ مهم جداً: استبدل الأسماء التالية بأسماء التابات (Sheets) الموجودة في أسفل ملف جوجل بالضبط!
+    const TAB_LEADS_NAME = 'new_applicants'; // استبدل 'التسجيل' باسم التاب الخاص ببيانات الطلاب
+    const TAB_FINANCE_NAME = 'paymentss'; // استبدل 'المالية' باسم التاب الخاص بالدفع (إن وجد منفصلاً)
+    // =================================================================
 
-    // روابط تحويل البيانات التلقائي إلى تدفق تفاعلي
-    const URL_LEADS = `https://docs.google.com/spreadsheets/d/${SHEET_1_ID}/gviz/tq?tqx=out:csv`;
-    const URL_PAYMENTS = `https://docs.google.com/spreadsheets/d/${SHEET_2_ID}/gviz/tq?tqx=out:csv`;
+    function switchTab(tabId) {
+        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(tabId).classList.add('active');
+        event.currentTarget.classList.add('active');
+    }
 
-    // دالة المعالجة المتقدمة لملفات الـ CSV المستلمة من جوجل
+    // دالة لاستخراج البيانات من جوجل شيت أوتوماتيكياً
+    async function fetchSheetData(tabName) {
+        const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(tabName)}`;
+        try {
+            const response = await fetch(url);
+            if (!response.ok) throw new Error('Network error');
+            const csvText = await response.text();
+            
+            // تحقق إذا كان الشيت خاص (يعيد HTML بدلا من CSV)
+            if (csvText.includes('<html')) throw new Error('Private Sheet');
+            
+            return parseCSV(csvText);
+        } catch (error) {
+            console.error("Error fetching tab:", tabName, error);
+            return null;
+        }
+    }
+
+    // محلل الـ CSV
     function parseCSV(text) {
         let lines = text.split('\n');
         return lines.map(line => {
-            let row = [];
-            let inQuotes = false;
-            let current = '';
+            let row = []; let inQuotes = false; let current = '';
             for (let i = 0; i < line.length; i++) {
                 let char = line[i];
-                if (char === '"') { inQuotes = !inQuotes; }
+                if (char === '"') inQuotes = !inQuotes;
                 else if (char === ',' && !inQuotes) { row.push(current.trim()); current = ''; }
-                else { current += char; }
+                else current += char;
             }
             row.push(current.trim());
             return row;
         }).filter(r => r.length > 0 && r[0] !== '');
     }
 
-    // دالة البحث الذكي المرن عن أسماء الأعمدة لتجنب أي توقف بسبب تغيير المسميات
-    function getColumnIndex(headers, keywords) {
-        return headers.findIndex(h => keywords.some(k => h.toLowerCase().includes(k.toLowerCase())));
+    // البحث الذكي عن الأعمدة
+    function findColumn(headers, keywords) {
+        return headers.findIndex(h => keywords.some(k => String(h).toLowerCase().includes(k)));
     }
 
-    // بدء سحب البيانات الحية عند فتح الصفحة
+    // تهيئة الداشبورد
     async function initDashboard() {
-        try {
-            const resLeads = await fetch(URL_LEADS);
-            const resPays = await fetch(URL_PAYMENTS);
-            
-            if (!resLeads.ok || !resPays.ok) throw new Error("Private Access");
+        const statusDot = document.getElementById('status-dot');
+        const statusText = document.getElementById('status-text');
 
-            const dataLeads = parseCSV(await resLeads.text());
-            const dataPays = parseCSV(await resPays.text());
+        // سحب البيانات
+        const leadsData = await fetchSheetData(TAB_LEADS_NAME);
+        // يمكنك إضافة سحب لتابات أخرى هنا إذا احتجت
 
-            document.getElementById('sync-status').innerText = 'متصل ومحدث حياً من جداول جوجل';
-            processAndRender(dataLeads, dataPays);
-        } catch (e) {
-            // تفعيل نظام المحاكاة الذكي في حال عدم ضبط صلاحية الشيت كـ Public بعد
-            document.getElementById('sync-status').innerHTML = '⚠️ يعرض بيانات نموذجية (اضبط صلاحية الشيت إلى "أي شخص لديه الرابط يمكنه العرض" للتفعيل المباشر)';
-            document.getElementById('sync-status').style.color = 'var(--khalil-gold)';
-            renderFallback();
+        if (leadsData && leadsData.length > 1) {
+            statusDot.className = 'dot live';
+            statusText.innerText = 'متصل (بيانات حية مباشرة)';
+            processData(leadsData);
+        } else {
+            statusDot.className = 'dot error';
+            statusText.innerText = 'خطأ: يرجى التأكد من أن الشيت "متاح لأي شخص لديه الرابط" وأن اسم التاب صحيح';
         }
     }
 
-    // دالة المعالجة واستخراج الرؤى التحليلية الرقمية
-    function processAndRender(leads, payments) {
-        let headersLeads = leads[0] || [];
-        let headersPays = payments[0] || [];
+    function processData(data) {
+        const headers = data[0];
+        const rows = data.slice(1);
 
-        // تحديد مواضع الأعمدة بذكاء مرن
-        let srcIdx = getColumnIndex(headersLeads, ['مصدر', 'قناة', 'source', 'channel', 'إعلان']);
-        let cntIdx = getColumnIndex(headersLeads, ['دولة', 'بلد', 'country']);
-        let dateIdx = getColumnIndex(headersLeads, ['تاريخ', 'date', 'time']);
-        
-        let amtIdx = getColumnIndex(headersPays, ['مبلغ', 'قيمة', 'amount', 'paid']);
-        let pStatusIdx = getColumnIndex(headersPays, ['حالة', 'وضع', 'status']);
+        // التعرف على الأعمدة بذكاء (الكلمات المفتاحية)
+        const idxDate = findColumn(headers, ['تاريخ', 'وقت', 'timestamp', 'date']);
+        const idxSource = findColumn(headers, ['مصدر', 'تعرفت', 'source', 'اعلان']);
+        const idxCountry = findColumn(headers, ['دولة', 'بلد', 'إقامة', 'country']);
+        const idxStatus = findColumn(headers, ['حالة', 'موقف', 'status', 'دفع']);
+        const idxAmount = findColumn(headers, ['مبلغ', 'قيمة', 'رسوم', 'amount']);
 
-        // 1. حساب الإيرادات
-        let totalRevenue = 0;
-        let paymentStatusCounts = {};
-        for(let i=1; i<payments.length; i++) {
-            let row = payments[i];
-            let amt = parseFloat(row[amtIdx === -1 ? 2 : amtIdx]) || 0;
-            totalRevenue += amt;
-            
-            let status = row[pStatusIdx === -1 ? 3 : pStatusIdx] || 'مكتمل';
-            paymentStatusCounts[status] = (paymentStatusCounts[status] || 0) + 1;
-        }
+        let totalLeads = rows.length;
+        let totalRev = 0;
+        let totalPaid = 0;
 
-        // 2. حساب المؤشرات العامة وقنوات التسويق
-        let totalLeads = leads.length - 1;
-        let sourceCounts = {};
-        let countryCounts = {};
-        let dateCounts = {};
+        let datesCount = {};
+        let sourceCount = {};
+        let countryCount = {};
+        let statusCount = {};
 
-        for(let i=1; i<leads.length; i++) {
-            let row = leads[i];
-            let src = row[srcIdx === -1 ? 2 : srcIdx] || 'مباشر / عضوي';
-            let cnt = row[cntIdx === -1 ? 3 : cntIdx] || 'غير محدد';
-            let dt = row[dateIdx === -1 ? 0 : dateIdx] || 'غير محدد';
-
-            if(dt !== 'غير محدد') {
-                let cleanDate = dt.split(' ')[0]; // استخراج التاريخ بدون الوقت
-                dateCounts[cleanDate] = (dateCounts[cleanDate] || 0) + 1;
+        rows.forEach(row => {
+            // التواريخ
+            if (idxDate > -1 && row[idxDate]) {
+                let dateStr = row[idxDate].split(' ')[0]; // أخذ التاريخ فقط
+                datesCount[dateStr] = (datesCount[dateStr] || 0) + 1;
             }
+            // المصادر
+            if (idxSource > -1 && row[idxSource]) {
+                let src = row[idxSource];
+                sourceCount[src] = (sourceCount[src] || 0) + 1;
+            }
+            // الدول
+            if (idxCountry > -1 && row[idxCountry]) {
+                let country = row[idxCountry];
+                countryCount[country] = (countryCount[country] || 0) + 1;
+            }
+            // الحالات والإيرادات
+            if (idxStatus > -1 && row[idxStatus]) {
+                let status = row[idxStatus];
+                statusCount[status] = (statusCount[status] || 0) + 1;
+                if (status.includes('مسدد') || status.includes('دفع') || status.includes('مكتمل')) {
+                    totalPaid++;
+                }
+            }
+            if (idxAmount > -1 && row[idxAmount]) {
+                let amt = parseFloat(row[idxAmount].replace(/[^0-9.-]+/g,""));
+                if (!isNaN(amt)) totalRev += amt;
+            }
+        });
 
-            sourceCounts[src] = (sourceCounts[src] || 0) + 1;
-            countryCounts[cnt] = (countryCounts[cnt] || 0) + 1;
-        }
-
-        // تحديث كروت الـ KPI بالمخرجات الحقيقية
+        // تحديث الكروت
         document.getElementById('kpi-leads').innerText = totalLeads.toLocaleString();
-        document.getElementById('kpi-revenue').innerText = '$' + totalRevenue.toLocaleString();
-        
-        let convRate = totalLeads > 0 ? ((payments.length - 1) / totalLeads * 100).toFixed(1) : 0;
-        document.getElementById('kpi-conv').innerText = convRate + '%';
-        
-        let uniqueDays = Object.keys(dateCounts).length || 1;
-        document.getElementById('kpi-daily-rate').innerText = (totalLeads / uniqueDays).toFixed(1);
+        document.getElementById('kpi-rev').innerText = totalRev > 0 ? '$' + totalRev.toLocaleString() : 'غير مسجل بالشيت';
+        document.getElementById('kpi-paid').innerText = totalPaid.toLocaleString();
 
-        // رسم المخططات التفاعلية بالبيانات المعالجة
-        renderCharts(dateCounts, sourceCounts, countryCounts, paymentStatusCounts);
+        // رسم التشارتات
+        drawCharts(datesCount, sourceCount, countryCount, statusCount);
     }
 
-    // دالة بناء ورسم التشارتات التفاعلية باستخدام Chart.js
-    function renderCharts(dateData, sourceData, countryData, statusData) {
-        // أ. مخطط نمو التسجيل الزمني
-        let sortedDates = Object.keys(dateData).sort();
-        let dailyValues = sortedDates.map(d => dateData[d]);
-        let cumulativeSum = 0;
-        let cumulativeValues = dailyValues.map(v => cumulativeSum += v);
+    function drawCharts(dates, sources, countries, statuses) {
+        // ترتيب التواريخ
+        let sortedDates = Object.keys(dates).sort();
+        let dateValues = sortedDates.map(d => dates[d]);
 
-        new Chart(document.getElementById('trendChart'), {
+        new Chart(document.getElementById('timelineChart'), {
             type: 'line',
-            data: {
-                labels: sortedDates,
-                datasets: [
-                    { label: 'التسجيل التراكمي', data: cumulativeValues, borderColor: '#1A54A8', backgroundColor: 'rgba(26,84,168,0.05)', fill: true, yAxisID: 'y' },
-                    { label: 'التسجيل اليومي المنفرد', type: 'bar', data: dailyValues, backgroundColor: '#D4AF37', yAxisID: 'y1' }
-                ]
-            },
-            options: { responsive: true, maintainAspectRatio: false, scales: { y: { type: 'linear', position: 'right' }, y1: { type: 'linear', position: 'left', grid: { display: false } } } }
+            data: { labels: sortedDates, datasets: [{ label: 'مسجلين جدد', data: dateValues, borderColor: '#1A54A8', backgroundColor: 'rgba(26,84,168,0.1)', fill: true, tension: 0.3 }] },
+            options: { maintainAspectRatio: false }
         });
 
-        // ب. مخطط القنوات التسويقية الإعلانية
         new Chart(document.getElementById('sourceChart'), {
-            type: 'doughnut',
-            data: {
-                labels: Object.keys(sourceData),
-                datasets: [{ data: Object.values(sourceData), backgroundColor: ['#1A54A8', '#10346a', '#D4AF37', '#4b7bec', '#a55eea'] }]
-            },
-            options: { responsive: true, maintainAspectRatio: false }
+            type: 'pie',
+            data: { labels: Object.keys(sources), datasets: [{ data: Object.values(sources), backgroundColor: ['#1A54A8', '#D4AF37', '#10b981', '#f59e0b', '#64748b'] }] },
+            options: { maintainAspectRatio: false }
         });
 
-        // ج. مخطط التوزيع الجغرافي لأعلى الدول
-        let topCountries = Object.entries(countryData).sort((a,b) => b[1] - a[1]).slice(0, 5);
+        // أعلى 5 دول فقط
+        let topCountries = Object.entries(countries).sort((a,b) => b[1] - a[1]).slice(0, 5);
         new Chart(document.getElementById('countryChart'), {
             type: 'bar',
-            data: {
-                labels: topCountries.map(c => c[0]),
-                datasets: [{ label: 'عدد الطلاب', data: topCountries.map(c => c[1]), backgroundColor: '#1A54A8', borderRadius: 6 }]
-            },
-            options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false }
+            data: { labels: topCountries.map(c => c[0]), datasets: [{ label: 'طلاب', data: topCountries.map(c => c[1]), backgroundColor: '#1A54A8', borderRadius: 5 }] },
+            options: { indexAxis: 'y', maintainAspectRatio: false }
         });
 
-        // د. مخطط الحالات المالية للتحصيل
         new Chart(document.getElementById('statusChart'), {
-            type: 'pie',
-            data: {
-                labels: Object.keys(statusData).length ? Object.keys(statusData) : ['مسدد بالكامل', 'أقساط قيد السداد'],
-                datasets: [{ data: Object.keys(statusData).length ? Object.values(statusData) : [75, 25], backgroundColor: ['#15803d', '#e67e22', '#b91c1c'] }]
-            },
-            options: { responsive: true, maintainAspectRatio: false }
+            type: 'doughnut',
+            data: { labels: Object.keys(statuses), datasets: [{ data: Object.values(statuses), backgroundColor: ['#10b981', '#f59e0b', '#ef4444', '#475569'] }] },
+            options: { maintainAspectRatio: false }
         });
-    }
-
-    // دالة تعبئة البيانات الافتراضية الذكية لحين فك قفل صلاحية الشيتات
-    function renderFallback() {
-        const mockDates = { '2026-05-10': 12, '2026-05-11': 18, '2026-05-12': 25, '2026-05-13': 22, '2026-05-14': 30, '2026-05-15': 34, '2026-05-16': 41, '2026-05-17': 39 };
-        const mockSources = { 'إعلانات فيسبوك': 124, 'مجموعات واتساب': 58, 'قناة تليجرام': 42, 'توصية صديق': 22, 'عضوي / جوجل': 35 };
-        const mockCountries = { 'مصر': 110, 'المملكة العربية السعودية': 85, 'الكويت': 40, 'الإمارات': 28, 'الأردن': 18 };
-        const mockStatus = { 'مسدد بالكامل': 182, 'أقساط مجدولة': 64, 'مسترجع': 5 };
-
-        document.getElementById('kpi-leads').innerText = "283";
-        document.getElementById('kpi-revenue').innerText = "$14,150";
-        document.getElementById('kpi-conv').innerText = "86.9%";
-        document.getElementById('kpi-daily-rate').innerText = "35.3";
-
-        renderCharts(mockDates, mockSources, mockCountries, mockStatus);
     }
 
     window.onload = initDashboard;
