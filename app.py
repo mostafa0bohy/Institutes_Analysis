@@ -15,8 +15,18 @@ def load_data():
     url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRTJXOApbP389e07-RnHJtOlC9iMwKdWo4xID1BfwPhoHisk1wl4aS1Gge5P0_2tkoI_IMuAfvaRMdR/pub?gid=1631853462&single=true&output=csv"
     df = pd.read_csv(url)
     
-    # تحويل التاريخ
+    # --- سطر للتحقق (سيظهر في صفحة الداشبورد) ---
+    st.write("أعمدة البيانات المكتشفة:", df.columns.tolist())
+    # ---------------------------------------------
+    
+    # تنظيف أسماء الأعمدة من المسافات الزائدة في البداية والنهاية
+    df.columns = df.columns.str.strip()
+    
+    # محاولة البحث عن التاريخ (بافتراض أن الاسم قد يحتوي على مسافات غير مرئية)
+    # إذا لم يجد "التاريخ"، جرب كتابة الاسم بالضبط كما سيظهر لك على الشاشة
     df['التاريخ'] = pd.to_datetime(df['التاريخ'])
+    
+    # ... باقي الكود كما هو
     
     # معالجة القيم غير الرقمية (مثل #DIV/0!) وتحويلها إلى 0
     cols_to_fix = df.columns.difference(['التاريخ'])
