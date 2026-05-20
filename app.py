@@ -14,23 +14,24 @@ st.markdown("---")
 def load_data():
     url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRTJXOApbP389e07-RnHJtOlC9iMwKdWo4xID1BfwPhoHisk1wl4aS1Gge5P0_2tkoI_IMuAfvaRMdR/pub?gid=1631853462&single=true&output=csv"
     
-    # header=2 يعني أن أسماء الأعمدة موجودة في السطر الثالث
-    df = pd.read_csv(url, header=2)
+    # قراءة الملف مع اعتبار الصف الثاني (index 1) هو الرأس
+    df = pd.read_csv(url, header=1)
+    
+    # حذف الصف الأول (index 0) لأنه غالباً سيكون صفاً فارغاً أو غير مرغوب فيه (بين الرأس والبيانات)
+    df = df.iloc[1:]
     
     # تنظيف أسماء الأعمدة من أي مسافات زائدة
     df.columns = df.columns.str.strip()
     
-    # التأكد من وجود عمود التاريخ
-    if 'التاريخ' not in df.columns:
-        st.error(f"خطأ: لم يتم العثور على عمود باسم 'التاريخ'. الأعمدة الموجودة هي: {df.columns.tolist()}")
-        st.stop()
-        
-    df['التاريخ'] = pd.to_datetime(df['التاريخ'])
-    
-    # تنظيف البيانات
-    cols_to_fix = df.columns.difference(['التاريخ'])
-    for col in cols_to_fix:
+    # تنظيف البيانات الرقمية
+    # سنقوم بتنظيف الأعمدة من أي قيم غير رقمية لتحويلها إلى 0
+    cols_to_numeric = df.columns.drop('التاريخ')
+    for col in cols_to_numeric:
         df[col] = pd.to_numeric(df[col], errors='coerce').fillna(0)
+        
+    # تحويل عمود التاريخ
+    df['التاريخ'] = pd.to_datetime(df['التاريخ'], errors='coerce')
+    df = df.dropna(subset=['التاريخ']) # حذف أي صف لا يحتوي على تاريخ صحيح
     
     return df
 df = load_data()
