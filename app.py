@@ -10,8 +10,8 @@ st.set_page_config(layout="wide", page_title="داشبورد معهد خليل",
 # تخصيص الثيم باستخدام ألوان معهد خليل (أخضر داكن وذهبي)
 st.markdown("""
     <style>
-    .main { background-color: #f4f7f6; } /* لون خلفية مريح */
-    h1, h2, h3 { color: #1e4620; font-family: 'Arial', sans-serif; } /* أخضر داكن للعناوين */
+    .main { background-color: #e5ecf3; } /* لون خلفية مريح */
+    h1, h2, h3 { color: #004388; font-family: 'Arial', sans-serif; } /* أخضر داكن للعناوين */
     div[data-testid="stMetricValue"] { font-size: 30px; font-weight: bold; color: #b8860b; } /* ذهبي داكن للأرقام */
     div[data-testid="stMetricLabel"] { font-size: 16px; color: #1e4620; font-weight: bold; }
     .stTabs [data-baseweb="tab-list"] { gap: 10px; }
@@ -25,7 +25,7 @@ st.markdown("""
 col_logo, col_title = st.columns([1, 8])
 with col_logo:
     # ضع رابط الشعار الحقيقي هنا إن وجد
-    st.image("https://via.placeholder.com/150/1e4620/FFFFFF?text=Khalil", width=80) 
+    st.image("https://cdn.khalilfiqh.com/assists/EhBneH5AIWkFX6LkHvh4Wa9VTHDLjLXttbWt66UL.png", width=80) 
 with col_title:
     st.title("📊 لوحة التحكم التفاعلية - الدفعة الجديدة (معهد خليل)")
 st.markdown("---")
