@@ -10,28 +10,32 @@ st.title("📊 لوحة تحكم أداء المبيعات والتسجيل - م
 st.markdown("---")
 
 # 2. تحميل ومعالجة البيانات
+import datetime # لا تنسَ إضافة هذا السطر في أعلى الكود
+
 @st.cache_data
 def load_data():
     url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRTJXOApbP389e07-RnHJtOlC9iMwKdWo4xID1BfwPhoHisk1wl4aS1Gge5P0_2tkoI_IMuAfvaRMdR/pub?gid=1631853462&single=true&output=csv"
     
-    # قراءة الملف مع اعتبار الصف الثاني (index 1) هو الرأس
+    # قراءة البيانات مع ضبط الهيدر (الصف الثاني)
     df = pd.read_csv(url, header=1)
     
-    # حذف الصف الأول (index 0) لأنه غالباً سيكون صفاً فارغاً أو غير مرغوب فيه (بين الرأس والبيانات)
+    # حذف الصف الثالث (الفارغ)
     df = df.iloc[1:]
     
-    # تنظيف أسماء الأعمدة من أي مسافات زائدة
+    # تنظيف أسماء الأعمدة
     df.columns = df.columns.str.strip()
     
-    # تنظيف البيانات الرقمية
-    # سنقوم بتنظيف الأعمدة من أي قيم غير رقمية لتحويلها إلى 0
+    # 1. تحويل عمود التاريخ
+    df['التاريخ'] = pd.to_datetime(df['التاريخ'], errors='coerce')
+    
+    # 2. الفلترة: حذف الصفوف التي لا تحتوي على تاريخ أو تواريخها مستقبلية
+    today = pd.Timestamp(datetime.date.today())
+    df = df[df['التاريخ'] <= today]
+    
+    # 3. تنظيف البيانات الرقمية
     cols_to_numeric = df.columns.drop('التاريخ')
     for col in cols_to_numeric:
         df[col] = pd.to_numeric(df[col], errors='coerce').fillna(0)
-        
-    # تحويل عمود التاريخ
-    df['التاريخ'] = pd.to_datetime(df['التاريخ'], errors='coerce')
-    df = df.dropna(subset=['التاريخ']) # حذف أي صف لا يحتوي على تاريخ صحيح
     
     return df
 df = load_data()
