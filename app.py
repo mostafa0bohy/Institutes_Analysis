@@ -13,28 +13,26 @@ st.markdown("---")
 @st.cache_data
 def load_data():
     url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRTJXOApbP389e07-RnHJtOlC9iMwKdWo4xID1BfwPhoHisk1wl4aS1Gge5P0_2tkoI_IMuAfvaRMdR/pub?gid=1631853462&single=true&output=csv"
-    df = pd.read_csv(url)
     
-    # --- سطر للتحقق (سيظهر في صفحة الداشبورد) ---
-    st.write("أعمدة البيانات المكتشفة:", df.columns.tolist())
-    # ---------------------------------------------
+    # header=2 يعني أن أسماء الأعمدة موجودة في السطر الثالث
+    df = pd.read_csv(url, header=2)
     
-    # تنظيف أسماء الأعمدة من المسافات الزائدة في البداية والنهاية
+    # تنظيف أسماء الأعمدة من أي مسافات زائدة
     df.columns = df.columns.str.strip()
     
-    # محاولة البحث عن التاريخ (بافتراض أن الاسم قد يحتوي على مسافات غير مرئية)
-    # إذا لم يجد "التاريخ"، جرب كتابة الاسم بالضبط كما سيظهر لك على الشاشة
+    # التأكد من وجود عمود التاريخ
+    if 'التاريخ' not in df.columns:
+        st.error(f"خطأ: لم يتم العثور على عمود باسم 'التاريخ'. الأعمدة الموجودة هي: {df.columns.tolist()}")
+        st.stop()
+        
     df['التاريخ'] = pd.to_datetime(df['التاريخ'])
     
-    # ... باقي الكود كما هو
-    
-    # معالجة القيم غير الرقمية (مثل #DIV/0!) وتحويلها إلى 0
+    # تنظيف البيانات
     cols_to_fix = df.columns.difference(['التاريخ'])
     for col in cols_to_fix:
         df[col] = pd.to_numeric(df[col], errors='coerce').fillna(0)
     
     return df
-
 df = load_data()
 
 # 3. عرض المؤشرات الرئيسية (KPIs)
