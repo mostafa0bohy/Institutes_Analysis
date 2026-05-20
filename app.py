@@ -14,7 +14,7 @@ st.markdown("""
     div[data-testid="stMetricValue"] { font-size: 28px; font-weight: bold; color: #1E3A8A; }
     div[data-testid="stMetricLabel"] { font-size: 16px; color: #4B5563; }
     </style>
-""", unsafe_style_code=True)
+""", unsafe_allow_html=True)
 
 st.title("📊 لوحة التحكم الذكية لفتح الدفعة الجديدة - معهد خليل")
 st.markdown("---")
