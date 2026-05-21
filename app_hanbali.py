@@ -44,51 +44,63 @@ def clean_percentage(val):
 def load_hanbali_data():
     url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRmiO4XN9kssEddDdU8TuKtXOypsisNKiKejQ-DCDqcgmox6s7DV0zRJ6mxpLqpBA5XQr4JMgFE11_o/pub?gid=826428120&single=true&output=csv"
     
-    # قراءة البيانات الخام بالكامل
     raw_df = pd.read_csv(url, header=None)
     
-    # تنظيف العناوين بالصف الثاني (Index 1)
+    # تنظيف العناوين وتحويلها لنصوص لتفادي خطأ الـ float
     headers = raw_df.iloc[1].astype(str).str.replace('\n', ' ', regex=True).str.strip()
     raw_df.columns = headers
     
-    # استخلاص الخط الزمني الرئيسي (الأعمدة من A إلى M) وبدء البيانات من الصف الرابع (Index 3)
-    timeline_df = raw_df.iloc[3:].copy().reset_index(drop=True)
+    # الأعمدة الأساسية التي نحتاجها للخط الزمني (بدون أعمدة الـ Pivot)
+    main_columns = [
+        'التاريخ',
+        'إجمالي المسجلين الجدد (أنشأ حسابًا على الموقع)',
+        'مسجلين اليوم (أنشأ حسابًا على الموقع)',
+        'المسجلين الجدد من قدامى البهوتي (لم يدرس ولم يدفع)',
+        'نسبة المسجلين الجدد من قدامى البهوتي',
+        'المسجلين الجدد من طلاب البهوتي (طالب حالي يدرس البهوتي )',
+        'نسبة المسجلين الجدد من طلاب البهوتي',
+        'المسجلين الجدد من طلاب البهوتي المتوقفين (درس ولم يكمل)',
+        'نسبة المسجلين الجدد من طلبة البهوتي المتوقفين',
+        'المسجلين الجدد غير المسجلين في البهوتي',
+        'نسبة المسجلين الجدد غير المسجلين في البهوتي'
+    ]
+    
+    # التأكد من أخذ الأعمدة الموجودة فعلياً فقط لتجنب أي أخطاء
+    available_cols = [col for col in main_columns if col in raw_df.columns]
+    
+    timeline_df = raw_df.iloc[3:][available_cols].copy().reset_index(drop=True)
     timeline_df['التاريخ'] = pd.to_datetime(timeline_df['التاريخ'], errors='coerce')
     timeline_df = timeline_df.dropna(subset=['التاريخ'])
     
-    # تحويل وتنظيف البيانات الرقمية للخط الزمني
-    for col in timeline_df.columns.drop('التاريخ'):
-        if 'نسبة' in col:
+    # تنظيف وتنسيق الأرقام والنسب بأمان
+    for col in timeline_df.columns:
+        if col == 'التاريخ':
+            continue
+        if 'نسبة' in str(col):  # إضافة str() هنا تمنع الخطأ المذكور تماماً
             timeline_df[col] = timeline_df[col].apply(clean_percentage)
         else:
             if timeline_df[col].dtype == 'object':
                 timeline_df[col] = timeline_df[col].astype(str).str.replace(',', '', regex=True)
             timeline_df[col] = pd.to_numeric(timeline_df[col], errors='coerce').fillna(0)
             
-    # تصفية الأيام التي لم تبدأ أو الفارغة
     timeline_df = timeline_df[timeline_df['إجمالي المسجلين الجدد (أنشأ حسابًا على الموقع)'] > 0]
     
-    # --- قراءة جداول الـ Pivot Tables ديناميكياً من العمود N وما بعده ---
-    # نأخذ كامل الشيت ونبحث في الأعمدة الجانبية لاستخراج كتل الجداول
-    side_data = raw_df.iloc[1:].copy() # تشمل العناوين والبيانات
+    # --- استخراج الـ Pivot Tables بأمان ---
+    side_data = raw_df.iloc[1:].copy()
     
     def extract_pivot(search_header, data_frame):
-        # البحث عن العمود الذي يحتوي على اسم الجدول
         for col in data_frame.columns:
-            if data_frame[col].astype(str).str.contains(search_header).any():
+            # التأكد من أن البحث يتم في نصوص لتفادي أي floats
+            if data_frame[col].astype(str).str.contains(search_header, na=False).any():
                 idx = data_frame[data_frame[col].astype(str) == search_header].index[0]
-                # استخراج الجدول الصغير حتى نصل لسطر فارغ أو كلمة "إجمالي"
                 sub_df = data_frame.loc[idx:].copy()
-                items = []
-                counts = []
+                items, counts = [], []
                 for _, row in sub_df.iterrows():
                     val_name = str(row[col]).strip()
-                    # التوقف عند نهاية الجدول أو السطور الفارغة
                     if val_name == 'nan' or 'Grand Total' in val_name or 'الإجمالي' in val_name or val_name == search_header:
                         if val_name == search_header: continue
                         break
                     
-                    # القيمة الرقمية تكون في العمود التالي مباشرة
                     next_col_idx = list(data_frame.columns).index(col) + 1
                     try:
                         count_val = float(str(row.iloc[next_col_idx]).replace(',', ''))
@@ -99,7 +111,6 @@ def load_hanbali_data():
                 return pd.DataFrame({'الفئة': items, 'العدد': counts})
         return pd.DataFrame({'الفئة': [], 'العدد': []})
 
-    # استخراج الجداول الخمسة بناءً على المسميات المتوقعة في خلايا الـ Pivot المحددة بالشيت
     pivot_gender = extract_pivot("الجنس", side_data)
     pivot_geo = extract_pivot("الدولة", side_data)
     pivot_relation = extract_pivot("العلاقة بالبهوتي", side_data)
@@ -107,7 +118,6 @@ def load_hanbali_data():
     pivot_edu = extract_pivot("المستوى التعليمي", side_data)
     
     return timeline_df, pivot_gender, pivot_geo, pivot_relation, pivot_age, pivot_edu
-
 try:
     df, p_gender, p_geo, p_relation, p_age, p_edu = load_hanbali_data()
     last_row = df.iloc[-1]
