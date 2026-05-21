@@ -1,3 +1,5 @@
+<script>
+
 function buildDashboard(data) {
 
     const students = new Set();
@@ -9,12 +11,10 @@ function buildDashboard(data) {
 
     data.forEach(row => {
 
-        // استخراج البيانات من الصف
         const email = row['الإيميل'] || row['email'];
         const country = row['الدولة'] || row['country'];
         const payment = row['وسيلة الدفع'] || row['payment_method'];
 
-        // تحويل المبلغ لرقم
         const amount = parseFloat(
             row['المبلغ المستلم'] ||
             row['total'] ||
@@ -23,36 +23,25 @@ function buildDashboard(data) {
 
         const date = row['التاريخ'] || row['created_at'];
 
-        // عدد الطلاب الفريدين
-        if (email) {
-            students.add(email);
-        }
+        if (email) students.add(email);
 
-        // تجميع حسب الدولة
         if (country) {
             countries[country] =
                 (countries[country] || 0) + 1;
         }
 
-        // تجميع طرق الدفع
         if (payment) {
             paymentMethods[payment] =
                 (paymentMethods[payment] || 0) + 1;
         }
 
-        // الإيرادات حسب التاريخ
         if (date) {
             revenueByDate[date] =
                 (revenueByDate[date] || 0) + amount;
         }
 
-        // إجمالي الإيرادات
         totalRevenue += amount;
     });
-
-    // =========================
-    // KPI Cards
-    // =========================
 
     document.getElementById('studentsCount').innerText =
         students.size;
@@ -65,52 +54,6 @@ function buildDashboard(data) {
 
     document.getElementById('payments').innerText =
         data.length;
-
-    // =========================
-    // Country Chart
-    // =========================
-
-    Plotly.newPlot(
-        'countryChart',
-        [{
-            x: Object.keys(countries),
-            y: Object.values(countries),
-            type: 'bar'
-        }],
-        {
-            title: 'الطلاب حسب الدولة'
-        }
-    );
-
-    // =========================
-    // Payment Methods Chart
-    // =========================
-
-    Plotly.newPlot(
-        'paymentChart',
-        [{
-            labels: Object.keys(paymentMethods),
-            values: Object.values(paymentMethods),
-            type: 'pie'
-        }],
-        {
-            title: 'طرق الدفع'
-        }
-    );
-
-    // =========================
-    // Revenue Timeline
-    // =========================
-
-    Plotly.newPlot(
-        'timelineChart',
-        [{
-            x: Object.keys(revenueByDate),
-            y: Object.values(revenueByDate),
-            type: 'scatter'
-        }],
-        {
-            title: 'الإيرادات عبر الزمن'
-        }
-    );
 }
+
+</script>
