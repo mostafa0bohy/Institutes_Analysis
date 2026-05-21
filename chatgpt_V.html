@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+    const revenueByDate = {};
+
+    let totalRevenue = 0;
+
+    data.forEach(row => {
+
+        const email = row['الإيميل'] || row['email'];
+        const country = row['الدولة'] || row['country'];
+        const payment = row['وسيلة الدفع'] || row['payment_method'];
+        const amount = parseFloat(row['المبلغ المستلم'] || row['total'] || 0);
+        const date = row['التاريخ'] || row['created_at'];
+
+        if(email) students.add(email);
+
+        if(country) {
+            countries[country] = (countries[country] || 0) + 1;
+        }
+
+        if(payment) {
+            paymentMethods[payment] = (paymentMethods[payment] || 0) + 1;
+        }
+
+        if(date) {
+            revenueByDate[date] = (revenueByDate[date] || 0) + amount;
+        }
+
+        totalRevenue += amount;
+    });
+
+    document.getElementById('studentsCount').innerText = students.size;
+    document.getElementById('revenue').innerText = totalRevenue.toLocaleString();
+    document.getElementById('countries').innerText = Object.keys(countries).length;
+    document.getElementById('payments').innerText = data.length;
+
+    Plotly.newPlot('countryChart', [{
+        x: Object.keys(countries),
+        y: Object.values(countries),
+        type: 'bar'
+    }], {
+        title: 'الطلاب حسب الدولة'
+    });
+
+    Plotly.newPlot('paymentChart', [{
+        labels: Object.keys(paymentMethods),
+        values: Object.values(paymentMethods),
+        type: 'pie'
+    }], {
+        title: 'طرق الدفع'
+    });
+
+    Plotly.newPlot('timelineChart', [{
+        x: Object.keys(revenueByDate),
+        y: Object.values(revenueByDate),
+        type: 'scatter'
+    }], {
+        title: 'الإيرادات عبر الزمن'
+    });
+}
+
+</script>
+
+</body>
+</html>
