@@ -42,33 +42,24 @@ def load_hanbali_data_by_index():
     raw_df = pd.read_csv(url, header=None)
     side_data = raw_df.iloc[1:].copy()
     
-    # استخلاص الخط الزمني من الصف الرابع (index 3) واختيار أول 12 عموداً
+    # 1. اقتطاع أول 12 عموداً فقط من الصف الرابع (index 3)
     timeline_df = raw_df.iloc[3:, :12].copy().reset_index(drop=True)
     
-    # إعطاء أسماء أعمدة بسيطة وموحدة للعمل عليها
     col_names = [
-        'Date',             # 0
-        'Old',              # 1
-        'Total_New',        # 2
-        'Today_New',        # 3
-        'Behuti_Old',       # 4
-        'Perc_Behuti_Old',  # 5
-        'Behuti_Curr',      # 6
-        'Perc_Behuti_Curr', # 7
-        'Behuti_Stop',      # 8
-        'Perc_Behuti_Stop', # 9
-        'Non_Behuti',       # 10
-        'Perc_Non_Behuti'   # 11
+        'Date', 'Old', 'Total_New', 'Today_New', 
+        'Behuti_Old', 'Perc_Behuti_Old', 'Behuti_Curr', 'Perc_Behuti_Curr', 
+        'Behuti_Stop', 'Perc_Behuti_Stop', 'Non_Behuti', 'Perc_Non_Behuti'
     ]
     timeline_df.columns = col_names
     
-    # تنظيف التاريخ
+    # 2. تحويل عمود التاريخ أولاً وتصفية أي سطر لا يحتوي على تاريخ حقيقي (هذا يحذف خلايا الإجمالي والنصوص تلقائياً)
     timeline_df['Date'] = pd.to_datetime(timeline_df['Date'], errors='coerce')
     timeline_df = timeline_df.dropna(subset=['Date'])
     
-    # تنظيف الأرقام والنسب
-    for i, col in enumerate(col_names):
-        if col == 'Date': continue
+    # 3. الآن نقوم بتنظيف الأرقام والنسب بأمان تام بعد التخلص من الصفوف الغريبة
+    for col in col_names:
+        if col == 'Date': 
+            continue
         if 'Perc' in col:
             timeline_df[col] = timeline_df[col].apply(clean_percentage)
         else:
@@ -76,10 +67,7 @@ def load_hanbali_data_by_index():
                 timeline_df[col] = timeline_df[col].astype(str).str.replace(',', '', regex=True)
             timeline_df[col] = pd.to_numeric(timeline_df[col], errors='coerce').fillna(0)
             
-    # تصفية السطور بناءً على عمود Total_New
-    timeline_df = timeline_df[timeline_df['Total_New'] > 0]
-    
-    # استخراج الجداول الجانبية
+    # استخراج الجداول الجانبية (Pivot Tables)
     def extract_pivot(search_header, data_frame):
         for col in data_frame.columns:
             col_data_str = data_frame[col].astype(str)
@@ -116,7 +104,7 @@ try:
     df, p_gender, p_geo, p_relation, p_age, p_edu = load_hanbali_data_by_index()
     
     if df.empty:
-        st.warning("⚠️ لم يتم العثور على بيانات نشطة لتاريخ اليوم في الشيت، يرجى التحقق من إدخال البيانات.")
+        st.warning("⚠️ لم يتم العثور على بيانات نشطة تحتوي على تواريخ صالحة في الشيت.")
     else:
         last_row = df.iloc[-1]
         
@@ -139,7 +127,6 @@ try:
             st.markdown("---")
             st.subheader("📉 المنحنى الزمني لتطور عمليات إنشاء الحسابات للدفعة 16")
             
-            # تغيير أسماء الأعمدة للعرض في الرسم البياني
             df_plot = df.rename(columns={'Total_New': 'إجمالي المسجلين الجدد', 'Today_New': 'مسجلين اليوم'})
             fig_line = px.line(df_plot, x='Date', y=['إجمالي المسجلين الجدد', 'مسجلين اليوم'],
                                labels={'value': 'عدد الطلاب', 'variable': 'مؤشر القياس', 'Date': 'التاريخ'},
@@ -149,7 +136,6 @@ try:
 
         with tab2:
             st.subheader("👥 البنية الإحصائية والديموغرافية للطلاب الجدد")
-            
             col_demo1, col_demo2 = st.columns(2)
             
             with col_demo1:
@@ -159,7 +145,7 @@ try:
                                    title="🧬 التوزيع الجندري بين الجنسين")
                     st.plotly_chart(fig_g, use_container_width=True)
                 else:
-                    st.info("ℹ️ لم يتم العثور على جدول 'الجنس' في البيانات الجانبية بعد.")
+                    st.info("ℹ️ لم يتم العثور على جدول 'الجنس' بعد.")
                     
                 if not p_age.empty:
                     fig_a = px.bar(p_age, x='الفئة', y='العدد', text_auto=True,
@@ -167,7 +153,7 @@ try:
                                    title="⏳ التوزيع العددي للفئات العمرية للمتقدمين")
                     st.plotly_chart(fig_a, use_container_width=True)
                 else:
-                    st.info("ℹ️ لم يتم العثور على جدول 'العمر' في البيانات الجانبية بعد.")
+                    st.info("ℹ️ لم يتم العثور على جدول 'العمر' بعد.")
 
             with col_demo2:
                 if not p_edu.empty:
@@ -176,7 +162,7 @@ try:
                                    title="🎓 توزيع المستويات التعليمية والأكاديمية للطلاب")
                     st.plotly_chart(fig_e, use_container_width=True)
                 else:
-                    st.info("ℹ️ لم يتم العثور على جدول 'المستوى التعليمي' في البيانات الجانبية بعد.")
+                    st.info("ℹ️ لم يتم العثور على جدول 'المستوى التعليمي' بعد.")
                     
                 if not p_geo.empty:
                     p_geo_top = p_geo.sort_values(by='العدد', ascending=False).head(10)
@@ -185,7 +171,7 @@ try:
                                      title="🌍 التوزيع الجغرافي (أعلى 10 دول من حيث الإقبال)")
                     st.plotly_chart(fig_geo, use_container_width=True)
                 else:
-                    st.info("ℹ️ لم يتم العثور على جدول 'الدولة' في البيانات الجانبية بعد.")
+                    st.info("ℹ️ لم يتم العثور على جدول 'الدولة' بعد.")
 
         with tab3:
             st.subheader("🎯 رصد وتحليل روافد المتقدمين وعلاقتهم التاريخية بمعهد البهوتي")
@@ -226,23 +212,23 @@ try:
                 st.markdown("📣 **استراتيجية الجذب الخارجي**")
                 new_non_behuti_rate = last_row['Perc_Non_Behuti']
                 if new_non_behuti_rate > 50:
-                    st.success(f"✅ الجذب الخارجي ممتاز! النسبة تسجل ({new_non_behuti_rate:.1f}%) من الطلاب الجدد تماماً خارج نظام البهوتي. هذا يعني نجاح انتشار الهوية التسويقية المستقلة للتأهيل الفقهي.")
+                    st.success(f"✅ الجذب الخارجي ممتاز! النسبة تسجل ({new_non_behuti_rate:.1f}%) من الطلاب الجدد تماماً خارج نظام البهوتي.")
                 else:
-                    st.warning(f"⚠️ الامتداد الخارجي يمثل ({new_non_behuti_rate:.1f}%). البرنامج يعتمد بشكل ثقيل على القنوات الداخلية؛ يُنصح بإطلاق حملات ممولة موجهة لشرائح جديدة كلياً لرفع الوعي بالبرنامج خارج نطاق المعهد الداخلي.")
+                    st.warning(f"⚠️ الامتداد الخارجي يمثل ({new_non_behuti_rate:.1f}%). يُنصح بإطلاق حملات ممولة موجهة لشرائح جديدة كلياً.")
                     
             with col_rec2:
                 st.markdown("💼 **توصيات فريق المبيعات واستغلال الـ Leads**")
                 behuti_old = last_row['Behuti_Old']
                 behuti_stopped = last_row['Behuti_Stop']
                 
-                st.info(f"💡 هناك **{int(behuti_old)}** طالب مسجل من 'قدامى البهوتي' (سجلوا فقط ولم يدرسوا). هؤلاء يمثلون فرصة إعادة تنشيط (Re-engagement) قوية عبر إرسال محتوى تعريفي تخصصي خفيف يربط الفقه بالواقع.")
+                st.info(f"💡 هناك **{int(behuti_old)}** طالب مسجل من 'قدامى البهوتي'.")
                 if behuti_stopped > 0:
-                    st.success(f"🔥 فئة المتوقفين تضم **{int(behuti_stopped)}** طالب قاموا بالتسجيل مجدداً. هؤلاء لديهم رغبة حقيقية في العودة؛ مكالمة هاتفية أو رسالة دعم مخصصة من فريق المبيعات كفيلة بتحويلهم لملتزمين بالدراسة فوراً.")
+                    st.success(f"🔥 فئة المتوقفين تضم **{int(behuti_stopped)}** طالب قاموا بالتسجيل مجدداً.")
 
             with col_rec3:
                 st.markdown("🏛️ **تكامل المناهج والولاء**")
                 behuti_current_rate = last_row['Perc_Behuti_Curr']
-                st.info(f"💡 نسبة الطلاب الحاليين بالبهوتي والذين قاموا بالتسجيل هنا بلغت ({behuti_current_rate:.1f}%). هذا التريند يعكس رغبة صادقة من طلاب المعهد الحاليين لتعميق دراستهم التخصصية بالمتون الحنبلية.")
+                st.info(f"💡 نسبة الطلاب الحاليين بالبهوتي والذين قاموا بالتسجيل هنا بلغت ({behuti_current_rate:.1f}%).")
 
 except Exception as e:
     st.error(f"⚠️ فشل تحليل الشيت الفعلي: {e}")
