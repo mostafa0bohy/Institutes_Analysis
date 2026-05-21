@@ -1,64 +1,116 @@
-<!DOCTYPE html>
+function buildDashboard(data) {
+
+    const students = new Set();
+    const countries = {};
+    const paymentMethods = {};
     const revenueByDate = {};
 
     let totalRevenue = 0;
 
     data.forEach(row => {
 
+        // استخراج البيانات من الصف
         const email = row['الإيميل'] || row['email'];
         const country = row['الدولة'] || row['country'];
         const payment = row['وسيلة الدفع'] || row['payment_method'];
-        const amount = parseFloat(row['المبلغ المستلم'] || row['total'] || 0);
+
+        // تحويل المبلغ لرقم
+        const amount = parseFloat(
+            row['المبلغ المستلم'] ||
+            row['total'] ||
+            0
+        );
+
         const date = row['التاريخ'] || row['created_at'];
 
-        if(email) students.add(email);
-
-        if(country) {
-            countries[country] = (countries[country] || 0) + 1;
+        // عدد الطلاب الفريدين
+        if (email) {
+            students.add(email);
         }
 
-        if(payment) {
-            paymentMethods[payment] = (paymentMethods[payment] || 0) + 1;
+        // تجميع حسب الدولة
+        if (country) {
+            countries[country] =
+                (countries[country] || 0) + 1;
         }
 
-        if(date) {
-            revenueByDate[date] = (revenueByDate[date] || 0) + amount;
+        // تجميع طرق الدفع
+        if (payment) {
+            paymentMethods[payment] =
+                (paymentMethods[payment] || 0) + 1;
         }
 
+        // الإيرادات حسب التاريخ
+        if (date) {
+            revenueByDate[date] =
+                (revenueByDate[date] || 0) + amount;
+        }
+
+        // إجمالي الإيرادات
         totalRevenue += amount;
     });
 
-    document.getElementById('studentsCount').innerText = students.size;
-    document.getElementById('revenue').innerText = totalRevenue.toLocaleString();
-    document.getElementById('countries').innerText = Object.keys(countries).length;
-    document.getElementById('payments').innerText = data.length;
+    // =========================
+    // KPI Cards
+    // =========================
 
-    Plotly.newPlot('countryChart', [{
-        x: Object.keys(countries),
-        y: Object.values(countries),
-        type: 'bar'
-    }], {
-        title: 'الطلاب حسب الدولة'
-    });
+    document.getElementById('studentsCount').innerText =
+        students.size;
 
-    Plotly.newPlot('paymentChart', [{
-        labels: Object.keys(paymentMethods),
-        values: Object.values(paymentMethods),
-        type: 'pie'
-    }], {
-        title: 'طرق الدفع'
-    });
+    document.getElementById('revenue').innerText =
+        totalRevenue.toLocaleString();
 
-    Plotly.newPlot('timelineChart', [{
-        x: Object.keys(revenueByDate),
-        y: Object.values(revenueByDate),
-        type: 'scatter'
-    }], {
-        title: 'الإيرادات عبر الزمن'
-    });
+    document.getElementById('countries').innerText =
+        Object.keys(countries).length;
+
+    document.getElementById('payments').innerText =
+        data.length;
+
+    // =========================
+    // Country Chart
+    // =========================
+
+    Plotly.newPlot(
+        'countryChart',
+        [{
+            x: Object.keys(countries),
+            y: Object.values(countries),
+            type: 'bar'
+        }],
+        {
+            title: 'الطلاب حسب الدولة'
+        }
+    );
+
+    // =========================
+    // Payment Methods Chart
+    // =========================
+
+    Plotly.newPlot(
+        'paymentChart',
+        [{
+            labels: Object.keys(paymentMethods),
+            values: Object.values(paymentMethods),
+            type: 'pie'
+        }],
+        {
+            title: 'طرق الدفع'
+        }
+    );
+
+    // =========================
+    // Revenue Timeline
+    // =========================
+
+    Plotly.newPlot(
+        'timelineChart',
+        [{
+            x: Object.keys(revenueByDate),
+            y: Object.values(revenueByDate),
+            type: 'scatter'
+        }],
+        {
+            title: 'الإيرادات عبر الزمن'
+        }
+    );
 }
-
-</script>
-
-</body>
-</html>
