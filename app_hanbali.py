@@ -11,7 +11,7 @@ def load_data_robust():
     
     raw_df = pd.read_csv(url, header=None)
     
-    # البحث عن صف العنوان
+    # 1. البحث عن صف العنوان
     header_idx = None
     for i in range(len(raw_df)):
         if "التاريخ" in str(raw_df.iloc[i].values):
@@ -25,20 +25,23 @@ def load_data_robust():
     df.columns = df.iloc[0]
     df = df.iloc[1:].reset_index(drop=True)
     
-    # --- الحل الجذري للتكرار ---
-    # تحويل أسماء الأعمدة إلى قائمة، ثم معالجتها لإزالة التكرار
+    # 2. الحل الجذري للتكرار والأعمدة الفارغة:
+    # أ- حذف الأعمدة التي لا تحتوي على اسم (NaN أو فارغة)
+    df = df.loc[:, df.columns.notna()]
+    df = df.loc[:, df.columns != '']
+    
+    # ب- إعادة تسمية الأعمدة المكررة بذكاء
     cols = pd.Series(df.columns)
     for dup in cols[cols.duplicated()].unique():
         cols[cols[cols == dup].index.values.tolist()] = [
-            f"{dup}.{i}" if i != 0 else dup for i in range(sum(cols == dup))
+            f"{dup}_{i}" if i != 0 else dup for i in range(sum(cols == dup))
         ]
     df.columns = cols
-    # ---------------------------
     
+    # ج- حذف الأعمدة الفارغة تماماً من البيانات (التي لا تحتوي على أي قيمة)
     df = df.dropna(axis=1, how='all')
     
     return df, None
-
 # عرض النتائج
 df, error = load_data_robust()
 
