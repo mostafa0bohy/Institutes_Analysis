@@ -46,11 +46,9 @@ def load_hanbali_data():
     
     raw_df = pd.read_csv(url, header=None)
     
-    # تنظيف العناوين وتحويلها لنصوص لتفادي خطأ الـ float
     headers = raw_df.iloc[1].astype(str).str.replace('\n', ' ', regex=True).str.strip()
     raw_df.columns = headers
     
-    # الأعمدة الأساسية التي نحتاجها للخط الزمني (بدون أعمدة الـ Pivot)
     main_columns = [
         'التاريخ',
         'إجمالي المسجلين الجدد (أنشأ حسابًا على الموقع)',
@@ -65,18 +63,16 @@ def load_hanbali_data():
         'نسبة المسجلين الجدد غير المسجلين في البهوتي'
     ]
     
-    # التأكد من أخذ الأعمدة الموجودة فعلياً فقط لتجنب أي أخطاء
     available_cols = [col for col in main_columns if col in raw_df.columns]
     
     timeline_df = raw_df.iloc[3:][available_cols].copy().reset_index(drop=True)
     timeline_df['التاريخ'] = pd.to_datetime(timeline_df['التاريخ'], errors='coerce')
     timeline_df = timeline_df.dropna(subset=['التاريخ'])
     
-    # تنظيف وتنسيق الأرقام والنسب بأمان
     for col in timeline_df.columns:
         if col == 'التاريخ':
             continue
-        if 'نسبة' in str(col):  # إضافة str() هنا تمنع الخطأ المذكور تماماً
+        if 'نسبة' in str(col):
             timeline_df[col] = timeline_df[col].apply(clean_percentage)
         else:
             if timeline_df[col].dtype == 'object':
@@ -85,22 +81,27 @@ def load_hanbali_data():
             
     timeline_df = timeline_df[timeline_df['إجمالي المسجلين الجدد (أنشأ حسابًا على الموقع)'] > 0]
     
-    # --- استخراج الـ Pivot Tables بأمان ---
+    # --- إصلاح استخراج الـ Pivot Tables ---
     side_data = raw_df.iloc[1:].copy()
     
     def extract_pivot(search_header, data_frame):
+        # البحث عن العمود الذي يحتوي على العنوان (نتعامل مع محتوى العمود كـ Series وليس اسمه)
         for col in data_frame.columns:
-            # التأكد من أن البحث يتم في نصوص لتفادي أي floats
-            if data_frame[col].astype(str).str.contains(search_header, na=False).any():
-                idx = data_frame[data_frame[col].astype(str) == search_header].index[0]
+            # هنا التعديل: تحويل محتوى العمود إلى نصوص للبحث عن العنوان داخله
+            col_data_str = data_frame[col].astype(str)
+            if col_data_str.str.contains(search_header, na=False, regex=False).any():
+                # إيجاد السطر الذي يحتوي على هذا العنوان
+                idx = data_frame[col_data_str == search_header].index[0]
                 sub_df = data_frame.loc[idx:].copy()
                 items, counts = [], []
+                
                 for _, row in sub_df.iterrows():
                     val_name = str(row[col]).strip()
                     if val_name == 'nan' or 'Grand Total' in val_name or 'الإجمالي' in val_name or val_name == search_header:
                         if val_name == search_header: continue
                         break
                     
+                    # العمود التالي يحتوي على القيم
                     next_col_idx = list(data_frame.columns).index(col) + 1
                     try:
                         count_val = float(str(row.iloc[next_col_idx]).replace(',', ''))
