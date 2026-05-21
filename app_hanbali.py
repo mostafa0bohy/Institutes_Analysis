@@ -1,16 +1,15 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
+from datetime import datetime
 
 # إعداد الصفحة
 st.set_page_config(layout="wide", page_title="داشبورد التأهيل الفقهي", page_icon="📜")
 
-# دالة تحميل وتنظيف البيانات
 @st.cache_data
-def load_final_data():
+def load_and_clean_data():
     url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRmiO4XN9kssEddDdU8TuKtXOypsisNKiKejQ-DCDqcgmox6s7DV0zRJ6mxpLqpBA5XQr4JMgFE11_o/pub?gid=826428120&single=true&output=csv"
     
-    # تحميل الخام
     raw_df = pd.read_csv(url, header=None)
     
     # تحديد صف العنوان
@@ -22,42 +21,43 @@ def load_final_data():
     # تنظيف الأعمدة (إزالة أي أعمدة فارغة أو غير مسماة)
     df = df.loc[:, df.columns.notna() & (df.columns != "")]
     
-    # إزالة التكرار في الأسماء (إضافة لاحقة)
-    cols = pd.Series(df.columns)
-    for dup in cols[cols.duplicated()].unique():
-        cols[cols[cols == dup].index.values.tolist()] = [f"{dup}_{i}" if i != 0 else dup for i in range(sum(cols == dup))]
-    df.columns = cols
-    
-    # تحويل البيانات الرقمية
+    # تحويل الأرقام (هذا الجزء يحل مشكلة الأرقام غير الظاهرة)
     for col in df.columns:
         if col != "التاريخ":
+            # تنظيف النصوص وتحويلها لأرقام
             df[col] = pd.to_numeric(df[col].astype(str).str.replace(r'[^\d.]', '', regex=True), errors='coerce').fillna(0)
     
     # تحويل التاريخ
     df["التاريخ"] = pd.to_datetime(df["التاريخ"], errors='coerce')
-    return df.dropna(subset=["التاريخ"])
-
-# عرض الداشبورد
-st.title("📊 لوحة تحكم التأهيل الفقهي - الدفعة 16")
+    df = df.dropna(subset=["التاريخ"])
+    
+    # --- الفلترة الزمنية (حل مشكلة التواريخ المستقبلية) ---
+    today = datetime.now()
+    df = df[df["التاريخ"] <= today]
+    
+    return df
 
 try:
-    df = load_final_data()
+    df = load_and_clean_data()
     
-    # 1. عرض ملخص عام (KPIs)
-    col1, col2, col3 = st.columns(3)
+    st.title("📊 لوحة تحكم التأهيل الفقهي - الدفعة 16")
+    
+    # عرض KPIs
     latest = df.iloc[-1]
-    col1.metric("إجمالي المسجلين الجدد", int(latest["إجمالي المسجلين الجدد (أنشأ حسابًا على الموقع)"]))
-    col2.metric("مسجلي اليوم", int(latest["مسجلين اليوم (أنشأ حسابًا على الموقع)"]))
-    col3.metric("نسبة الطلاب الجدد", f"{latest.get('نسبة المسجلين الجدد غير المسجلين في البهوتي ', 0):.1f}%")
+    col1, col2, col3 = st.columns(3)
+    # استخدام تنسيق f-string مع الفواصل للأرقام لتظهر بوضوح
+    col1.metric("إجمالي المسجلين الجدد", f"{int(latest['إجمالي المسجلين الجدد (أنشأ حسابًا على الموقع)']):,}")
+    col2.metric("مسجلي اليوم", f"{int(latest['مسجلين اليوم (أنشأ حسابًا على الموقع)']):,}")
     
-    # 2. الرسم البياني للاتجاه
+    # الجراف
     st.subheader("📈 اتجاه التسجيل اليومي")
     fig = px.line(df, x="التاريخ", y="إجمالي المسجلين الجدد (أنشأ حسابًا على الموقع)")
+    # تعديل الجراف ليظهر الأرقام بوضوح
+    fig.update_traces(mode="lines+markers")
     st.plotly_chart(fig, use_container_width=True)
     
-    # 3. جدول البيانات المفصل
-    st.subheader("📋 سجل البيانات التفصيلي")
-    st.dataframe(df)
+    st.subheader("📋 سجل البيانات")
+    st.dataframe(df.style.format({"إجمالي المسجلين الجدد (أنشأ حسابًا على الموقع)": "{:,.0f}"}))
 
 except Exception as e:
-    st.error(f"حدث خطأ أثناء تحميل الداشبورد: {e}")
+    st.error(f"خطأ أثناء العرض: {e}")
