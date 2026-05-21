@@ -2,7 +2,6 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 
-# 1. إعداد الصفحة وتطبيق الهوية البصرية الرسمية لمعهد البهوتي (الأزرق النيلي والذهبي)
 st.set_page_config(layout="wide", page_title="داشبورد التأهيل الفقهي الحنبلي - الدفعة 16", page_icon="📜")
 
 st.markdown("""
@@ -40,51 +39,47 @@ def clean_percentage(val):
 def load_hanbali_data_by_index():
     url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRmiO4XN9kssEddDdU8TuKtXOypsisNKiKejQ-DCDqcgmox6s7DV0zRJ6mxpLqpBA5XQr4JMgFE11_o/pub?gid=826428120&single=true&output=csv"
     
-    # قراءة الملف الخام بالكامل بدون تحديد رؤوس أعمدة لمنع الـ KeyError
     raw_df = pd.read_csv(url, header=None)
-    
-    # الاحتفاظ بنسخة كاملة مخصصة لاستخراج الـ Pivot Tables لاحقاً
     side_data = raw_df.iloc[1:].copy()
     
-    # استخلاص الخط الزمني من الصف الرابع (index 3) واختيار أول 13 عموداً فقط (من A إلى M)
-    timeline_df = raw_df.iloc[3:, :13].copy().reset_index(drop=True)
+    # استخلاص الخط الزمني من الصف الرابع (index 3) واختيار أول 12 عموداً
+    timeline_df = raw_df.iloc[3:, :12].copy().reset_index(drop=True)
     
-    # إعادة تسمية الأعمدة الـ 13 يدوياً وبشكل صارم داخل الكود لضمان الاستقرار
-    timeline_df.columns = [
-        'التاريخ',
-        'المسجلين قديما', # العمود المهمل
-        'إجمالي المسجلين الجدد',
-        'مسجلين اليوم',
-        'الجدد من قدامى البهوتي',
-        'نسبة الجدد من قدامى البهوتي',
-        'الجدد من طلاب البهوتي الحاليين',
-        'نسبة الجدد من طلاب البهوتي الحاليين',
-        'الجدد من طلاب البهوتي المتوقفين',
-        'نسبة الجدد من طلبة البهوتي المتوقفين',
-        'الجدد غير المسجلين في البهوتي',
-        'نسبة الجدد غير المسجلين في البهوتي',
-        'عمود زائد' # أي عمود إضافي حتى العمود M
+    # إعطاء أسماء أعمدة بسيطة وموحدة للعمل عليها
+    col_names = [
+        'Date',             # 0
+        'Old',              # 1
+        'Total_New',        # 2
+        'Today_New',        # 3
+        'Behuti_Old',       # 4
+        'Perc_Behuti_Old',  # 5
+        'Behuti_Curr',      # 6
+        'Perc_Behuti_Curr', # 7
+        'Behuti_Stop',      # 8
+        'Perc_Behuti_Stop', # 9
+        'Non_Behuti',       # 10
+        'Perc_Non_Behuti'   # 11
     ]
+    timeline_df.columns = col_names
     
-    # تنظيف العمود الخاص بالتاريخ وتحويله
-    timeline_df['التاريخ'] = pd.to_datetime(timeline_df['التاريخ'], errors='coerce')
-    timeline_df = timeline_df.dropna(subset=['التاريخ'])
+    # تنظيف التاريخ
+    timeline_df['Date'] = pd.to_datetime(timeline_df['Date'], errors='coerce')
+    timeline_df = timeline_df.dropna(subset=['Date'])
     
-    # معالجة القيم العددية والنسب المئوية للأعمدة المعرّفة حديثاً
-    for col in timeline_df.columns:
-        if col == 'التاريخ':
-            continue
-        if 'نسبة' in col:
+    # تنظيف الأرقام والنسب
+    for i, col in enumerate(col_names):
+        if col == 'Date': continue
+        if 'Perc' in col:
             timeline_df[col] = timeline_df[col].apply(clean_percentage)
         else:
             if timeline_df[col].dtype == 'object':
                 timeline_df[col] = timeline_df[col].astype(str).str.replace(',', '', regex=True)
             timeline_df[col] = pd.to_numeric(timeline_df[col], errors='coerce').fillna(0)
             
-    # تصفية السطور الفارغة التي لم يبدأ التسجيل فيها بعد
-    timeline_df = timeline_df[timeline_df['إجمالي المسجلين الجدد'] > 0]
+    # تصفية السطور بناءً على عمود Total_New
+    timeline_df = timeline_df[timeline_df['Total_New'] > 0]
     
-    # دالة ذكية للبحث عن الجداول الجانبية (Pivot Tables) في الأعمدة اللاحقة
+    # استخراج الجداول الجانبية
     def extract_pivot(search_header, data_frame):
         for col in data_frame.columns:
             col_data_str = data_frame[col].astype(str)
@@ -127,31 +122,31 @@ try:
         
         tab1, tab2, tab3 = st.tabs(["📈 حركية التسجيل اليومي", "📊 الخصائص الديموغرافية والتعليمية", "🎯 تحليل العلاقة مع معهد البهوتي"])
         
-        # --- التبويب الأول: حركية التسجيل اليومي ---
         with tab1:
             st.subheader("📌 أداء ووتيرة التدفق الحالية للمتقدمين")
             
             col1, col2, col3, col4 = st.columns(4)
-            col1.metric("إجمالي المسجلين الجدد (تراكمي)", f"{int(last_row['إجمالي المسجلين الجدد']):,}")
-            col2.metric("مسجلي اليوم الفعلي", f"{int(last_row['مسجلين اليوم']):,}")
+            col1.metric("إجمالي المسجلين الجدد (تراكمي)", f"{int(last_row['Total_New']):,}")
+            col2.metric("مسجلي اليوم الفعلي", f"{int(last_row['Today_New']):,}")
             
-            avg_daily = df['مسجلين اليوم'].mean()
+            avg_daily = df['Today_New'].mean()
             col3.metric("متوسط التسجيل اليومي", f"{avg_daily:.1f} طالب / يوم")
             
-            max_daily = df['مسجلين اليوم'].max()
-            max_date = df.loc[df['مسجلين اليوم'] == max_daily, 'التاريخ'].iloc[0].strftime('%Y-%m-%d')
+            max_daily = df['Today_New'].max()
+            max_date = df.loc[df['Today_New'] == max_daily, 'Date'].iloc[0].strftime('%Y-%m-%d')
             col4.metric("أعلى ذروة تسجيل يومية", f"{int(max_daily)} طالب", f"تاريخ: {max_date}", delta_color="off")
             
             st.markdown("---")
             st.subheader("📉 المنحنى الزمني لتطور عمليات إنشاء الحسابات للدفعة 16")
             
-            fig_line = px.line(df, x='التاريخ', y=['إجمالي المسجلين الجدد', 'مسجلين اليوم'],
-                               labels={'value': 'عدد الطلاب', 'variable': 'مؤشر القياس'},
+            # تغيير أسماء الأعمدة للعرض في الرسم البياني
+            df_plot = df.rename(columns={'Total_New': 'إجمالي المسجلين الجدد', 'Today_New': 'مسجلين اليوم'})
+            fig_line = px.line(df_plot, x='Date', y=['إجمالي المسجلين الجدد', 'مسجلين اليوم'],
+                               labels={'value': 'عدد الطلاب', 'variable': 'مؤشر القياس', 'Date': 'التاريخ'},
                                color_discrete_sequence=['#0f2c59', '#d4af37'], markers=True)
             fig_line.update_layout(hovermode="x unified")
             st.plotly_chart(fig_line, use_container_width=True)
 
-        # --- التبويب الثاني: تحليل الـ Pivot Tables الديموغرافية ---
         with tab2:
             st.subheader("👥 البنية الإحصائية والديموغرافية للطلاب الجدد")
             
@@ -192,7 +187,6 @@ try:
                 else:
                     st.info("ℹ️ لم يتم العثور على جدول 'الدولة' في البيانات الجانبية بعد.")
 
-        # --- التبويب الثالث: تفكيك العلاقة الحيوية مع معهد البهوتي ---
         with tab3:
             st.subheader("🎯 رصد وتحليل روافد المتقدمين وعلاقتهم التاريخية بمعهد البهوتي")
             
@@ -204,16 +198,16 @@ try:
                     "طلاب البهوتي المتوقفين (درس بالبهوتي سابقاً ولم يكمل)"
                 ],
                 "عدد الحسابات المنشأة": [
-                    last_row['الجدد غير المسجلين في البهوتي'],
-                    last_row['الجدد من قدامى البهوتي'],
-                    last_row['الجدد من طلاب البهوتي الحاليين'],
-                    last_row['الجدد من طلاب البهوتي المتوقفين']
+                    last_row['Non_Behuti'],
+                    last_row['Behuti_Old'],
+                    last_row['Behuti_Curr'],
+                    last_row['Behuti_Stop']
                 ],
                 "النسبة من إجمالي الدفعة": [
-                    f"{last_row['نسبة الجدد غير المسجلين في البهوتي']:.1f}%",
-                    f"{last_row['نسبة الجدد من قدامى البهوتي']:.1f}%",
-                    f"{last_row['نسبة الجدد من طلاب البهوتي الحاليين']:.1f}%",
-                    f"{last_row['نسبة الجدد من طلبة البهوتي المتوقفين']:.1f}%"
+                    f"{last_row['Perc_Non_Behuti']:.1f}%",
+                    f"{last_row['Perc_Behuti_Old']:.1f}%",
+                    f"{last_row['Perc_Behuti_Curr']:.1f}%",
+                    f"{last_row['Perc_Behuti_Stop']:.1f}%"
                 ]
             })
             
@@ -230,7 +224,7 @@ try:
             
             with col_rec1:
                 st.markdown("📣 **استراتيجية الجذب الخارجي**")
-                new_non_behuti_rate = last_row['نسبة الجدد غير المسجلين في البهوتي']
+                new_non_behuti_rate = last_row['Perc_Non_Behuti']
                 if new_non_behuti_rate > 50:
                     st.success(f"✅ الجذب الخارجي ممتاز! النسبة تسجل ({new_non_behuti_rate:.1f}%) من الطلاب الجدد تماماً خارج نظام البهوتي. هذا يعني نجاح انتشار الهوية التسويقية المستقلة للتأهيل الفقهي.")
                 else:
@@ -238,8 +232,8 @@ try:
                     
             with col_rec2:
                 st.markdown("💼 **توصيات فريق المبيعات واستغلال الـ Leads**")
-                behuti_old = last_row['الجدد من قدامى البهوتي']
-                behuti_stopped = last_row['الجدد من طلاب البهوتي المتوقفين']
+                behuti_old = last_row['Behuti_Old']
+                behuti_stopped = last_row['Behuti_Stop']
                 
                 st.info(f"💡 هناك **{int(behuti_old)}** طالب مسجل من 'قدامى البهوتي' (سجلوا فقط ولم يدرسوا). هؤلاء يمثلون فرصة إعادة تنشيط (Re-engagement) قوية عبر إرسال محتوى تعريفي تخصصي خفيف يربط الفقه بالواقع.")
                 if behuti_stopped > 0:
@@ -247,7 +241,7 @@ try:
 
             with col_rec3:
                 st.markdown("🏛️ **تكامل المناهج والولاء**")
-                behuti_current_rate = last_row['نسبة الجدد من طلاب البهوتي الحاليين']
+                behuti_current_rate = last_row['Perc_Behuti_Curr']
                 st.info(f"💡 نسبة الطلاب الحاليين بالبهوتي والذين قاموا بالتسجيل هنا بلغت ({behuti_current_rate:.1f}%). هذا التريند يعكس رغبة صادقة من طلاب المعهد الحاليين لتعميق دراستهم التخصصية بالمتون الحنبلية.")
 
 except Exception as e:
