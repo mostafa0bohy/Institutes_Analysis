@@ -15,11 +15,22 @@ API_URL = "https://script.google.com/macros/s/AKfycbzeWqeaOCcOmNMxA7nNmsLwIGnLGJ
 def fetch_live_data():
     response = requests.get(API_URL)
     data = response.json()
+    
     # تحويل البيانات إلى DataFrame
+    # نفترض أن الصف الأول هو العناوين
     df = pd.DataFrame(data[1:], columns=data[0])
-    # تحويل الأعمدة الرقمية (استبعاد عمود التاريخ) إلى أرقام
+    
+    # تنظيف الأسماء (إزالة الفراغات)
+    df.columns = df.columns.str.strip()
+    
+    # تحويل الأعمدة الرقمية (من العمود الثاني للنهاية)
+    # نستخدم حلقة للتأكد من أن كل عمود هو عبارة عن Series حقيقية
     for col in df.columns[1:]:
+        # نحول القيم إلى نصوص أولاً ثم نزيل أي رموز غير رقمية
+        df[col] = df[col].astype(str).str.replace(r'[^\d.]', '', regex=True)
+        # ثم نحولها لأرقام
         df[col] = pd.to_numeric(df[col], errors='coerce').fillna(0)
+        
     return df
 
 try:
