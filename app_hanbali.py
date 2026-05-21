@@ -1,50 +1,46 @@
 import streamlit as st
 import pandas as pd
-import plotly.express as px
-import numpy as np
 
 # إعداد الصفحة
-st.set_page_config(layout="wide", page_title="داشبورد التأهيل الفقهي الحنبلي", page_icon="📜")
+st.set_page_config(layout="wide")
+st.title("لوحة تحكم التأهيل الفقهي - النسخة المستقرة")
 
 @st.cache_data
-def load_and_clean_data():
+def load_data_robust():
     url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRmiO4XN9kssEddDdU8TuKtXOypsisNKiKejQ-DCDqcgmox6s7DV0zRJ6mxpLqpBA5XQr4JMgFE11_o/pub?gid=826428120&single=true&output=csv"
     
-    # 1. قراءة البيانات بدون أي رؤوس أعمدة (header=None) لتجنب أخطاء التحليل
-    df = pd.read_csv(url, header=None)
+    # 1. قراءة الملف بدون رؤوس أعمدة أولية
+    raw_df = pd.read_csv(url, header=None)
     
-    # 2. البحث عن السطر الذي يحتوي كلمة "التاريخ" ليكون هو بداية البيانات
-    # هذا يحل مشكلة الأسطر الفارغة في الأعلى
-    start_row = 0
-    for i in range(len(df)):
-        if "التاريخ" in str(df.iloc[i].values):
-            start_row = i
+    # 2. البحث عن الصف الذي يحتوي على "التاريخ" ليكون هو الرأس (Header)
+    header_idx = None
+    for i in range(len(raw_df)):
+        if "التاريخ" in str(raw_df.iloc[i].values):
+            header_idx = i
             break
     
-    # إعادة بناء الجدول من تلك النقطة
-    df = df.iloc[start_row:].reset_index(drop=True)
-    df.columns = df.iloc[0] # تعيين أول سطر كعناوين
-    df = df.iloc[1:].reset_index(drop=True) # حذف سطر العنوان المكرر
+    if header_idx is None:
+        return None, "لم يتم العثور على عمود 'التاريخ'!"
     
-    # 3. حذف أي سطر فارغ تماماً من البيانات
-    df = df.dropna(how='all')
+    # 3. إعادة تشكيل الجدول بناءً على الصف المكتشف
+    df = raw_df.iloc[header_idx:].reset_index(drop=True)
+    df.columns = df.iloc[0]
+    df = df.iloc[1:].reset_index(drop=True)
     
-    # 4. تحويل أعمدة الأرقام لتصبح صالحة للرسم (إزالة أي فواصل أو نصوص)
-    for col in df.columns:
-        if col != 'التاريخ':
-            df[col] = df[col].astype(str).str.replace(r'[^\d.]', '', regex=True)
-            df[col] = pd.to_numeric(df[col], errors='coerce').fillna(0)
-            
-    return df
+    # 4. تنظيف الأعمدة (حذف الأعمدة الفارغة تماماً)
+    df = df.dropna(axis=1, how='all')
+    
+    return df, None
 
-try:
-    df = load_and_clean_data()
-    
-    st.write("### معاينة سريعة للبيانات التي تم تنظيفها:")
-    st.dataframe(df.head())
-    
-    # رسم بياني بسيط للتأكد من نجاح العمل
-    st.line_chart(df.select_dtypes(include=['number']))
+# عرض النتائج
+df, error = load_data_robust()
 
-except Exception as e:
-    st.error(f"خطأ في معالجة البيانات: {e}")
+if error:
+    st.error(error)
+else:
+    st.success("تم تحميل البيانات بنجاح!")
+    st.write("### معاينة أول 10 صفوف من البيانات:")
+    st.dataframe(df.head(10))
+    
+    st.write("### أسماء الأعمدة المكتشفة:")
+    st.write(df.columns.tolist())
