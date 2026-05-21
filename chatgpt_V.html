@@ -1,59 +1,141 @@
-<script>
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
 
-function buildDashboard(data) {
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    const students = new Set();
-    const countries = {};
-    const paymentMethods = {};
-    const revenueByDate = {};
+    <title>Dashboard</title>
 
-    let totalRevenue = 0;
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 
-    data.forEach(row => {
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 
-        const email = row['الإيميل'] || row['email'];
-        const country = row['الدولة'] || row['country'];
-        const payment = row['وسيلة الدفع'] || row['payment_method'];
-
-        const amount = parseFloat(
-            row['المبلغ المستلم'] ||
-            row['total'] ||
-            0
-        );
-
-        const date = row['التاريخ'] || row['created_at'];
-
-        if (email) students.add(email);
-
-        if (country) {
-            countries[country] =
-                (countries[country] || 0) + 1;
+    <style>
+        body {
+            font-family: Arial;
+            background: #f5f5f5;
+            padding: 20px;
         }
 
-        if (payment) {
-            paymentMethods[payment] =
-                (paymentMethods[payment] || 0) + 1;
+        .card {
+            background: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 12px;
         }
 
-        if (date) {
-            revenueByDate[date] =
-                (revenueByDate[date] || 0) + amount;
+        .kpi {
+            font-size: 30px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Dashboard</h1>
+
+    <div class="card">
+        <div>عدد الطلاب</div>
+        <div class="kpi" id="studentsCount">0</div>
+    </div>
+
+    <div class="card">
+        <div>الإيرادات</div>
+        <div class="kpi" id="revenue">0</div>
+    </div>
+
+    <div class="card">
+        <div id="countryChart"></div>
+    </div>
+
+    <script>
+
+        const csvUrl =
+            "https://docs.google.com/spreadsheets/d/e/2PACX-1vRmiO4XN9kssEddDdU8TuKtXOypsisNKiKejQ-DCDqcgmox6s7DV0zRJ6mxpLqpBA5XQr4JMgFE11_o/pub?gid=826428120&single=true&output=csv";
+
+        Papa.parse(csvUrl, {
+
+            download: true,
+            header: true,
+
+            complete: function (results) {
+
+                console.log(results);
+
+                const data = results.data;
+
+                buildDashboard(data);
+            },
+
+            error: function (err) {
+
+                console.error(err);
+
+                alert("خطأ في تحميل البيانات");
+            }
+        });
+
+        function buildDashboard(data) {
+
+            const students = new Set();
+
+            const countries = {};
+
+            let totalRevenue = 0;
+
+            data.forEach(row => {
+
+                const email =
+                    row['الإيميل'] || row['email'];
+
+                const country =
+                    row['الدولة'] || row['country'];
+
+                const amount = parseFloat(
+                    row['المبلغ المستلم'] || 0
+                );
+
+                if (email) {
+                    students.add(email);
+                }
+
+                if (country) {
+
+                    countries[country] =
+                        (countries[country] || 0) + 1;
+                }
+
+                totalRevenue += amount;
+            });
+
+            document.getElementById(
+                'studentsCount'
+            ).innerText = students.size;
+
+            document.getElementById(
+                'revenue'
+            ).innerText = totalRevenue.toLocaleString();
+
+            Plotly.newPlot(
+
+                'countryChart',
+
+                [{
+                    x: Object.keys(countries),
+                    y: Object.values(countries),
+                    type: 'bar'
+                }],
+
+                {
+                    title: 'الطلاب حسب الدولة'
+                }
+            );
         }
 
-        totalRevenue += amount;
-    });
+    </script>
 
-    document.getElementById('studentsCount').innerText =
-        students.size;
+</body>
 
-    document.getElementById('revenue').innerText =
-        totalRevenue.toLocaleString();
-
-    document.getElementById('countries').innerText =
-        Object.keys(countries).length;
-
-    document.getElementById('payments').innerText =
-        data.length;
-}
-
-</script>
+</html>
