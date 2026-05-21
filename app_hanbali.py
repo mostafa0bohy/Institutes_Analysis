@@ -4,147 +4,170 @@ import plotly.express as px
 import plotly.graph_objects as go
 from datetime import datetime
 
-# إعداد الصفحة
-st.set_page_config(layout="wide", page_title="الداشبورد التفاعلي | التأهيل الفقهي", page_icon="📈")
+# إعداد الصفحة وتطبيق المظهر الاحترافي الموحد
+st.set_page_config(layout="wide", page_title="داشبورد التأهيل الفقهي", page_icon="📜")
 
+# الألوان المعتمدة للواجهة #006e7f (الأساسي) و #cce2e5 (الخلفيات الخفيفة)
 st.markdown("""
     <style>
-    .main { background-color: #f8f9fa; }
+    .main { background-color: #fafafa; }
     div[data-testid="metric-container"] {
         background-color: #ffffff;
         border: 1px solid #e0e0e0;
-        padding: 5% 5% 5% 10%;
+        padding: 15px;
         border-radius: 8px;
-        border-right: 5px solid #1f77b4;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        border-right: 5px solid #006e7f;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.02);
     }
-    h1, h2, h3 { color: #2c3e50; font-family: 'Arial', sans-serif; }
-    hr { border-top: 2px solid #e0e0e0; }
+    div[data-testid="metric-container"] label {
+        color: #555555 !important;
+        font-weight: bold !important;
+        font-size: 14px !important;
+    }
+    div[data-testid="metric-container"] div[data-testid="stMetricValue"] {
+        color: #006e7f !important;
+        font-size: 28px !important;
+    }
+    h1, h2, h3 { color: #006e7f; font-family: 'Arial', sans-serif; }
+    hr { border-top: 1px solid #cce2e5; }
     </style>
 """, unsafe_allow_html=True)
 
 @st.cache_data
-def fetch_and_process_data():
+def load_perfect_data():
     url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRmiO4XN9kssEddDdU8TuKtXOypsisNKiKejQ-DCDqcgmox6s7DV0zRJ6mxpLqpBA5XQr4JMgFE11_o/pub?gid=826428120&single=true&output=csv"
     
-    # قراءة البيانات الخام
-    raw_df = pd.read_csv(url, header=None)
+    # قراءة البيانات بالكامل كنصوص لمنع تفسيرها الخاطئ أثناء التحميل
+    raw_df = pd.read_csv(url, header=None, dtype=str)
     
-    # تحديد صف العنوان
-    start_row = raw_df[raw_df.apply(lambda row: "التاريخ" in str(row.values), axis=1)].index[0]
-    df = raw_df.iloc[start_row:].reset_index(drop=True)
-    df.columns = df.iloc[0]
-    df = df.iloc[1:].reset_index(drop=True)
+    # البحث عن السطر الذي يبدأ بـ "التاريخ"
+    start_row = None
+    for i in range(len(raw_df)):
+        if raw_df.iloc[i].astype(str).str.contains("التاريخ").any():
+            start_row = i
+            break
+            
+    if start_row is None:
+        return pd.DataFrame()
+
+    # تحديد موقع عمود التاريخ بالضبط داخل هذا السطر
+    row_cells = raw_df.iloc[start_row].astype(str).tolist()
+    date_col_idx = next(idx for idx, val in enumerate(row_cells) if "التاريخ" in val)
+
+    # قطع الـ 11 عمود المتتالية فقط بناءً على موقع عمود التاريخ الثابت
+    df = raw_df.iloc[start_row+1:, date_col_idx:date_col_idx+11].copy()
     
-    # تنظيف أسماء الأعمدة من المسافات الزائدة لتسهيل الاستدعاء
-    df.columns = df.columns.str.strip()
-
-    # خريطة لربط الأسماء العربية بأسماء متغيرة قصيرة لسهولة الكود
-    # استخدمنا الأسماء الدقيقة التي أرسلتها في رسالة سابقة
-    col_mapping = {
-        "التاريخ": "Date",
-        "إجمالي المسجلين الجدد (أنشأ حسابًا على الموقع)": "Total_New",
-        "مسجلين اليوم (أنشأ حسابًا على الموقع)": "Today_New",
-        "المسجلين الجدد من قدامى البهوتي (لم يدرس ولم يدفع)": "Buhuti_Old",
-        "المسجلين الجدد من طلاب البهوتي (طالب حالي يدرس البهوتي )": "Buhuti_Current",
-        "المسجلين الجدد من طلاب البهوتي المتوقفين (درس ولم يكمل)": "Buhuti_Stopped",
-        "المسجلين الجدد غير المسجلين في البهوتي": "Non_Buhuti"
-    }
-
-    # التحقق من وجود الأعمدة المطلوبة وتغيير أسمائها
-    available_cols = {}
-    for ar_col, en_col in col_mapping.items():
-        # البحث عن عمود يطابق أو يحتوي على النص العربي
-        matching_col = next((c for c in df.columns if ar_col in str(c)), None)
-        if matching_col:
-            available_cols[matching_col] = en_col
+    # تسمية الأعمدة برمجياً بالترتيب العددي الصارم لحل مشكلة الأسماء نهائياً
+    df.columns = [
+        "التاريخ", "إجمالي المسجلين", "تسجيل اليوم",
+        "قدامى البهوتي", "نسبة القدامى",
+        "طلاب حاليين", "نسبة الحاليين",
+        "طلاب متوقفين", "نسبة المتوقفيين",
+        "من خارج البهوتي", "نسبة الخارج"
+    ]
     
-    df = df.rename(columns=available_cols)
+    # تنظيف وتجهيز عمود التاريخ
+    df["التاريخ"] = df["التاريخ"].astype(str).str.strip()
+    df["التاريخ"] = pd.to_datetime(df["التاريخ"], errors='coerce')
+    df = df.dropna(subset=["التاريخ"])
     
-    # الاحتفاظ فقط بالأعمدة التي تم التعرف عليها
-    df = df[list(available_cols.values())]
-
-    # تحويل التواريخ والفلترة
-    df['Date'] = pd.to_datetime(df['Date'], errors='coerce')
-    df = df.dropna(subset=['Date'])
-    df = df[df['Date'] <= pd.to_datetime(datetime.now().date())]
-
-    # تحويل الأرقام بصرامة
-    numeric_cols = [c for c in df.columns if c != 'Date']
-    for col in numeric_cols:
-        df[col] = df[col].astype(str).str.replace(r'[^\d.]', '', regex=True)
-        df[col] = pd.to_numeric(df[col], errors='coerce').fillna(0)
-
+    # فلترة التواريخ المستقبلية (حتى تاريخ اليوم فقط)
+    today_date = pd.to_datetime(datetime.now().date())
+    df = df[df["التاريخ"] <= today_date]
+    
+    # تحويل كافة الأعمدة الأخرى إلى أرقام حقيقية بعد تنظيف الفواصل والرموز والمسافات
+    for col in df.columns:
+        if col != "التاريخ":
+            df[col] = df[col].astype(str).str.replace(r'[^\d.]', '', regex=True)
+            df[col] = pd.to_numeric(df[col], errors='coerce').fillna(0)
+            
+    # ترتيب البيانات تصاعدياً حسب التاريخ لضمان سلامة الرسم البياني التراكمي
+    df = df.sort_values("التاريخ").reset_index(drop=True)
     return df
 
 try:
-    df = fetch_and_process_data()
-
+    df = load_perfect_data()
+    
     if df.empty:
-        st.warning("⚠️ لم يتم العثور على بيانات صالحة للعرض بعد التنظيف.")
+        st.error("❌ فشل الكود في تحديد مكان جدول البيانات داخل ملف الشيت. يرجى مراجعة صف الرأس.")
     else:
-        st.markdown("<h1 style='text-align: center; color: #1a237e; margin-bottom: 10px;'>📊 لوحة المؤشرات الاستراتيجية - التأهيل الفقهي</h1>", unsafe_allow_html=True)
+        # واجهة الداشبورد الاحترافية
+        st.markdown("<h1 style='text-align: center; margin-bottom: 5px;'>📊 لوحة متابعة تسجيل الدفعة 16</h1>", unsafe_allow_html=True)
+        st.markdown("<p style='text-align: center; color: #666; margin-bottom: 30px;'>تحليل إحصائي واستراتيجي لربط المتقدمين بمعهد البهوتي</p>", unsafe_allow_html=True)
         
+        # جلب أحدث صف يحتوي على بيانات فعلية
         latest = df.iloc[-1]
         
-        # التأكد من وجود الأعمدة قبل عرض KPIs
+        # صف المؤشرات الرئيسية (KPIs)
         col1, col2, col3, col4 = st.columns(4)
-        if 'Total_New' in df.columns:
-            col1.metric("إجمالي المسجلين (تراكمي)", f"{int(latest['Total_New']):,}")
-        if 'Today_New' in df.columns:
-            col2.metric("مسجلي اليوم الفعلي", f"{int(latest['Today_New']):,}")
+        col1.metric("إجمالي الحسابات المنشأة", f"{int(latest['إجمالي المسجلين']):,}")
+        col2.metric("مسجلي اليوم", f"{int(latest['تسجيل اليوم']):,}")
         
-        buhuti_total = 0
-        if all(c in df.columns for c in ['Buhuti_Old', 'Buhuti_Current', 'Buhuti_Stopped']):
-             buhuti_total = latest['Buhuti_Old'] + latest['Buhuti_Current'] + latest['Buhuti_Stopped']
-             col3.metric("إجمالي المرتبطين بالبهوتي", f"{int(buhuti_total):,}")
+        buhuti_total = latest['قدامى البهوتي'] + latest['طلاب حاليين'] + latest['طلاب متوقفين']
+        col3.metric("إجمالي منتسبي البهوتي", f"{int(buhuti_total):,}")
+        col4.metric("متقدمين مستقلين (خارج البهوتي)", f"{int(latest['من خارج البهوتي']):,}")
         
-        if 'Non_Buhuti' in df.columns:
-             col4.metric("متقدمين من خارج البهوتي", f"{int(latest['Non_Buhuti']):,}")
-
         st.markdown("<br><hr><br>", unsafe_allow_html=True)
-
-        col_chart1, col_chart2 = st.columns([2.5, 1.5])
-
-        with col_chart1:
-            st.markdown("### 📈 نمو التسجيل التراكمي وتصنيف المتقدمين")
+        
+        # الصف الثاني: الرسوم البيانية الاستراتيجية
+        chart_col1, chart_col2 = st.columns([2.5, 1.5])
+        
+        with chart_col1:
+            st.markdown("### 📈 النمو التراكمي وتصنيفات معهد البهوتي")
             fig_area = go.Figure()
-            # إضافة الـ Traces فقط إذا كان العمود موجوداً لتجنب الأخطاء
-            if 'Non_Buhuti' in df.columns: fig_area.add_trace(go.Scatter(x=df['Date'], y=df['Non_Buhuti'], mode='lines', stackgroup='one', name='من خارج البهوتي', line=dict(color='#2ca02c')))
-            if 'Buhuti_Old' in df.columns: fig_area.add_trace(go.Scatter(x=df['Date'], y=df['Buhuti_Old'], mode='lines', stackgroup='one', name='قدامى البهوتي', line=dict(color='#ff7f0e')))
-            if 'Buhuti_Current' in df.columns: fig_area.add_trace(go.Scatter(x=df['Date'], y=df['Buhuti_Current'], mode='lines', stackgroup='one', name='طلاب البهوتي الحاليين', line=dict(color='#1f77b4')))
-            if 'Buhuti_Stopped' in df.columns: fig_area.add_trace(go.Scatter(x=df['Date'], y=df['Buhuti_Stopped'], mode='lines', stackgroup='one', name='طلاب البهوتي المتوقفين', line=dict(color='#d62728')))
-
-            fig_area.update_layout(hovermode='x unified', margin=dict(l=0, r=0, t=20, b=0), legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1))
-            st.plotly_chart(fig_area, use_container_width=True)
-
-        with col_chart2:
-            st.markdown("### 🎯 التوزيع النهائي للمسجلين الجدد")
-            labels, values = [], []
-            if 'Non_Buhuti' in df.columns: labels.append('من خارج البهوتي'); values.append(latest['Non_Buhuti'])
-            if 'Buhuti_Old' in df.columns: labels.append('قدامى البهوتي'); values.append(latest['Buhuti_Old'])
-            if 'Buhuti_Current' in df.columns: labels.append('حاليين بالبهوتي'); values.append(latest['Buhuti_Current'])
-            if 'Buhuti_Stopped' in df.columns: labels.append('متوقفين بالبهوتي'); values.append(latest['Buhuti_Stopped'])
+            # رسم بياني مساحي متراكم يعتمد على الأعداد التراكمية الحقيقية لكل تصنيف
+            fig_area.add_trace(go.Scatter(x=df['التاريخ'], y=df['من خارج البهوتي'], mode='lines', stackgroup='one', name='من خارج البهوتي', line=dict(color='#006e7f')))
+            fig_area.add_trace(go.Scatter(x=df['التاريخ'], y=df['قدامى البهوتي'], mode='lines', stackgroup='one', name='قدامى البهوتي', line=dict(color='#ff9f43')))
+            fig_area.add_trace(go.Scatter(x=df['التاريخ'], y=df['طلاب حاليين'], mode='lines', stackgroup='one', name='طلاب حاليين يدرسون بالبهوتي', line=dict(color='#10ac84')))
+            fig_area.add_trace(go.Scatter(x=df['التاريخ'], y=df['طلاب متوقفين'], mode='lines', stackgroup='one', name='طلاب متوقفين بالبهوتي', line=dict(color='#ee5253')))
             
-            if values:
-                fig_pie = px.pie(values=values, names=labels, hole=0.45, color_discrete_sequence=['#2ca02c', '#ff7f0e', '#1f77b4', '#d62728'])
-                fig_pie.update_traces(textposition='inside', textinfo='percent+value')
-                fig_pie.update_layout(margin=dict(l=0, r=0, t=20, b=0), showlegend=True)
-                st.plotly_chart(fig_pie, use_container_width=True)
-            else:
-                st.info("لا توجد بيانات كافية للرسم الدائري.")
-
+            fig_area.update_layout(
+                hovermode='x unified',
+                margin=dict(l=10, r=10, t=10, b=10),
+                legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
+                paper_bgcolor='rgba(0,0,0,0)',
+                plot_bgcolor='rgba(0,0,0,0)'
+            )
+            st.plotly_chart(fig_area, use_container_width=True)
+            
+        with chart_col2:
+            st.markdown("### 🎯 التوزيع النسبي لإجمالي الدفعة")
+            labels = ['خارج البهوتي', 'قدامى البهوتي', 'طلاب حاليين', 'طلاب متوقفين']
+            values = [latest['من خارج البهوتي'], latest['قدامى البهوتي'], latest['طلاب حاليين'], latest['طلاب متوقفين']]
+            colors = ['#006e7f', '#ff9f43', '#10ac84', '#ee5253']
+            
+            fig_pie = px.pie(values=values, names=labels, hole=0.5, color_discrete_sequence=colors)
+            fig_pie.update_traces(textposition='inside', textinfo='percent+value', labels=labels)
+            fig_pie.update_layout(margin=dict(l=10, r=10, t=10, b=10), showlegend=True)
+            st.plotly_chart(fig_pie, use_container_width=True)
+            
         st.markdown("<br><hr><br>", unsafe_allow_html=True)
-
-        if 'Today_New' in df.columns:
-            st.markdown("### 📊 الأعداد اليومية للمسجلين الجدد")
-            fig_bar = px.bar(df, x='Date', y='Today_New', text_auto=True)
-            fig_bar.update_traces(marker_color='#1a237e', textposition='outside')
-            fig_bar.update_layout(xaxis_title="التاريخ", yaxis_title="عدد المسجلين في اليوم", margin=dict(l=0, r=0, t=20, b=0), xaxis=dict(tickformat="%Y-%m-%d"))
-            st.plotly_chart(fig_bar, use_container_width=True)
-
-        with st.expander("📄 استعراض جدول البيانات التفصيلي"):
-            st.dataframe(df, use_container_width=True)
+        
+        # قسم رسم الأعداد اليومية (منفصل)
+        st.markdown("### 📊 حركية التسجيل اليومية الفعالة")
+        # استثناء الأيام التي يكون فيها تسجيل اليوم صفر لتنظيف الجراف وتوضيح الأيام النشطة فقط
+        df_daily = df[df["تسجيل اليوم"] > 0]
+        
+        fig_bar = px.bar(df_daily, x='التاريخ', y='تسجيل اليوم', text_auto=True)
+        fig_bar.update_traces(marker_color='#006e7f', textposition='outside')
+        fig_bar.update_layout(
+            xaxis_title="التاريخ الفعلي",
+            yaxis_title="عدد المسجلين الجدد",
+            margin=dict(l=10, r=10, t=20, b=10),
+            xaxis=dict(tickformat="%Y-%m-%d"),
+            paper_bgcolor='rgba(0,0,0,0)',
+            plot_bgcolor='rgba(0,0,0,0)'
+        )
+        st.plotly_chart(fig_bar, use_container_width=True)
+        
+        st.markdown("<br>", unsafe_allow_html=True)
+        
+        # جدول مراجعة البيانات باللغة العربية
+        with st.expander("📋 استعراض السجل الرقمي المنظّم"):
+            formatted_df = df.copy()
+            # تنسيق التاريخ للعرض بوضوح
+            formatted_df["التاريخ"] = formatted_df["التاريخ"].dt.strftime('%Y-%m-%d')
+            st.dataframe(formatted_df.style.background_gradient(cmap='GnBu', subset=["تسجيل اليوم", "إجمالي المسجلين"]), use_container_width=True)
 
 except Exception as e:
-    st.error(f"⚠️ نعتذر، حدث خطأ أثناء معالجة البيانات: {e}")
+    st.error(f"⚠️ خطأ فني أثناء التشغيل: {e}")
