@@ -3,15 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لوحة مؤشرات التأهيل الفقهي الحنبلي | مركز تميز</title>
+    <title>لوحة مؤشرات التأهيل الفقهي الحنبلي المباشرة | مركز تميز</title>
+    <!-- استدعاء مكتبة Chart.js للرسوم البيانية -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
-            --primary-color: #006e7f; /* اللون الأساسي للمركز */
-            --secondary-color: #cce2e5; /* اللون الثانوي للمركز */
-            --dark-color: #2d3748;
-            --light-bg: #f7fafc;
-            --card-bg: #ffffff;
+            --primary-color: #8d191b; /* الهوية اللونية لمركز تميز */
+            --secondary-color: #f2e9d8;
+            --dark-color: #000000;
+            --light-bg: #f1e2e0;
+            --card-bg: #f1e2e2;
+            --loading-color: #f1e2e5;
+
         }
         
         body {
@@ -28,12 +31,12 @@
             padding: 25px 30px;
             text-align: center;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            position: relative;
         }
 
         .header h1 { 
             margin: 0; 
             font-size: 26px; 
-            font-weight: bold;
         }
 
         .header p { 
@@ -42,13 +45,25 @@
             font-size: 16px;
         }
 
+        /* مؤشر حالة جلب البيانات الحية */
+        .status-badge {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            color: white;
+        }
+
         .container { 
             padding: 30px; 
             max-width: 1400px; 
             margin: 0 auto; 
         }
 
-        /* تنسيق بطاقات الأداء الرقمية الكبرى KPI */
+        /* بطاقات الـ KPI */
         .kpi-row {
             display: flex;
             gap: 20px;
@@ -65,11 +80,6 @@
             border-radius: 6px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.05);
             text-align: center;
-            transition: transform 0.2s;
-        }
-
-        .kpi-card:hover {
-            transform: translateY(-3px);
         }
 
         .kpi-card h3 { 
@@ -85,7 +95,7 @@
             margin-top: 10px; 
         }
 
-        /* تنسيق شبكة الرسوم البيانية */
+        /* شبكة الرسوم البيانية */
         .charts-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
@@ -124,142 +134,204 @@
 <body>
 
     <div class="header">
-        <h1>لوحة المؤشرات الحية - برنامج التأهيل الفقهي الحنبلي (الدفعة 16)</h1>
-        <p>مركز تميز لتطوير التعليم الشرعي عن بعد - لوحة تفاعلية مخصصة للإدارة والتشغيل والتسويق</p>
+        <h1>لوحة المؤشرات الحية والمباشرة (الربط التلقائي)</h1>
+        <p>برنامج التأهيل الفقهي الحنبلي - مركز تميز</p>
+        <div class="status-badge" id="data-status">جاري جلب البيانات الحية...</div>
     </div>
 
     <div class="container">
         
+        <!-- صف المؤشرات الرقمية الحية -->
         <div class="kpi-row">
             <div class="kpi-card">
-                <h3>إجمالي المسجلين التراكمي</h3>
-                <div class="value" id="total-students">2,935</div>
+                <h3>إجمالي المسجلين الفعلي</h3>
+                <div class="value" id="kpi-total">0</div>
             </div>
             <div class="kpi-card">
                 <h3>نسبة الطلاب (ذكور)</h3>
-                <div class="value">64.5%</div>
+                <div class="value" id="kpi-male">0%</div>
             </div>
             <div class="kpi-card">
                 <h3>نسبة الطالبات (إناث)</h3>
-                <div class="value">35.5%</div>
+                <div class="value" id="kpi-female">0%</div>
             </div>
             <div class="kpi-card">
-                <h3>نسبة حَمَلة البكالوريوس/الجامعي</h3>
-                <div class="value">61.5%</div>
+                <h3>حملة الشهادات الجامعية</h3>
+                <div class="value" id="kpi-edu">0%</div>
             </div>
         </div>
 
+        <!-- شبكة الرسوم البيانية -->
         <div class="charts-grid">
-            
             <div class="chart-card">
-                <h3>معدل نمو التسجيل اليومي وتطور الأعداد التراكمية</h3>
-                <div class="chart-container">
-                    <canvas id="trendChart"></canvas>
-                </div>
+                <h3>معدل نمو التسجيل اليومي (التراكمي الأسبوعي)</h3>
+                <div class="chart-container"><canvas id="trendChart"></canvas></div>
             </div>
-            
             <div class="chart-card">
-                <h3>توزيع الفئات العمرية للمسجلين بالبرنامج</h3>
-                <div class="chart-container">
-                    <canvas id="ageChart"></canvas>
-                </div>
+                <h3>توزيع الفئات العمرية للمسجلين</h3>
+                <div class="chart-container"><canvas id="ageChart"></canvas></div>
             </div>
-            
             <div class="chart-card">
-                <h3>المستويات التعليمية للطلاب المستهدفين</h3>
-                <div class="chart-container">
-                    <canvas id="eduChart"></canvas>
-                </div>
+                <h3>المستويات التعليمية للطلاب</h3>
+                <div class="chart-container"><canvas id="eduChart"></canvas></div>
             </div>
-            
             <div class="chart-card">
-                <h3>الموقف التحليلي للمسجلين الجدد من معهد البهوتي الشقيق</h3>
-                <div class="chart-container">
-                    <canvas id="bahoutiChart"></canvas>
-                </div>
+                <h3>الموقف من معهد البهوتي</h3>
+                <div class="chart-container"><canvas id="bahoutiChart"></canvas></div>
             </div>
-
         </div>
     </div>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            
-            // المخطط الأول: التتبع الزمني والنمو التاريخي (Line Chart)
-            const ctxTrend = document.getElementById('trendChart').getContext('2d');
-            new Chart(ctxTrend, {
-                type: 'line',
-                data: {
-                    labels: ['5/5', '10/5', '15/5', '20/5', '24/5'], // التواريخ اليومية من شيت الدفعة 16
-                    datasets: [{
-                        label: 'إجمالي المسجلين التراكمي',
-                        data: [283, 1444, 1837, 2141, 2935],
-                        borderColor: '#006e7f',
-                        backgroundColor: 'rgba(204, 226, 229, 0.5)', // استخدام الهوية اللونية الفاتحة مع شفافية
-                        fill: true,
-                        tension: 0.3
-                    }]
-                },
-                options: { 
-                    responsive: true, 
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: true, labels: { font: { family: 'Segoe UI' } } } }
-                }
-            });
+        // 1. ضع رابط الـ CSV الخاص بملف الـ Google Sheet الخاص بك هنا بدلاً من الرابط التجريبي أدناه
+        const sheetCsvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRmiO4XN9kssEddDdU8TuKtXOypsisNKiKejQ-DCDqcgmox6s7DV0zRJ6mxpLqpBA5XQr4JMgFE11_o/pub?output=csv';
 
-            // المخطط الثاني: توزيع الأعمار (Bar Chart)
-            const ctxAge = document.getElementById('ageChart').getContext('2d');
-            new Chart(ctxAge, {
-                type: 'bar',
-                data: {
-                    labels: ['18-24 سنة', '25-34 سنة', '35-44 سنة', '45-54 سنة', 'أقل من 18', 'أكبر من 55'],
-                    datasets: [{
-                        label: 'عدد الطلاب',
-                        data: [1144, 921, 373, 125, 332, 40],
-                        backgroundColor: '#006e7f',
-                        borderRadius: 4
-                    }]
-                },
-                options: { 
-                    responsive: true, 
-                    maintainAspectRatio: false
-                }
-            });
+        // دالة لمعالجة النصوص وتحويل الـ CSV إلى مصفوفة كائنات (Objects)
+        function csvToObjects(csvText) {
+            const lines = csvText.split('\n');
+            const result = [];
+            const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
 
-            // المخطط الثالث: المستويات التعليمية (Pie Chart)
-            const ctxEdu = document.getElementById('eduChart').getContext('2d');
-            new Chart(ctxEdu, {
-                type: 'pie',
-                data: {
-                    labels: ['جامعي/بكالوريوس', 'ثانوي', 'ماجستير', 'أقل من ثانوي', 'دكتوراه'],
-                    datasets: [{
-                        data: [1806, 731, 185, 167, 33],
-                        backgroundColor: ['#006e7f', '#2c5282', '#4a5568', '#a0aec0', '#cce2e5']
-                    }]
-                },
-                options: { 
-                    responsive: true, 
-                    maintainAspectRatio: false
-                }
-            });
+            for (let i = 1; i < lines.length; i++) {
+                if (!lines[i]) continue;
+                const obj = {};
+                // التعامل مع الفواصل داخل النصوص المحاطة بعلامات تنصيص
+                const currentline = lines[i].match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g) || lines[i].split(',');
+                
+                headers.forEach((header, index) => {
+                    let val = currentline[index] ? currentline[index].trim() : '';
+                    obj[header] = val.replace(/"/g, ''); // تنظيف علامات التنصيص
+                });
+                result.push(obj);
+            }
+            return result;
+        }
 
-            // المخطط الرابع: الموقف من معهد البهوتي (Doughnut Chart)
-            const ctxBahouti = document.getElementById('bahoutiChart').getContext('2d');
-            new Chart(ctxBahouti, {
-                type: 'doughnut',
-                data: {
-                    labels: ['جديد تماماً (ليس في البهوتي)', 'طالب قديم في البهوتي', 'طالب حالي يدرس بالبهوتي', 'طالب متوقف عن البهوتي'],
-                    datasets: [{
-                        data: [2245, 382, 275, 53],
-                        backgroundColor: ['#006e7f', '#2b6cb0', '#dd6b20', '#e53e3e']
-                    }]
-                },
-                options: { 
-                    responsive: true, 
-                    maintainAspectRatio: false
-                }
-            });
-        });
+        // الدالة الأساسية لجلب البيانات وتحليلها ورسم المخططات حياً
+        async function loadLiveDashboard() {
+            try {
+                const response = await fetch(sheetCsvUrl);
+                const csvText = await response.text();
+                const data = csvToObjects(csvText);
+                
+                if(data.length === 0) throw new Error("الملف فارغ");
+
+                // تحديث مؤشر الحالة العلوي
+                document.getElementById('data-status').innerText = "تحديث حي: متصل ومحدث";
+                document.getElementById('data-status').style.backgroundColor = "#48bb78";
+
+                // --- [أولاً: حساب المقاييس الرقمية KPI حياً] ---
+                const totalStudents = data.length;
+                document.getElementById('kpi-total').innerText = totalStudents.toLocaleString();
+
+                // حساب الجنس (ذكور / إناث) - بافتراض أن اسم العمود في الشيت هو "الجنس"
+                const males = data.filter(row => row['الجنس'] === 'ذكر').length;
+                const malePct = ((males / totalStudents) * 100).toFixed(1);
+                document.getElementById('kpi-male').innerText = `${malePct}%`;
+                document.getElementById('kpi-female').innerText = `${(100 - malePct).toFixed(1)}%`;
+
+                // --- [ثانياً: بناء وتحديث الرسوم البيانية ديناميكياً] ---
+                
+                // 1. مخطط الأعمار التلقائي
+                const ageCounts = {};
+                data.forEach(row => {
+                    let ageGroup = row['الفئة العمرية'] || 'غير محدد';
+                    ageCounts[ageGroup] = (ageCounts[ageGroup] || 0) + 1;
+                });
+
+                new Chart(document.getElementById('ageChart'), {
+                    type: 'bar',
+                    data: {
+                        labels: Object.keys(ageCounts),
+                        datasets: [{
+                            label: 'عدد الطلاب',
+                            data: Object.values(ageCounts),
+                            backgroundColor: '#006e7f'
+                        }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false }
+                });
+
+                // 2. مخطط المستوى التعليمي التلقائي
+                const eduCounts = {};
+                data.forEach(row => {
+                    let edu = row['المستوى التعليمي'] || 'غير محدد';
+                    eduCounts[edu] = (eduCounts[edu] || 0) + 1;
+                });
+
+                // تحديث الـ KPI الخاص بالجامعيين
+                const bachelorCount = eduCounts['جامعي/بكالوريوس'] || 0;
+                document.getElementById('kpi-edu').innerText = `${((bachelorCount/totalStudents)*100).toFixed(1)}%`;
+
+                new Chart(document.getElementById('eduChart'), {
+                    type: 'pie',
+                    data: {
+                        labels: Object.keys(eduCounts),
+                        datasets: [{
+                            data: Object.values(eduCounts),
+                            backgroundColor: ['#006e7f', '#2c5282', '#4a5568', '#a0aec0', '#cce2e5']
+                        }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false }
+                });
+
+                // 3. مخطط الموقف من معهد البهوتي التلقائي
+                const bahoutiCounts = {};
+                data.forEach(row => {
+                    let status = row['الموقف من معهد البهوتي'] || 'غير محدد';
+                    bahoutiCounts[status] = (bahoutiCounts[status] || 0) + 1;
+                });
+
+                new Chart(document.getElementById('bahoutiChart'), {
+                    type: 'doughnut',
+                    data: {
+                        labels: Object.keys(bahoutiCounts),
+                        datasets: [{
+                            data: Object.values(bahoutiCounts),
+                            backgroundColor: ['#006e7f', '#2b6cb0', '#dd6b20', '#e53e3e']
+                        }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false }
+                });
+
+                // 4. مخطط التتبع الزمني (بافتراض وجود عمود "تاريخ التسجيل")
+                const dateCounts = {};
+                data.forEach(row => {
+                    let date = row['تاريخ التسجيل'] || 'أخرى';
+                    dateCounts[date] = (dateCounts[date] || 0) + 1;
+                });
+                // ترتيب التواريخ تصاعدياً
+                const sortedDates = Object.keys(dateCounts).sort();
+                let cumulativeSum = 0;
+                const cumulativeData = sortedDates.map(date => {
+                    cumulativeSum += dateCounts[date];
+                    return cumulativeSum;
+                });
+
+                new Chart(document.getElementById('trendChart'), {
+                    type: 'line',
+                    data: {
+                        labels: sortedDates,
+                        datasets: [{
+                            label: 'إجمالي المسجلين التراكمي حياً',
+                            data: cumulativeData,
+                            borderColor: '#006e7f',
+                            backgroundColor: 'rgba(204, 226, 229, 0.4)',
+                            fill: true
+                        }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false }
+                });
+
+            } catch (error) {
+                console.error("خطأ في جلب البيانات الحية:", error);
+                document.getElementById('data-status').innerText = "فشل الاتصال بالشيت. تأكد من إعداد النشر!";
+                document.getElementById('data-status').style.backgroundColor = "#e53e3e";
+            }
+        }
+
+        // تشغيل الدالة تلقائياً عند تحميل الصفحة
+        loadLiveDashboard();
     </script>
 </body>
 </html>
