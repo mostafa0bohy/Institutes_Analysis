@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة مؤشرات التأهيل الفقهي الحنبلي | مركز تميز</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary-color: #006e7f; /* اللون الأساسي للمركز */
+            --secondary-color: #cce2e5; /* اللون الثانوي للمركز */
+            --dark-color: #2d3748;
+            --light-bg: #f7fafc;
+            --card-bg: #ffffff;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light-bg);
+            color: var(--dark-color);
+            margin: 0;
+            padding: 0;
+        }
+
+        .header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 25px 30px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .header h1 { 
+            margin: 0; 
+            font-size: 26px; 
+            font-weight: bold;
+        }
+
+        .header p { 
+            margin: 8px 0 0 0; 
+            color: var(--secondary-color); 
+            font-size: 16px;
+        }
+
+        .container { 
+            padding: 30px; 
+            max-width: 1400px; 
+            margin: 0 auto; 
+        }
+
+        /* تنسيق بطاقات الأداء الرقمية الكبرى KPI */
+        .kpi-row {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .kpi-card {
+            flex: 1;
+            min-width: 220px;
+            background-color: var(--card-bg);
+            border-right: 6px solid var(--primary-color);
+            padding: 20px;
+            border-radius: 6px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            text-align: center;
+            transition: transform 0.2s;
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .kpi-card h3 { 
+            margin: 0; 
+            font-size: 14px; 
+            color: #718096; 
+        }
+
+        .kpi-card .value { 
+            font-size: 30px; 
+            font-weight: bold; 
+            color: var(--primary-color); 
+            margin-top: 10px; 
+        }
+
+        /* تنسيق شبكة الرسوم البيانية */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .chart-card {
+            background-color: var(--card-bg);
+            padding: 20px;
+            border-radius: 6px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
+        }
+
+        .chart-card h3 { 
+            margin: 0 0 15px 0; 
+            font-size: 16px; 
+            border-bottom: 2px solid var(--secondary-color); 
+            padding-bottom: 8px; 
+            color: var(--primary-color); 
+        }
+
+        .chart-container { 
+            position: relative; 
+            height: 320px; 
+            width: 100%; 
+        }
+
+        @media (max-width: 768px) {
+            .charts-grid { grid-template-columns: 1fr; }
+            .container { padding: 15px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>لوحة المؤشرات الحية - برنامج التأهيل الفقهي الحنبلي (الدفعة 16)</h1>
+        <p>مركز تميز لتطوير التعليم الشرعي عن بعد - لوحة تفاعلية مخصصة للإدارة والتشغيل والتسويق</p>
+    </div>
+
+    <div class="container">
+        
+        <div class="kpi-row">
+            <div class="kpi-card">
+                <h3>إجمالي المسجلين التراكمي</h3>
+                <div class="value" id="total-students">2,935</div>
+            </div>
+            <div class="kpi-card">
+                <h3>نسبة الطلاب (ذكور)</h3>
+                <div class="value">64.5%</div>
+            </div>
+            <div class="kpi-card">
+                <h3>نسبة الطالبات (إناث)</h3>
+                <div class="value">35.5%</div>
+            </div>
+            <div class="kpi-card">
+                <h3>نسبة حَمَلة البكالوريوس/الجامعي</h3>
+                <div class="value">61.5%</div>
+            </div>
+        </div>
+
+        <div class="charts-grid">
+            
+            <div class="chart-card">
+                <h3>معدل نمو التسجيل اليومي وتطور الأعداد التراكمية</h3>
+                <div class="chart-container">
+                    <canvas id="trendChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="chart-card">
+                <h3>توزيع الفئات العمرية للمسجلين بالبرنامج</h3>
+                <div class="chart-container">
+                    <canvas id="ageChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="chart-card">
+                <h3>المستويات التعليمية للطلاب المستهدفين</h3>
+                <div class="chart-container">
+                    <canvas id="eduChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="chart-card">
+                <h3>الموقف التحليلي للمسجلين الجدد من معهد البهوتي الشقيق</h3>
+                <div class="chart-container">
+                    <canvas id="bahoutiChart"></canvas>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            
+            // المخطط الأول: التتبع الزمني والنمو التاريخي (Line Chart)
+            const ctxTrend = document.getElementById('trendChart').getContext('2d');
+            new Chart(ctxTrend, {
+                type: 'line',
+                data: {
+                    labels: ['5/5', '10/5', '15/5', '20/5', '24/5'], // التواريخ اليومية من شيت الدفعة 16
+                    datasets: [{
+                        label: 'إجمالي المسجلين التراكمي',
+                        data: [283, 1444, 1837, 2141, 2935],
+                        borderColor: '#006e7f',
+                        backgroundColor: 'rgba(204, 226, 229, 0.5)', // استخدام الهوية اللونية الفاتحة مع شفافية
+                        fill: true,
+                        tension: 0.3
+                    }]
+                },
+                options: { 
+                    responsive: true, 
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: true, labels: { font: { family: 'Segoe UI' } } } }
+                }
+            });
+
+            // المخطط الثاني: توزيع الأعمار (Bar Chart)
+            const ctxAge = document.getElementById('ageChart').getContext('2d');
+            new Chart(ctxAge, {
+                type: 'bar',
+                data: {
+                    labels: ['18-24 سنة', '25-34 سنة', '35-44 سنة', '45-54 سنة', 'أقل من 18', 'أكبر من 55'],
+                    datasets: [{
+                        label: 'عدد الطلاب',
+                        data: [1144, 921, 373, 125, 332, 40],
+                        backgroundColor: '#006e7f',
+                        borderRadius: 4
+                    }]
+                },
+                options: { 
+                    responsive: true, 
+                    maintainAspectRatio: false
+                }
+            });
+
+            // المخطط الثالث: المستويات التعليمية (Pie Chart)
+            const ctxEdu = document.getElementById('eduChart').getContext('2d');
+            new Chart(ctxEdu, {
+                type: 'pie',
+                data: {
+                    labels: ['جامعي/بكالوريوس', 'ثانوي', 'ماجستير', 'أقل من ثانوي', 'دكتوراه'],
+                    datasets: [{
+                        data: [1806, 731, 185, 167, 33],
+                        backgroundColor: ['#006e7f', '#2c5282', '#4a5568', '#a0aec0', '#cce2e5']
+                    }]
+                },
+                options: { 
+                    responsive: true, 
+                    maintainAspectRatio: false
+                }
+            });
+
+            // المخطط الرابع: الموقف من معهد البهوتي (Doughnut Chart)
+            const ctxBahouti = document.getElementById('bahoutiChart').getContext('2d');
+            new Chart(ctxBahouti, {
+                type: 'doughnut',
+                data: {
+                    labels: ['جديد تماماً (ليس في البهوتي)', 'طالب قديم في البهوتي', 'طالب حالي يدرس بالبهوتي', 'طالب متوقف عن البهوتي'],
+                    datasets: [{
+                        data: [2245, 382, 275, 53],
+                        backgroundColor: ['#006e7f', '#2b6cb0', '#dd6b20', '#e53e3e']
+                    }]
+                },
+                options: { 
+                    responsive: true, 
+                    maintainAspectRatio: false
+                }
+            });
+        });
+    </script>
+</body>
+</html>
