@@ -3,283 +3,300 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>الداشبورد الحية - معهد خليل للفقه</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <title>لوحة مؤشرات التأهيل الفقهي الحنبلي المباشرة | مركز تميز</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
-            --primary: #1A54A8; /* أزرق خليل */
-            --dark: #0f346a;
-            --gold: #D4AF37; /* ذهبي خليل */
-            --bg: #f8fafc;
-            --surface: #ffffff;
-            --text: #1e293b;
+            /* ألوانك المخصصة */
+            --primary-color: #8d191b; 
+            --secondary-color: #f2e9d8;
+            --dark-color: #000000;
+            --light-bg: #f1e2e0;
+            --card-bg: #f1e2e2;
+            --loading-color: #f1e2e5;
         }
-        body { font-family: 'Cairo', sans-serif; background: var(--bg); color: var(--text); margin: 0; }
         
-        /* شريط علوي */
-        .header { background: var(--dark); color: white; padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; border-bottom: 5px solid var(--gold); }
-        .logo { font-size: 1.5rem; font-weight: 800; display: flex; align-items: center; gap: 10px; }
-        .logo span { color: var(--gold); }
-        
-        /* حالة المزامنة */
-        .sync-status { display: flex; align-items: center; gap: 10px; font-size: 0.9rem; background: rgba(255,255,255,0.1); padding: 8px 15px; border-radius: 20px; }
-        .dot { width: 10px; height: 10px; border-radius: 50%; background: #94a3b8; }
-        .dot.live { background: #10b981; animation: pulse 1.5s infinite; }
-        .dot.error { background: #ef4444; }
-        @keyframes pulse { 0% { transform: scale(0.9); opacity: 0.7; } 50% { transform: scale(1.3); opacity: 1; } 100% { transform: scale(0.9); opacity: 0.7; } }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light-bg);
+            color: var(--dark-color);
+            margin: 0;
+            padding: 0;
+        }
 
-        /* تابات التنقل */
-        .tabs { display: flex; justify-content: center; gap: 15px; margin: 30px 0; }
-        .tab-btn { background: white; border: 1px solid #cbd5e1; color: var(--text); padding: 10px 30px; border-radius: 8px; cursor: pointer; font-family: 'Cairo'; font-weight: 700; font-size: 1rem; transition: 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
-        .tab-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+        .header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 25px 30px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            position: relative;
+        }
 
-        .container { max-width: 1300px; margin: 0 auto; padding: 0 20px 40px; }
-        .tab-content { display: none; animation: fadeIn 0.3s; }
-        .tab-content.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        .header h1 { margin: 0; font-size: 26px; }
+        .header p { margin: 8px 0 0 0; color: var(--secondary-color); font-size: 16px; }
 
-        /* الكروت */
-        .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px; }
-        .kpi-card { background: var(--surface); padding: 25px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); border-right: 5px solid var(--primary); }
-        .kpi-title { font-size: 0.9rem; color: #64748b; font-weight: 700; margin-bottom: 10px; }
-        .kpi-val { font-size: 2.2rem; font-weight: 800; color: var(--dark); }
+        .status-badge {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            color: white;
+        }
 
-        /* التشارتات */
-        .chart-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 20px; }
-        .chart-box { background: var(--surface); padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
-        .chart-box h3 { margin-top: 0; color: var(--dark); border-bottom: 1px solid #e2e8f0; padding-bottom: 10px; font-size: 1.1rem; }
-        .canvas-container { height: 300px; position: relative; }
+        .container { padding: 30px; max-width: 1400px; margin: 0 auto; }
+
+        .kpi-row {
+            display: flex; gap: 20px; margin-bottom: 30px; flex-wrap: wrap;
+        }
+
+        .kpi-card {
+            flex: 1; min-width: 220px; background-color: var(--card-bg);
+            border-right: 6px solid var(--primary-color);
+            padding: 20px; border-radius: 6px; text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .kpi-card h3 { margin: 0; font-size: 14px; color: #555; }
+        .kpi-card .value { font-size: 30px; font-weight: bold; color: var(--primary-color); margin-top: 10px; }
+
+        .charts-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 25px; margin-bottom: 30px;
+        }
+
+        .chart-card {
+            background-color: var(--card-bg); padding: 20px;
+            border-radius: 6px; border: 1px solid #e2e8f0;
+        }
+
+        .chart-card h3 { 
+            margin: 0 0 15px 0; font-size: 16px; 
+            border-bottom: 2px solid var(--primary-color); 
+            padding-bottom: 8px; color: var(--primary-color); 
+        }
+
+        .chart-container { position: relative; height: 320px; width: 100%; }
+
+        @media (max-width: 768px) {
+            .charts-grid { grid-template-columns: 1fr; }
+            .container { padding: 15px; }
+        }
     </style>
 </head>
 <body>
 
     <div class="header">
-        <div class="logo">معهد <span>خليل</span></div>
-        <div class="sync-status">
-            <div class="dot" id="status-dot"></div>
-            <span id="status-text">جاري الاتصال بقاعدة البيانات...</span>
-        </div>
-    </div>
-
-    <div class="tabs">
-        <button class="tab-btn active" onclick="switchTab('overview')">الإدارة والملخص</button>
-        <button class="tab-btn" onclick="switchTab('marketing')">أداء التسويق</button>
-        <button class="tab-btn" onclick="switchTab('ops')">التشغيل والطلاب</button>
+        <h1>لوحة المؤشرات الحية والمباشرة (الربط التلقائي)</h1>
+        <p>برنامج التأهيل الفقهي الحنبلي - مركز تميز</p>
+        <div class="status-badge" id="data-status">جاري جلب البيانات الحية...</div>
     </div>
 
     <div class="container">
-        <div id="overview" class="tab-content active">
-            <div class="kpi-grid">
-                <div class="kpi-card" style="border-color: var(--primary);">
-                    <div class="kpi-title">إجمالي المسجلين بالاستمارة</div>
-                    <div class="kpi-val" id="kpi-leads">0</div>
-                </div>
-                <div class="kpi-card" style="border-color: var(--gold);">
-                    <div class="kpi-title">إجمالي الإيرادات (تقريبي)</div>
-                    <div class="kpi-val" id="kpi-rev">$0</div>
-                </div>
-                <div class="kpi-card" style="border-color: #10b981;">
-                    <div class="kpi-title">إجمالي المسددين أو المحولين</div>
-                    <div class="kpi-val" id="kpi-paid">0</div>
-                </div>
+        <div class="kpi-row">
+            <div class="kpi-card">
+                <h3>إجمالي المسجلين الفعلي</h3>
+                <div class="value" id="kpi-total">0</div>
             </div>
-            <div class="chart-box">
-                <h3>مؤشر نمو التسجيل الزمني</h3>
-                <div class="canvas-container"><canvas id="timelineChart"></canvas></div>
+            <div class="kpi-card">
+                <h3>نسبة الطلاب (ذكور)</h3>
+                <div class="value" id="kpi-male">0%</div>
+            </div>
+            <div class="kpi-card">
+                <h3>نسبة الطالبات (إناث)</h3>
+                <div class="value" id="kpi-female">0%</div>
+            </div>
+            <div class="kpi-card">
+                <h3>حملة الشهادات الجامعية</h3>
+                <div class="value" id="kpi-edu">0%</div>
             </div>
         </div>
 
-        <div id="marketing" class="tab-content">
-            <div class="chart-grid">
-                <div class="chart-box">
-                    <h3>مصادر الإعلانات (من أين يأتي الطلاب؟)</h3>
-                    <div class="canvas-container"><canvas id="sourceChart"></canvas></div>
-                </div>
-                <div class="chart-box">
-                    <h3>حالات التسجيل والمتابعة</h3>
-                    <div class="canvas-container"><canvas id="statusChart"></canvas></div>
-                </div>
+        <div class="charts-grid">
+            <div class="chart-card">
+                <h3>معدل نمو التسجيل اليومي (التراكمي)</h3>
+                <div class="chart-container"><canvas id="trendChart"></canvas></div>
             </div>
-        </div>
-
-        <div id="ops" class="tab-content">
-            <div class="chart-box">
-                <h3>أكثر الدول تسجيلاً (لضبط مواعيد المحاضرات)</h3>
-                <div class="canvas-container"><canvas id="countryChart"></canvas></div>
+            <div class="chart-card">
+                <h3>توزيع الفئات العمرية للمسجلين</h3>
+                <div class="chart-container"><canvas id="ageChart"></canvas></div>
+            </div>
+            <div class="chart-card">
+                <h3>المستويات التعليمية للطلاب</h3>
+                <div class="chart-container"><canvas id="eduChart"></canvas></div>
+            </div>
+            <div class="chart-card">
+                <h3>الموقف من معهد البهوتي</h3>
+                <div class="chart-container"><canvas id="bahoutiChart"></canvas></div>
             </div>
         </div>
     </div>
 
-<script>
-    // =================================================================
-    // ⚙️ إعدادات الربط الأوتوماتيكي بشيت جوجل
-    // =================================================================
-    const SHEET_ID = '10BT1405GJLNm1sY_3zCpP9mTb7Q6xHQRvEjBiAv-QEA'; 
-    
-    // ⚠️ مهم جداً: استبدل الأسماء التالية بأسماء التابات (Sheets) الموجودة في أسفل ملف جوجل بالضبط!
-    const TAB_LEADS_NAME = 'التسجيل'; // استبدل 'التسجيل' باسم التاب الخاص ببيانات الطلاب
-    const TAB_FINANCE_NAME = 'المالية'; // استبدل 'المالية' باسم التاب الخاص بالدفع (إن وجد منفصلاً)
-    // =================================================================
+    <script>
+        // 1. رابط الـ CSV المخصص (تأكد أنه يسحب تبويبة البيانات الخام للطلاب وليس البيفوت)
+        const sheetCsvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRmiO4XN9kssEddDdU8TuKtXOypsisNKiKejQ-DCDqcgmox6s7DV0zRJ6mxpLqpBA5XQr4JMgFE11_o/pub?output=csv';
 
-    function switchTab(tabId) {
-        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        document.getElementById(tabId).classList.add('active');
-        event.currentTarget.classList.add('active');
-    }
-
-    // دالة لاستخراج البيانات من جوجل شيت أوتوماتيكياً
-    async function fetchSheetData(tabName) {
-        const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(tabName)}`;
-        try {
-            const response = await fetch(url);
-            if (!response.ok) throw new Error('Network error');
-            const csvText = await response.text();
-            
-            // تحقق إذا كان الشيت خاص (يعيد HTML بدلا من CSV)
-            if (csvText.includes('<html')) throw new Error('Private Sheet');
-            
-            return parseCSV(csvText);
-        } catch (error) {
-            console.error("Error fetching tab:", tabName, error);
-            return null;
+        // دالة قوية لمعالجة ملف CSV وتجاهل الفواصل داخل النصوص
+        function parseCSVRow(str) {
+            let arr = [], quote = false, cell = '';
+            for (let i = 0; i < str.length; i++) {
+                let c = str[i];
+                if (c === '"') quote = !quote;
+                else if (c === ',' && !quote) { arr.push(cell.trim()); cell = ''; }
+                else cell += c;
+            }
+            arr.push(cell.trim());
+            return arr;
         }
-    }
 
-    // محلل الـ CSV
-    function parseCSV(text) {
-        let lines = text.split('\n');
-        return lines.map(line => {
-            let row = []; let inQuotes = false; let current = '';
-            for (let i = 0; i < line.length; i++) {
-                let char = line[i];
-                if (char === '"') inQuotes = !inQuotes;
-                else if (char === ',' && !inQuotes) { row.push(current.trim()); current = ''; }
-                else current += char;
-            }
-            row.push(current.trim());
-            return row;
-        }).filter(r => r.length > 0 && r[0] !== '');
-    }
+        function csvToObjects(csvText) {
+            const lines = csvText.split('\n').filter(line => line.trim() !== '');
+            if(lines.length === 0) return [];
+            
+            const headers = parseCSVRow(lines[0]);
+            const result = [];
 
-    // البحث الذكي عن الأعمدة
-    function findColumn(headers, keywords) {
-        return headers.findIndex(h => keywords.some(k => String(h).toLowerCase().includes(k)));
-    }
-
-    // تهيئة الداشبورد
-    async function initDashboard() {
-        const statusDot = document.getElementById('status-dot');
-        const statusText = document.getElementById('status-text');
-
-        // سحب البيانات
-        const leadsData = await fetchSheetData(TAB_LEADS_NAME);
-        // يمكنك إضافة سحب لتابات أخرى هنا إذا احتجت
-
-        if (leadsData && leadsData.length > 1) {
-            statusDot.className = 'dot live';
-            statusText.innerText = 'متصل (بيانات حية مباشرة)';
-            processData(leadsData);
-        } else {
-            statusDot.className = 'dot error';
-            statusText.innerText = 'خطأ: يرجى التأكد من أن الشيت "متاح لأي شخص لديه الرابط" وأن اسم التاب صحيح';
-        }
-    }
-
-    function processData(data) {
-        const headers = data[0];
-        const rows = data.slice(1);
-
-        // التعرف على الأعمدة بذكاء (الكلمات المفتاحية)
-        const idxDate = findColumn(headers, ['تاريخ', 'وقت', 'timestamp', 'date']);
-        const idxSource = findColumn(headers, ['مصدر', 'تعرفت', 'source', 'اعلان']);
-        const idxCountry = findColumn(headers, ['دولة', 'بلد', 'إقامة', 'country']);
-        const idxStatus = findColumn(headers, ['حالة', 'موقف', 'status', 'دفع']);
-        const idxAmount = findColumn(headers, ['مبلغ', 'قيمة', 'رسوم', 'amount']);
-
-        let totalLeads = rows.length;
-        let totalRev = 0;
-        let totalPaid = 0;
-
-        let datesCount = {};
-        let sourceCount = {};
-        let countryCount = {};
-        let statusCount = {};
-
-        rows.forEach(row => {
-            // التواريخ
-            if (idxDate > -1 && row[idxDate]) {
-                let dateStr = row[idxDate].split(' ')[0]; // أخذ التاريخ فقط
-                datesCount[dateStr] = (datesCount[dateStr] || 0) + 1;
-            }
-            // المصادر
-            if (idxSource > -1 && row[idxSource]) {
-                let src = row[idxSource];
-                sourceCount[src] = (sourceCount[src] || 0) + 1;
-            }
-            // الدول
-            if (idxCountry > -1 && row[idxCountry]) {
-                let country = row[idxCountry];
-                countryCount[country] = (countryCount[country] || 0) + 1;
-            }
-            // الحالات والإيرادات
-            if (idxStatus > -1 && row[idxStatus]) {
-                let status = row[idxStatus];
-                statusCount[status] = (statusCount[status] || 0) + 1;
-                if (status.includes('مسدد') || status.includes('دفع') || status.includes('مكتمل')) {
-                    totalPaid++;
+            for (let i = 1; i < lines.length; i++) {
+                const currentline = parseCSVRow(lines[i]);
+                const obj = {};
+                headers.forEach((header, index) => {
+                    obj[header] = currentline[index] || '';
+                });
+                
+                // الفلتر الذكي: تجاهل الصفوف الفارغة (التي تحتوي على أقل من 3 خلايا ممتلئة)
+                if(currentline.filter(v => v !== '').length >= 3) {
+                    result.push(obj);
                 }
             }
-            if (idxAmount > -1 && row[idxAmount]) {
-                let amt = parseFloat(row[idxAmount].replace(/[^0-9.-]+/g,""));
-                if (!isNaN(amt)) totalRev += amt;
+            return result;
+        }
+
+        // دالة ذكية للبحث عن الأعمدة حتى لو اختلف اسمها قليلاً في الشيت
+        function getColValue(row, keywords) {
+            for (let key of Object.keys(row)) {
+                for (let word of keywords) {
+                    if (key.includes(word)) return row[key] ? row[key].trim() : 'غير محدد';
+                }
             }
-        });
+            return 'غير محدد';
+        }
 
-        // تحديث الكروت
-        document.getElementById('kpi-leads').innerText = totalLeads.toLocaleString();
-        document.getElementById('kpi-rev').innerText = totalRev > 0 ? '$' + totalRev.toLocaleString() : 'غير مسجل بالشيت';
-        document.getElementById('kpi-paid').innerText = totalPaid.toLocaleString();
+        // لوحة الألوان الجديدة المستوحاة من اختيارك (عنابي ودرجاته)
+        const chartColors = ['#8d191b', '#b32d2f', '#d9534f', '#a96a6c', '#631112', '#f2e9d8'];
 
-        // رسم التشارتات
-        drawCharts(datesCount, sourceCount, countryCount, statusCount);
-    }
+        async function loadLiveDashboard() {
+            try {
+                const response = await fetch(sheetCsvUrl);
+                const csvText = await response.text();
+                const data = csvToObjects(csvText);
+                
+                if(data.length === 0) throw new Error("لا توجد بيانات صالحة");
 
-    function drawCharts(dates, sources, countries, statuses) {
-        // ترتيب التواريخ
-        let sortedDates = Object.keys(dates).sort();
-        let dateValues = sortedDates.map(d => dates[d]);
+                document.getElementById('data-status').innerText = "تحديث حي: متصل ومحدث";
+                document.getElementById('data-status').style.backgroundColor = "#48bb78";
 
-        new Chart(document.getElementById('timelineChart'), {
-            type: 'line',
-            data: { labels: sortedDates, datasets: [{ label: 'مسجلين جدد', data: dateValues, borderColor: '#1A54A8', backgroundColor: 'rgba(26,84,168,0.1)', fill: true, tension: 0.3 }] },
-            options: { maintainAspectRatio: false }
-        });
+                // --- 1. حساب المقاييس (KPIs) ---
+                const totalStudents = data.length;
+                document.getElementById('kpi-total').innerText = totalStudents.toLocaleString();
 
-        new Chart(document.getElementById('sourceChart'), {
-            type: 'pie',
-            data: { labels: Object.keys(sources), datasets: [{ data: Object.values(sources), backgroundColor: ['#1A54A8', '#D4AF37', '#10b981', '#f59e0b', '#64748b'] }] },
-            options: { maintainAspectRatio: false }
-        });
+                const males = data.filter(row => getColValue(row, ['الجنس', 'نوع']) === 'ذكر').length;
+                const malePct = totalStudents > 0 ? ((males / totalStudents) * 100).toFixed(1) : 0;
+                document.getElementById('kpi-male').innerText = `${malePct}%`;
+                document.getElementById('kpi-female').innerText = `${(100 - malePct).toFixed(1)}%`;
 
-        // أعلى 5 دول فقط
-        let topCountries = Object.entries(countries).sort((a,b) => b[1] - a[1]).slice(0, 5);
-        new Chart(document.getElementById('countryChart'), {
-            type: 'bar',
-            data: { labels: topCountries.map(c => c[0]), datasets: [{ label: 'طلاب', data: topCountries.map(c => c[1]), backgroundColor: '#1A54A8', borderRadius: 5 }] },
-            options: { indexAxis: 'y', maintainAspectRatio: false }
-        });
+                // --- 2. تجهيز البيانات للرسوم البيانية ---
+                const ageCounts = {}, eduCounts = {}, bahoutiCounts = {}, dateCounts = {};
+                let bachelors = 0;
 
-        new Chart(document.getElementById('statusChart'), {
-            type: 'doughnut',
-            data: { labels: Object.keys(statuses), datasets: [{ data: Object.values(statuses), backgroundColor: ['#10b981', '#f59e0b', '#ef4444', '#475569'] }] },
-            options: { maintainAspectRatio: false }
-        });
-    }
+                data.forEach(row => {
+                    // تصنيف الأعمار
+                    let age = getColValue(row, ['عمرية', 'العمر']);
+                    ageCounts[age] = (ageCounts[age] || 0) + 1;
 
-    window.onload = initDashboard;
-</script>
+                    // تصنيف التعليم
+                    let edu = getColValue(row, ['تعليم', 'مستوى', 'مؤهل']);
+                    eduCounts[edu] = (eduCounts[edu] || 0) + 1;
+                    if(edu.includes('جامعي') || edu.includes('بكالوريوس')) bachelors++;
 
+                    // تصنيف البهوتي
+                    let bahouti = getColValue(row, ['بهوتي', 'البهوتي']);
+                    bahoutiCounts[bahouti] = (bahoutiCounts[bahouti] || 0) + 1;
+
+                    // تصنيف التواريخ
+                    let fullDate = getColValue(row, ['تاريخ', 'تسجيل', 'وقت']);
+                    let dateOnly = fullDate !== 'غير محدد' ? fullDate.split(' ')[0] : 'أخرى';
+                    dateCounts[dateOnly] = (dateCounts[dateOnly] || 0) + 1;
+                });
+
+                // نسبة الجامعيين
+                document.getElementById('kpi-edu').innerText = totalStudents > 0 ? `${((bachelors/totalStudents)*100).toFixed(1)}%` : '0%';
+
+                // --- 3. رسم المخططات بالألوان العنابية المخصصة ---
+                
+                // مخطط الأعمار
+                new Chart(document.getElementById('ageChart'), {
+                    type: 'bar',
+                    data: {
+                        labels: Object.keys(ageCounts),
+                        datasets: [{ label: 'عدد الطلاب', data: Object.values(ageCounts), backgroundColor: '#8d191b' }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false }
+                });
+
+                // مخطط التعليم
+                new Chart(document.getElementById('eduChart'), {
+                    type: 'pie',
+                    data: {
+                        labels: Object.keys(eduCounts),
+                        datasets: [{ data: Object.values(eduCounts), backgroundColor: chartColors }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false }
+                });
+
+                // مخطط الموقف من البهوتي
+                new Chart(document.getElementById('bahoutiChart'), {
+                    type: 'doughnut',
+                    data: {
+                        labels: Object.keys(bahoutiCounts),
+                        datasets: [{ data: Object.values(bahoutiCounts), backgroundColor: chartColors }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false }
+                });
+
+                // مخطط التتبع الزمني التراكمي
+                const sortedDates = Object.keys(dateCounts).filter(d => d !== 'أخرى').sort();
+                let cumulativeSum = 0;
+                const cumulativeData = sortedDates.map(date => {
+                    cumulativeSum += dateCounts[date];
+                    return cumulativeSum;
+                });
+
+                new Chart(document.getElementById('trendChart'), {
+                    type: 'line',
+                    data: {
+                        labels: sortedDates,
+                        datasets: [{
+                            label: 'إجمالي المسجلين التراكمي',
+                            data: cumulativeData,
+                            borderColor: '#8d191b',
+                            backgroundColor: 'rgba(141, 25, 27, 0.2)', // عنابي شفاف
+                            fill: true, tension: 0.2
+                        }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false }
+                });
+
+            } catch (error) {
+                console.error("خطأ:", error);
+                document.getElementById('data-status').innerText = "خطأ في قراءة الشيت، تأكد من تصدير شيت البيانات الخام وليس البيفوت!";
+                document.getElementById('data-status').style.backgroundColor = "#8d191b";
+            }
+        }
+
+        loadLiveDashboard();
+    </script>
 </body>
 </html>
