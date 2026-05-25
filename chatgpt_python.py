@@ -53,30 +53,52 @@ div[data-testid="stMetricLabel"] {
 # LOAD DATA
 # ======================================================
 
+import streamlit as st
+import pandas as pd
 import requests
 from io import StringIO
 
 @st.cache_data(ttl=300)
 def load_data():
 
-    url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRmiO4XN9kssEddDdU8TuKtXOypsisNKiKejQ-DCDqcgmox6s7DV0zRJ6mxpLqpBA5XQr4JMgFE11_o/pub?gid=826428120&single=true&output=csv"
+    try:
 
-    headers = {
-        "User-Agent": "Mozilla/5.0"
-    }
+        url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRmiO4XN9kssEddDdU8TuKtXOypsisNKiKejQ-DCDqcgmox6s7DV0zRJ6mxpLqpBA5XQr4JMgFE11_o/pub?gid=826428120&single=true&output=csv"
 
-    response = requests.get(
-        url,
-        headers=headers
-    )
+        headers = {
+            "User-Agent": "Mozilla/5.0"
+        }
 
-    response.raise_for_status()
+        response = requests.get(
+            url,
+            headers=headers,
+            timeout=30
+        )
 
-    csv_data = StringIO(response.text)
+        response.raise_for_status()
 
-    df = pd.read_csv(csv_data)
+        csv_data = StringIO(response.text)
 
-    return df
+        df = pd.read_csv(csv_data)
+
+        return df
+
+    except Exception as e:
+
+        st.error(f"Error loading data: {e}")
+
+        return pd.DataFrame()
+
+# تحميل البيانات
+df = load_data()
+
+# التأكد أن البيانات موجودة
+if df.empty:
+
+    st.stop()
+
+# تنظيف أسماء الأعمدة
+df.columns = df.columns.str.strip()
 
 # ======================================================
 # CLEAN DATA
