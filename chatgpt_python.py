@@ -1,7 +1,6 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
-import plotly.graph_objects as go
 
 # ======================================================
 # PAGE CONFIG
@@ -14,7 +13,7 @@ st.set_page_config(
 )
 
 # ======================================================
-# CUSTOM CSS
+# CUSTOM STYLE
 # ======================================================
 
 st.markdown("""
@@ -46,10 +45,6 @@ div[data-testid="stMetricLabel"] {
     font-weight: bold;
 }
 
-section[data-testid="stSidebar"] {
-    background-color: #ffffff;
-}
-
 </style>
 """, unsafe_allow_html=True)
 
@@ -60,8 +55,11 @@ section[data-testid="stSidebar"] {
 @st.cache_data(ttl=300)
 def load_data():
 
-    # الرابط المعدل الصحيح
-    url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRmiO4XN9kssEddDdU8TuKtXOypsisNKiKejQ-DCDqcgmox6s7DV0zRJ6mxpLqpBA5XQr4JMgFE11_o/pub?output=csv&gid=826428120"
+    sheet_id = "1sxTzceRssn2nNGv2PoOZSxeG_4anGNVzekt-ThupsWs"
+
+    gid = "826428120"
+
+    url = f"https://docs.google.com/spreadsheets/d/{sheet_id}/export?format=csv&gid={gid}"
 
     df = pd.read_csv(url)
 
@@ -148,8 +146,6 @@ if date_col:
 
 st.sidebar.title("Filters")
 
-# COUNTRY FILTER
-
 if country_col:
 
     countries = sorted(
@@ -168,27 +164,6 @@ if country_col:
 
         df = df[
             df[country_col] == selected_country
-        ]
-
-# DATE FILTER
-
-if date_col:
-
-    min_date = df[date_col].min()
-    max_date = df[date_col].max()
-
-    date_range = st.sidebar.date_input(
-        "الفترة الزمنية",
-        [min_date, max_date]
-    )
-
-    if len(date_range) == 2:
-
-        start_date, end_date = date_range
-
-        df = df[
-            (df[date_col] >= pd.to_datetime(start_date)) &
-            (df[date_col] <= pd.to_datetime(end_date))
         ]
 
 # ======================================================
@@ -286,10 +261,6 @@ with tab1:
             text_auto=True
         )
 
-        fig_country.update_layout(
-            height=500
-        )
-
         st.plotly_chart(
             fig_country,
             use_container_width=True
@@ -318,18 +289,10 @@ with tab2:
             hole=0.5
         )
 
-        fig_payment.update_layout(
-            height=500
-        )
-
         st.plotly_chart(
             fig_payment,
             use_container_width=True
         )
-
-    else:
-
-        st.warning("لم يتم العثور على عمود طرق الدفع")
 
 # ======================================================
 # REVENUE
@@ -355,18 +318,10 @@ with tab3:
             markers=True
         )
 
-        fig_rev.update_layout(
-            height=500
-        )
-
         st.plotly_chart(
             fig_rev,
             use_container_width=True
         )
-
-    else:
-
-        st.warning("لم يتم العثور على أعمدة التاريخ أو الإيرادات")
 
 # ======================================================
 # RAW DATA
