@@ -53,16 +53,30 @@ div[data-testid="stMetricLabel"] {
 # LOAD DATA
 # ======================================================
 
+import requests
+from io import StringIO
+
 @st.cache_data(ttl=300)
 def load_data():
 
     url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRmiO4XN9kssEddDdU8TuKtXOypsisNKiKejQ-DCDqcgmox6s7DV0zRJ6mxpLqpBA5XQr4JMgFE11_o/pub?gid=826428120&single=true&output=csv"
 
-    df = pd.read_csv(url)
+    headers = {
+        "User-Agent": "Mozilla/5.0"
+    }
+
+    response = requests.get(
+        url,
+        headers=headers
+    )
+
+    response.raise_for_status()
+
+    csv_data = StringIO(response.text)
+
+    df = pd.read_csv(csv_data)
 
     return df
-
-df = load_data()
 
 # ======================================================
 # CLEAN DATA
