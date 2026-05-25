@@ -14,7 +14,7 @@ st.set_page_config(
 )
 
 # ======================================================
-# CUSTOM STYLE
+# CUSTOM CSS
 # ======================================================
 
 st.markdown("""
@@ -46,6 +46,10 @@ div[data-testid="stMetricLabel"] {
     font-weight: bold;
 }
 
+section[data-testid="stSidebar"] {
+    background-color: #ffffff;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -53,61 +57,42 @@ div[data-testid="stMetricLabel"] {
 # LOAD DATA
 # ======================================================
 
-import streamlit as st
-import pandas as pd
-import requests
-from io import StringIO
-
 @st.cache_data(ttl=300)
 def load_data():
 
-    try:
+    # الرابط المعدل الصحيح
+    url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRmiO4XN9kssEddDdU8TuKtXOypsisNKiKejQ-DCDqcgmox6s7DV0zRJ6mxpLqpBA5XQr4JMgFE11_o/pub?output=csv&gid=826428120"
 
-        url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRmiO4XN9kssEddDdU8TuKtXOypsisNKiKejQ-DCDqcgmox6s7DV0zRJ6mxpLqpBA5XQr4JMgFE11_o/pub?gid=826428120&single=true&output=csv"
+    df = pd.read_csv(url)
 
-        headers = {
-            "User-Agent": "Mozilla/5.0"
-        }
+    return df
 
-        response = requests.get(
-            url,
-            headers=headers,
-            timeout=30
-        )
+# ======================================================
+# LOAD
+# ======================================================
 
-        response.raise_for_status()
+try:
 
-        csv_data = StringIO(response.text)
+    df = load_data()
 
-        df = pd.read_csv(csv_data)
+except Exception as e:
 
-        return df
-
-    except Exception as e:
-
-        st.error(f"Error loading data: {e}")
-
-        return pd.DataFrame()
-
-# تحميل البيانات
-df = load_data()
-
-# التأكد أن البيانات موجودة
-if df.empty:
+    st.error(f"Error loading data: {e}")
 
     st.stop()
 
-# تنظيف أسماء الأعمدة
+# ======================================================
+# CLEAN COLUMNS
+# ======================================================
+
+df.columns = df.columns.astype(str)
+
 df.columns = df.columns.str.strip()
 
 # ======================================================
-# CLEAN DATA
+# AUTO DETECT COLUMNS
 # ======================================================
 
-# توحيد أسماء الأعمدة
-df.columns = df.columns.str.strip()
-
-# الأعمدة المتوقعة
 email_col = None
 country_col = None
 amount_col = None
@@ -133,19 +118,16 @@ for col in df.columns:
     if "payment" in c or "الدفع" in c:
         payment_col = col
 
-# تنظيف التاريخ
-if date_col:
-    df[date_col] = pd.to_datetime(
-        df[date_col],
-        errors='coerce'
-    )
+# ======================================================
+# CLEAN DATA
+# ======================================================
 
-# تنظيف المبالغ
 if amount_col:
+
     df[amount_col] = (
         df[amount_col]
         .astype(str)
-        .str.replace(",", "")
+        .str.replace(",", "", regex=False)
     )
 
     df[amount_col] = pd.to_numeric(
@@ -153,11 +135,20 @@ if amount_col:
         errors='coerce'
     ).fillna(0)
 
+if date_col:
+
+    df[date_col] = pd.to_datetime(
+        df[date_col],
+        errors='coerce'
+    )
+
 # ======================================================
-# SIDEBAR FILTERS
+# SIDEBAR
 # ======================================================
 
-st.sidebar.header("Filters")
+st.sidebar.title("Filters")
+
+# COUNTRY FILTER
 
 if country_col:
 
@@ -174,8 +165,30 @@ if country_col:
     )
 
     if selected_country != "الكل":
+
         df = df[
             df[country_col] == selected_country
+        ]
+
+# DATE FILTER
+
+if date_col:
+
+    min_date = df[date_col].min()
+    max_date = df[date_col].max()
+
+    date_range = st.sidebar.date_input(
+        "الفترة الزمنية",
+        [min_date, max_date]
+    )
+
+    if len(date_range) == 2:
+
+        start_date, end_date = date_range
+
+        df = df[
+            (df[date_col] >= pd.to_datetime(start_date)) &
+            (df[date_col] <= pd.to_datetime(end_date))
         ]
 
 # ======================================================
@@ -236,17 +249,18 @@ col4.metric(
 st.markdown("---")
 
 # ======================================================
-# CHARTS
+# TABS
 # ======================================================
 
-tab1, tab2, tab3 = st.tabs([
+tab1, tab2, tab3, tab4 = st.tabs([
     "🌍 الدول",
     "💳 المدفوعات",
-    "📈 الإيرادات"
+    "📈 الإيرادات",
+    "📄 البيانات"
 ])
 
 # ======================================================
-# COUNTRY TAB
+# COUNTRIES
 # ======================================================
 
 with tab1:
@@ -282,7 +296,7 @@ with tab1:
         )
 
 # ======================================================
-# PAYMENT TAB
+# PAYMENTS
 # ======================================================
 
 with tab2:
@@ -313,8 +327,12 @@ with tab2:
             use_container_width=True
         )
 
+    else:
+
+        st.warning("لم يتم العثور على عمود طرق الدفع")
+
 # ======================================================
-# REVENUE TAB
+# REVENUE
 # ======================================================
 
 with tab3:
@@ -327,10 +345,7 @@ with tab3:
             df.groupby(date_col)[amount_col]
             .sum()
             .reset_index()
-        )
-
-        revenue_df = revenue_df.sort_values(
-            by=date_col
+            .sort_values(by=date_col)
         )
 
         fig_rev = px.line(
@@ -349,11 +364,17 @@ with tab3:
             use_container_width=True
         )
 
+    else:
+
+        st.warning("لم يتم العثور على أعمدة التاريخ أو الإيرادات")
+
 # ======================================================
 # RAW DATA
 # ======================================================
 
-with st.expander("📄 عرض البيانات الخام"):
+with tab4:
+
+    st.subheader("البيانات الخام")
 
     st.dataframe(
         df,
