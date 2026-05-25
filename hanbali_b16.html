@@ -812,14 +812,29 @@ const baseOpts = {
 function pct(n, total) { return total ? ((n/total)*100).toFixed(1)+'%' : '0%'; }
 function num(n) { return Number(n).toLocaleString('en-US'); }
 
-// Tooltip callback that shows count + percentage
+// Tooltip that shows count + percentage for bar/pie charts
 function tooltipWithPct(total) {
   return {
     callbacks: {
       label: function(ctx) {
-        const val = ctx.parsed.y ?? ctx.parsed.x ?? ctx.raw ?? 0;
+        const val = ctx.parsed.y !== undefined ? ctx.parsed.y
+                  : ctx.parsed.x !== undefined ? ctx.parsed.x
+                  : ctx.raw ?? 0;
         const p = total > 0 ? ((val/total)*100).toFixed(1) : 0;
-        return ` ${ctx.dataset.label || ''}: ${num(val)} (${p}%)`;
+        const label = ctx.dataset.label ? ctx.dataset.label + ': ' : '';
+        return ` ${label}${num(val)} طالب (${p}%)`;
+      }
+    }
+  };
+}
+
+// Tooltip for line/trend charts (no percentage)
+function tooltipLine() {
+  return {
+    callbacks: {
+      label: function(ctx) {
+        const val = ctx.parsed.y ?? 0;
+        return ` ${ctx.dataset.label || ''}: ${num(val)}`;
       }
     }
   };
@@ -829,6 +844,12 @@ function tooltipWithPct(total) {
 // LOAD ALL DATA
 // ============================================================
 async function loadAll() {
+  // تحذير لو شغّل الملف محلياً مباشرةً
+  if (location.protocol === 'file:') {
+    setStatus('error', '⚠️ افتح الملف عبر GitHub Pages أو local server — file:// لا يسمح بجلب البيانات');
+    document.getElementById('lastUpdate').textContent = 'لتشغيل الداشبورد: ارفع الملف على GitHub Pages أو استخدم VS Code Live Server';
+    return;
+  }
   setStatus('loading', 'جاري تحديث البيانات...');
   try {
     const [s13, b16] = await Promise.all([fetchCSV(URLS.sheet13), fetchCSV(URLS.batch16)]);
@@ -952,7 +973,8 @@ function buildOverview() {
       labels: bEntries.map(e=>e[0]),
       datasets: [{ label: 'العدد', data: bEntries.map(e=>e[1]), backgroundColor: COLORS.palette }]
     },
-    options: { ...baseOpts, indexAxis: 'y', plugins: { ...baseOpts.plugins, legend:{display:false} },
+    options: { ...baseOpts, indexAxis: 'y',
+      plugins: { ...baseOpts.plugins, legend:{display:false}, tooltip: tooltipWithPct(total) },
       scales: { x:{ticks:{font:{family:'Cairo'}}}, y:{ticks:{font:{family:'Cairo',size:11}}} } }
   });
 
@@ -965,7 +987,8 @@ function buildOverview() {
       labels: top10.map(e=>e[0]),
       datasets: [{ label: 'عدد الطلاب', data: top10.map(e=>e[1]), backgroundColor: COLORS.palette }]
     },
-    options: { ...baseOpts, indexAxis: 'y', plugins:{...baseOpts.plugins,legend:{display:false}},
+    options: { ...baseOpts, indexAxis: 'y',
+      plugins:{...baseOpts.plugins, legend:{display:false}, tooltip: tooltipWithPct(total)},
       scales:{x:{ticks:{font:{family:'Cairo'}}},y:{ticks:{font:{family:'Cairo',size:11}}}} }
   });
 }
@@ -977,7 +1000,7 @@ function buildStudents() {
   const total = rawData.length;
 
   // Age distribution — exact column
-  const ageCounts = countBy(rawData, r => exact(r,'الفئة العمرية للطالب'));
+  const ageCounts = countBy(rawData, r => col(r,['الفئة العمرية للطالب','الفئة العمرية']));
   const ageOrder = ['أقل من 18','18-24','25-34','35-44','45-54','55'];
   const sortedAge = Object.entries(ageCounts).sort((a,b)=>{
     const ai = ageOrder.findIndex(x => a[0].startsWith(x));
@@ -990,14 +1013,15 @@ function buildStudents() {
       labels: sortedAge.map(e=>e[0]),
       datasets: [{ label: 'عدد الطلاب', data: sortedAge.map(e=>e[1]), backgroundColor: COLORS.crimson, borderRadius:6 }]
     },
-    options: { ...baseOpts, plugins:{...baseOpts.plugins,legend:{display:false}},
+    options: { ...baseOpts,
+      plugins:{...baseOpts.plugins, legend:{display:false}, tooltip: tooltipWithPct(total)},
       scales:{x:{ticks:{font:{family:'Cairo',size:11},maxRotation:30}},y:{ticks:{font:{family:'Cairo'}}}} }
   });
 
   // Age × Gender — exact columns
   const ageLabels = sortedAge.map(e=>e[0]);
-  const maleByAge = ageLabels.map(a => rawData.filter(r => exact(r,'الفئة العمرية للطالب')===a && exact(r,'الجنس (ذكر,أنثى)').includes('ذكر')).length);
-  const femaleByAge = ageLabels.map(a => rawData.filter(r => exact(r,'الفئة العمرية للطالب')===a && exact(r,'الجنس (ذكر,أنثى)').includes('أنث')).length);
+  const maleByAge = ageLabels.map(a => rawData.filter(r => col(r,['الفئة العمرية للطالب','الفئة العمرية'])===a && exact(r,'الجنس (ذكر,أنثى)').includes('ذكر')).length);
+  const femaleByAge = ageLabels.map(a => rawData.filter(r => col(r,['الفئة العمرية للطالب','الفئة العمرية'])===a && exact(r,'الجنس (ذكر,أنثى)').includes('أنث')).length);
   makeChart('ageGenderChart', {
     type: 'bar',
     data: {
@@ -1007,8 +1031,9 @@ function buildStudents() {
         { label: 'إناث', data: femaleByAge, backgroundColor: COLORS.gold, borderRadius:4 }
       ]
     },
-    options: { ...baseOpts, scales:{x:{ticks:{font:{family:'Cairo',size:10},maxRotation:30}},y:{ticks:{font:{family:'Cairo'}}}},
-      plugins:{...baseOpts.plugins, legend:{labels:{font:{family:'Cairo'}}}} }
+    options: { ...baseOpts,
+      plugins:{...baseOpts.plugins, legend:{labels:{font:{family:'Cairo'}}}, tooltip: tooltipWithPct(total)},
+      scales:{x:{ticks:{font:{family:'Cairo',size:10},maxRotation:30}},y:{ticks:{font:{family:'Cairo'}}}} }
   });
 
   // Education — exact column
@@ -1020,7 +1045,7 @@ function buildStudents() {
       labels: eduEntries.map(e=>e[0]),
       datasets: [{ data: eduEntries.map(e=>e[1]), backgroundColor: COLORS.palette }]
     },
-    options: { ...baseOpts }
+    options: { ...baseOpts, plugins:{...baseOpts.plugins, tooltip: tooltipWithPct(total)} }
   });
 
   // Work status — exact column
@@ -1032,7 +1057,7 @@ function buildStudents() {
       labels: workEntries.map(e=>e[0]),
       datasets: [{ data: workEntries.map(e=>e[1]), backgroundColor: COLORS.palette }]
     },
-    options: { ...baseOpts, cutout:'55%' }
+    options: { ...baseOpts, cutout:'55%', plugins:{...baseOpts.plugins, tooltip: tooltipWithPct(total)} }
   });
 
   // Hours — exact column
@@ -1044,7 +1069,8 @@ function buildStudents() {
       labels: hoursEntries.map(e=>e[0]),
       datasets: [{ label: 'عدد الطلاب', data: hoursEntries.map(e=>e[1]), backgroundColor: COLORS.gold, borderRadius:6 }]
     },
-    options: { ...baseOpts, plugins:{...baseOpts.plugins,legend:{display:false}},
+    options: { ...baseOpts,
+      plugins:{...baseOpts.plugins, legend:{display:false}, tooltip: tooltipWithPct(total)},
       scales:{x:{ticks:{font:{family:'Cairo',size:11},maxRotation:30}},y:{ticks:{font:{family:'Cairo'}}}} }
   });
 
@@ -1121,7 +1147,9 @@ function buildGrowth() {
         pointRadius: 3, pointBackgroundColor: COLORS.crimson
       }]
     },
-    options: { ...baseOpts, scales:{x:{ticks:{font:{family:'Cairo',size:11},maxRotation:45}},y:{ticks:{font:{family:'Cairo'}}}} }
+    options: { ...baseOpts,
+      plugins:{...baseOpts.plugins, tooltip: tooltipLine()},
+      scales:{x:{ticks:{font:{family:'Cairo',size:11},maxRotation:45}},y:{ticks:{font:{family:'Cairo'}}}} }
   });
 
   // Daily bar chart
@@ -1137,37 +1165,47 @@ function buildGrowth() {
         borderWidth: 1, borderRadius: 4
       }]
     },
-    options: { ...baseOpts, plugins:{...baseOpts.plugins,legend:{display:false}},
+    options: { ...baseOpts,
+      plugins:{...baseOpts.plugins, legend:{display:false}, tooltip: tooltipLine()},
       scales:{x:{ticks:{font:{family:'Cairo',size:11},maxRotation:45}},y:{ticks:{font:{family:'Cairo'}}}} }
   });
 
-  // Segments stacked chart
+  // Segments chart — daily diffs
   makeChart('growthSegmentsChart', {
-    type: 'line',
+    type: 'bar',
     data: {
       labels,
       datasets: [
-        { label: 'قدامى البهوتي (لم يدرس)', data: oldBah, borderColor: '#2d6a4f', backgroundColor: 'rgba(45,106,79,0.15)', fill:true, tension:0.3, pointRadius:2 },
-        { label: 'طلاب البهوتي الحاليون', data: currBah, borderColor: '#1d3557', backgroundColor: 'rgba(29,53,87,0.15)', fill:true, tension:0.3, pointRadius:2 },
-        { label: 'متوقفون في البهوتي', data: stoppedBah, borderColor: COLORS.gold, backgroundColor: 'rgba(201,168,76,0.15)', fill:true, tension:0.3, pointRadius:2 },
-        { label: 'غير مسجلين في البهوتي', data: nonBah, borderColor: COLORS.crimson, backgroundColor: 'rgba(141,25,27,0.15)', fill:true, tension:0.3, pointRadius:2 }
+        { label: 'قدامى البهوتي (لم يدرس)', data: oldBah, backgroundColor: '#2d6a4f', borderRadius:3 },
+        { label: 'طلاب البهوتي الحاليون',   data: currBah, backgroundColor: '#1d3557', borderRadius:3 },
+        { label: 'متوقفون في البهوتي',       data: stoppedBah, backgroundColor: COLORS.gold, borderRadius:3 },
+        { label: 'غير مسجلين في البهوتي',   data: nonBah, backgroundColor: COLORS.crimson, borderRadius:3 }
       ]
     },
-    options: { ...baseOpts, scales:{x:{ticks:{font:{family:'Cairo',size:11},maxRotation:45}},y:{stacked:false,ticks:{font:{family:'Cairo'}}}} }
+    options: { ...baseOpts,
+      plugins:{...baseOpts.plugins, tooltip: tooltipLine()},
+      scales:{
+        x:{stacked:true, ticks:{font:{family:'Cairo',size:11},maxRotation:45}},
+        y:{stacked:true, ticks:{font:{family:'Cairo'}}}
+      }
+    }
   });
 
-  // Daily table
+  // Daily table — show cumulative totals + daily diffs for segments
   const tbody = document.getElementById('dailyTableBody');
-  tbody.innerHTML = [...batch16Data].reverse().map(r => `
+  tbody.innerHTML = [...batch16Data].reverse().map((r,revIdx) => {
+    const idx = batch16Data.length - 1 - revIdx;
+    return `
     <tr>
       <td><strong>${exact(r,'التاريخ')}</strong></td>
       <td>${num(getNumCol(r,'إجمالي المسجلين الجدد (أنشأ حسابًا على الموقع)'))}</td>
       <td><span class="badge badge-red">${num(getNumCol(r,'مسجلين اليوم (أنشأ حسابًا على الموقع)'))}</span></td>
-      <td>${num(getNumCol(r,'المسجلين الجدد من قدامى البهوتي (لم يدرس ولم يدفع)'))}</td>
-      <td>${num(getNumCol(r,'المسجلين الجدد من طلاب البهوتي (طالب حالي يدرس البهوتي )'))}</td>
-      <td>${num(getNumCol(r,'المسجلين الجدد من طلاب البهوتي المتوقفين (درس ولم يكمل)'))}</td>
-      <td>${num(getNumCol(r,'المسجلين الجدد غير المسجلين في البهوتي'))}</td>
-    </tr>`).join('');
+      <td>${num(oldBah[idx])}</td>
+      <td>${num(currBah[idx])}</td>
+      <td>${num(stoppedBah[idx])}</td>
+      <td>${num(nonBah[idx])}</td>
+    </tr>`;
+  }).join('');
 }
 
 // ============================================================
@@ -1186,7 +1224,8 @@ function buildMarketing() {
       labels: srcEntries.map(e=>e[0]),
       datasets: [{ label: 'عدد الطلاب', data: srcEntries.map(e=>e[1]), backgroundColor: COLORS.palette, borderRadius:6 }]
     },
-    options: { ...baseOpts, indexAxis:'y', plugins:{...baseOpts.plugins,legend:{display:false}},
+    options: { ...baseOpts, indexAxis:'y',
+      plugins:{...baseOpts.plugins, legend:{display:false}, tooltip: tooltipWithPct(total)},
       scales:{x:{ticks:{font:{family:'Cairo'}}},y:{ticks:{font:{family:'Cairo',size:11}}}} }
   });
 
@@ -1212,12 +1251,13 @@ function buildMarketing() {
       ]
     },
     options: { ...baseOpts, indexAxis:'y',
+      plugins:{...baseOpts.plugins, tooltip: tooltipWithPct(total)},
       scales:{x:{ticks:{font:{family:'Cairo'}}},y:{ticks:{font:{family:'Cairo',size:10}}}} }
   });
 
   // Source × Age (top 5 sources, top 4 ages)
   const top5src = srcEntries.slice(0,5).map(e=>e[0]);
-  const ageCounts2 = countBy(rawData, r=>exact(r,'الفئة العمرية للطالب'));
+  const ageCounts2 = countBy(rawData, r=>col(r,['الفئة العمرية للطالب','الفئة العمرية']));
   const top4age = Object.entries(ageCounts2).sort((a,b)=>b[1]-a[1]).slice(0,4).map(e=>e[0]);
   makeChart('sourceAgeChart', {
     type: 'bar',
@@ -1225,11 +1265,12 @@ function buildMarketing() {
       labels: top5src,
       datasets: top4age.map((age,i)=>({
         label: age,
-        data: top5src.map(s=>rawData.filter(r=>exact(r,'من أين عرفت المعهد؟')===s&&exact(r,'الفئة العمرية للطالب')===age).length),
+        data: top5src.map(s=>rawData.filter(r=>exact(r,'من أين عرفت المعهد؟')===s&&col(r,['الفئة العمرية للطالب','الفئة العمرية'])===age).length),
         backgroundColor: COLORS.palette[i], borderRadius:4
       }))
     },
     options: { ...baseOpts, indexAxis:'y',
+      plugins:{...baseOpts.plugins, tooltip: tooltipWithPct(total)},
       scales:{x:{ticks:{font:{family:'Cairo'}}},y:{ticks:{font:{family:'Cairo',size:10}}}} }
   });
 }
@@ -1254,7 +1295,7 @@ function buildRecommendations() {
   const bahoutiCounts = countBy(rawData, r=>exact(r,'الموقف من البهوتي'));
   const nonBahoutiRaw = rawData.filter(r=>exact(r,'الموقف من البهوتي').includes('غير')).length;
 
-  const ageCounts = countBy(rawData, r=>exact(r,'الفئة العمرية للطالب'));
+  const ageCounts = countBy(rawData, r=>col(r,['الفئة العمرية للطالب','الفئة العمرية']));
   const topAge = Object.entries(ageCounts).sort((a,b)=>b[1]-a[1])[0];
 
   const noWork = rawData.filter(r=>exact(r,'هل تعمل بدوام؟').includes('لا')).length;
