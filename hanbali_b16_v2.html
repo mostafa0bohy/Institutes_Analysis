@@ -229,8 +229,9 @@ function parseRow(s){
   }
   a.push(c);return a;
 }
-function parseCSV(txt){
-  const lines=txt.split(/\r?\n/).filter(l=>l.trim());
+function parseCSV(txt, skipLines = 0){
+  let lines=txt.split(/\r?\n/).filter(l=>l.trim());
+  if(skipLines > 0) lines = lines.slice(skipLines); // تخطي الصفوف المدمجة أو العناوين الإضافية
   if(!lines.length)return[];
   const hdrs=parseRow(lines[0]).map(h=>h.trim());
   return lines.slice(1).map(l=>{
@@ -240,9 +241,9 @@ function parseCSV(txt){
     return o;
   }).filter(r=>Object.values(r).some(v=>v));
 }
-async function fetchCSV(url){
+async function fetchCSV(url, skipLines = 0){
   const r=await fetch(url+'&nocache='+Date.now());
-  return parseCSV(await r.text());
+  return parseCSV(await r.text(), skipLines);
 }
 
 // ── accessors ───────────────────────────────────────────────
@@ -310,7 +311,7 @@ async function loadAll(){
   }
   setStatus('loading','جاري تحديث البيانات...');
   try{
-    const [s13,b16]=await Promise.all([fetchCSV(URLS.sheet13),fetchCSV(URLS.batch16)]);
+    const [s13,b16]=await Promise.all([fetchCSV(URLS.sheet13),fetchCSV(URLS.batch16,1)]);
 
     // ----- تشخيص أعمدة الدفعة 16 -----
     if(b16.length){
