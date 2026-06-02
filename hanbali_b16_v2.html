@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>لوحة المؤشرات | برنامج التأهيل الفقهي الحنبلي</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --crimson:#8d191b;--crimson-dark:#6b1214;--crimson-light:#b32325;
+  --crimson-pale:rgba(141,25,27,0.08);--gold:#c9a84c;--gold-light:#e8d5a3;
+  --cream:#faf7f2;--card:#ffffff;--text-primary:#1a1a1a;--text-secondary:#5a5a5a;
+  --text-muted:#9a9a9a;--border:#ece8e0;
+  --shadow:0 4px 24px rgba(141,25,27,0.08);--shadow-hover:0 8px 40px rgba(141,25,27,0.16);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Cairo',sans-serif;background:var(--cream);color:var(--text-primary);min-height:100vh;}
+.header{background:linear-gradient(135deg,var(--crimson-dark) 0%,var(--crimson) 60%,#a52022 100%);padding:0;position:relative;overflow:hidden;}
+.header::before{content:'';position:absolute;top:-60px;left:-60px;width:300px;height:300px;border-radius:50%;background:rgba(255,255,255,0.04);}
+.header::after{content:'';position:absolute;bottom:-80px;right:10%;width:250px;height:250px;border-radius:50%;background:rgba(201,168,76,0.12);}
+.header-inner{position:relative;z-index:1;padding:28px 40px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;}
+.header-brand{display:flex;align-items:center;gap:16px;}
+.brand-icon{width:54px;height:54px;background:rgba(255,255,255,0.15);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:26px;border:1px solid rgba(255,255,255,0.2);}
+.brand-text h1{font-size:20px;font-weight:900;color:white;line-height:1.2;}
+.brand-text p{font-size:13px;color:var(--gold-light);font-weight:400;}
+.header-status{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:50px;padding:8px 18px;font-size:13px;color:white;}
+.status-dot{width:8px;height:8px;border-radius:50%;background:#4ade80;animation:pulse 2s infinite;}
+.status-dot.loading{background:var(--gold);}
+.status-dot.error{background:#f87171;animation:none;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.4;}}
+.tabs-bar{background:var(--card);border-bottom:2px solid var(--border);padding:0 40px;display:flex;gap:0;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,0.06);}
+.tab-btn{padding:16px 24px;font-family:'Cairo',sans-serif;font-size:14px;font-weight:600;color:var(--text-muted);background:none;border:none;border-bottom:3px solid transparent;margin-bottom:-2px;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:8px;white-space:nowrap;}
+.tab-btn:hover{color:var(--crimson);}
+.tab-btn.active{color:var(--crimson);border-bottom-color:var(--crimson);}
+.tab-icon{font-size:16px;}
+.container{padding:32px 40px;max-width:1500px;margin:0 auto;}
+.section{display:none;}
+.section.active{display:block;}
+.update-bar{display:flex;align-items:center;justify-content:space-between;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 20px;margin-bottom:28px;font-size:13px;}
+.update-info{display:flex;align-items:center;gap:10px;color:var(--text-secondary);}
+.refresh-btn{background:var(--crimson);color:white;border:none;padding:8px 20px;border-radius:8px;font-family:'Cairo',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:background 0.2s;}
+.refresh-btn:hover{background:var(--crimson-dark);}
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px;margin-bottom:30px;}
+.kpi-card{background:var(--card);border-radius:16px;padding:22px 20px;border:1px solid var(--border);box-shadow:var(--shadow);position:relative;overflow:hidden;transition:box-shadow 0.2s,transform 0.2s;}
+.kpi-card:hover{box-shadow:var(--shadow-hover);transform:translateY(-2px);}
+.kpi-card::before{content:'';position:absolute;top:0;right:0;width:5px;height:100%;background:var(--crimson);border-radius:0 16px 16px 0;}
+.kpi-label{font-size:12px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;}
+.kpi-value{font-size:36px;font-weight:900;color:var(--crimson);line-height:1;margin-bottom:6px;}
+.kpi-sub{font-size:12px;color:var(--text-muted);display:flex;align-items:center;gap:4px;}
+.kpi-icon{position:absolute;bottom:12px;left:16px;font-size:32px;opacity:0.08;}
+.charts-grid{display:grid;grid-template-columns:repeat(12,1fr);gap:22px;margin-bottom:28px;}
+.chart-card{background:var(--card);border-radius:16px;padding:22px;border:1px solid var(--border);box-shadow:var(--shadow);}
+.col-12{grid-column:span 12;}.col-8{grid-column:span 8;}.col-7{grid-column:span 7;}
+.col-6{grid-column:span 6;}.col-5{grid-column:span 5;}.col-4{grid-column:span 4;}
+.chart-title{font-size:15px;font-weight:700;color:var(--text-primary);margin-bottom:4px;display:flex;align-items:center;gap:8px;}
+.chart-title::before{content:'';display:inline-block;width:4px;height:18px;background:var(--crimson);border-radius:2px;}
+.chart-subtitle{font-size:12px;color:var(--text-muted);margin-bottom:16px;padding-right:12px;}
+.chart-wrap{position:relative;}
+.chart-wrap canvas{max-height:280px;}
+.data-table{width:100%;border-collapse:collapse;font-size:14px;}
+.data-table th{background:var(--crimson-pale);color:var(--crimson);font-weight:700;padding:12px 16px;text-align:right;border-bottom:2px solid var(--crimson);white-space:nowrap;}
+.data-table td{padding:10px 16px;border-bottom:1px solid var(--border);color:var(--text-secondary);}
+.data-table tr:hover td{background:var(--crimson-pale);}
+.data-table tr:last-child td{border-bottom:none;}
+.insights-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-bottom:28px;}
+.insight-card{background:var(--card);border-radius:14px;padding:18px 20px;border:1px solid var(--border);display:flex;gap:14px;align-items:flex-start;}
+.insight-icon{width:42px;height:42px;min-width:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;}
+.insight-icon.red{background:rgba(141,25,27,0.1);}
+.insight-icon.gold{background:rgba(201,168,76,0.15);}
+.insight-icon.green{background:rgba(74,222,128,0.12);}
+.insight-icon.blue{background:rgba(96,165,250,0.12);}
+.insight-title{font-size:13px;font-weight:700;color:var(--text-primary);margin-bottom:4px;}
+.insight-text{font-size:12px;color:var(--text-secondary);line-height:1.6;}
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;}
+.section-header h2{font-size:20px;font-weight:900;color:var(--text-primary);display:flex;align-items:center;gap:10px;}
+.section-header h2 span{color:var(--crimson);}
+.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;}
+.badge-red{background:rgba(141,25,27,0.1);color:var(--crimson);}
+.badge-gold{background:rgba(201,168,76,0.15);color:#7a5c1a;}
+.badge-green{background:rgba(74,222,128,0.15);color:#166534;}
+.trend{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:700;}
+.trend.up{color:#16a34a;}.trend.down{color:var(--crimson);}
+.footer{text-align:center;padding:24px;color:var(--text-muted);font-size:12px;border-top:1px solid var(--border);margin-top:20px;}
+@media(max-width:1100px){.col-8{grid-column:span 12;}.col-7{grid-column:span 12;}.col-5{grid-column:span 12;}.col-4{grid-column:span 6;}}
+@media(max-width:768px){.container{padding:20px 16px;}.header-inner{padding:20px 16px;}.tabs-bar{padding:0 16px;overflow-x:auto;}.col-4{grid-column:span 12;}.col-6{grid-column:span 12;}.kpi-value{font-size:28px;}}
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="header-inner">
+    <div class="header-brand">
+      <div class="brand-icon">📊</div>
+      <div class="brand-text">
+        <h1>لوحة المؤشرات الحية | برنامج التأهيل الفقهي الحنبلي</h1>
+        <p>مركز تميز للتعليم الشرعي عن بعد — الدفعة السادسة عشرة</p>
+      </div>
+    </div>
+    <div class="header-status">
+      <div class="status-dot loading" id="statusDot"></div>
+      <span id="statusText">جاري تحميل البيانات...</span>
+    </div>
+  </div>
+</div>
+
+<div class="tabs-bar">
+  <button class="tab-btn active" onclick="switchTab('overview')" id="tab-overview"><span class="tab-icon">🏠</span> نظرة عامة</button>
+  <button class="tab-btn" onclick="switchTab('students')" id="tab-students"><span class="tab-icon">👥</span> تحليل الطلاب</button>
+  <button class="tab-btn" onclick="switchTab('growth')" id="tab-growth"><span class="tab-icon">📈</span> متابعة النمو اليومي</button>
+  <button class="tab-btn" onclick="switchTab('marketing')" id="tab-marketing"><span class="tab-icon">📣</span> التسويق والمصادر</button>
+  <button class="tab-btn" onclick="switchTab('recommendations')" id="tab-recommendations"><span class="tab-icon">💡</span> التوصيات</button>
+</div>
+
+<div class="container">
+  <div class="update-bar">
+    <div class="update-info"><span>🕐</span><span id="lastUpdate">جاري التحميل...</span></div>
+    <button class="refresh-btn" onclick="loadAll()">🔄 تحديث البيانات</button>
+  </div>
+
+  <!-- TAB 1: OVERVIEW -->
+  <div class="section active" id="section-overview">
+    <div class="section-header"><h2>🏠 النظرة العامة — <span id="overview-date">...</span></h2></div>
+    <div class="kpi-grid">
+      <div class="kpi-card"><div class="kpi-label">إجمالي المسجلين</div><div class="kpi-value" id="kpi-total">—</div><div class="kpi-sub">طالب وطالبة</div><div class="kpi-icon">👥</div></div>
+      <div class="kpi-card"><div class="kpi-label">مسجلو اليوم</div><div class="kpi-value" id="kpi-today">—</div><div class="kpi-sub">تسجيل جديد اليوم</div><div class="kpi-icon">📅</div></div>
+      <div class="kpi-card"><div class="kpi-label">نسبة الذكور</div><div class="kpi-value" id="kpi-male">—</div><div class="kpi-sub" id="kpi-male-sub">من إجمالي الطلاب</div><div class="kpi-icon">🧑</div></div>
+      <div class="kpi-card"><div class="kpi-label">نسبة الإناث</div><div class="kpi-value" id="kpi-female">—</div><div class="kpi-sub" id="kpi-female-sub">من إجمالي الطلاب</div><div class="kpi-icon">👩</div></div>
+      <div class="kpi-card"><div class="kpi-label">من خارج البهوتي</div><div class="kpi-value" id="kpi-new">—</div><div class="kpi-sub">وجوه جديدة للمعهد</div><div class="kpi-icon">🌟</div></div>
+      <div class="kpi-card"><div class="kpi-label">متوسط الساعات اليومية</div><div class="kpi-value" id="kpi-hours">—</div><div class="kpi-sub">ساعة/يوم للدراسة</div><div class="kpi-icon">⏰</div></div>
+    </div>
+    <div class="charts-grid">
+      <div class="chart-card col-8"><div class="chart-title">منحنى التسجيل التراكمي</div><div class="chart-subtitle">إجمالي المسجلين يوماً بيوم منذ انطلاق الدفعة</div><div class="chart-wrap"><canvas id="overviewTrendChart"></canvas></div></div>
+      <div class="chart-card col-4"><div class="chart-title">توزيع الجنس</div><div class="chart-subtitle">ذكور وإناث</div><div class="chart-wrap"><canvas id="overviewGenderChart"></canvas></div></div>
+    </div>
+    <div class="charts-grid">
+      <div class="chart-card col-6"><div class="chart-title">الموقف من معهد البهوتي</div><div class="chart-subtitle">تصنيف المسجلين بحسب علاقتهم بالمعهد</div><div class="chart-wrap"><canvas id="overviewBahoutiChart"></canvas></div></div>
+      <div class="chart-card col-6"><div class="chart-title">التوزيع الجغرافي — أبرز 10 دول</div><div class="chart-subtitle">الدول الأكثر تسجيلاً في البرنامج</div><div class="chart-wrap"><canvas id="overviewCountryChart"></canvas></div></div>
+    </div>
+  </div>
+
+  <!-- TAB 2: STUDENTS -->
+  <div class="section" id="section-students">
+    <div class="section-header"><h2>👥 تحليل <span>شريحة الطلاب</span></h2></div>
+    <div class="charts-grid">
+      <div class="chart-card col-6"><div class="chart-title">الفئات العمرية</div><div class="chart-subtitle">توزيع الطلاب حسب الفئة العمرية</div><div class="chart-wrap"><canvas id="ageChart"></canvas></div></div>
+      <div class="chart-card col-6"><div class="chart-title">الفئات العمرية بالجنس</div><div class="chart-subtitle">مقارنة الذكور والإناث عبر الفئات العمرية</div><div class="chart-wrap"><canvas id="ageGenderChart"></canvas></div></div>
+    </div>
+    <div class="charts-grid">
+      <div class="chart-card col-6"><div class="chart-title">المستوى التعليمي</div><div class="chart-subtitle">توزيع الطلاب حسب المؤهل الدراسي</div><div class="chart-wrap"><canvas id="eduChart"></canvas></div></div>
+      <div class="chart-card col-6"><div class="chart-title">الوضع الوظيفي</div><div class="chart-subtitle">هل يعمل الطالب؟ وبأي دوام؟</div><div class="chart-wrap"><canvas id="workChart"></canvas></div></div>
+    </div>
+    <div class="charts-grid">
+      <div class="chart-card col-6"><div class="chart-title">الساعات اليومية المتاحة للدراسة</div><div class="chart-subtitle">توزيع الطلاب حسب عدد الساعات المتاحة يومياً</div><div class="chart-wrap"><canvas id="hoursChart"></canvas></div></div>
+      <div class="chart-card col-6"><div class="chart-title">التوزيع الجغرافي الكامل</div><div class="chart-subtitle">جميع الدول المشاركة في البرنامج</div>
+        <div style="overflow-y:auto;max-height:300px"><table class="data-table" id="countryTable"><thead><tr><th>#</th><th>الدولة</th><th>العدد</th><th>النسبة</th></tr></thead><tbody></tbody></table></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 3: GROWTH -->
+  <div class="section" id="section-growth">
+    <div class="section-header"><h2>📈 متابعة <span>النمو اليومي</span></h2></div>
+    <div class="kpi-grid">
+      <div class="kpi-card"><div class="kpi-label">إجمالي المسجلين</div><div class="kpi-value" id="g-total">—</div><div class="kpi-sub">حتى آخر تحديث</div><div class="kpi-icon">👥</div></div>
+      <div class="kpi-card"><div class="kpi-label">أعلى يوم تسجيل</div><div class="kpi-value" id="g-peak">—</div><div class="kpi-sub" id="g-peak-date">—</div><div class="kpi-icon">🏆</div></div>
+      <div class="kpi-card"><div class="kpi-label">متوسط التسجيل اليومي</div><div class="kpi-value" id="g-avg">—</div><div class="kpi-sub">طالب/يوم</div><div class="kpi-icon">📊</div></div>
+      <div class="kpi-card"><div class="kpi-label">من خارج البهوتي (تراكمي)</div><div class="kpi-value" id="g-nonbahouti">—</div><div class="kpi-sub" id="g-nonbahouti-pct">—</div><div class="kpi-icon">🌟</div></div>
+    </div>
+    <div class="charts-grid">
+      <div class="chart-card col-12"><div class="chart-title">منحنى النمو التراكمي اليومي</div><div class="chart-subtitle">إجمالي المسجلين يوماً بيوم</div><div class="chart-wrap"><canvas id="growthTotalChart" style="max-height:300px"></canvas></div></div>
+    </div>
+    <div class="charts-grid">
+      <div class="chart-card col-12"><div class="chart-title">التسجيل اليومي (غير تراكمي)</div><div class="chart-subtitle">عدد الطلاب الجدد في كل يوم — اليوم الذهبي مميز بالذهبي</div><div class="chart-wrap"><canvas id="growthDailyChart" style="max-height:260px"></canvas></div></div>
+    </div>
+    <div class="charts-grid">
+      <div class="chart-card col-12"><div class="chart-title">توزيع شرائح البهوتي يومياً</div><div class="chart-subtitle">كم طالب جديد دخل كل يوم من كل شريحة (محسوب من الفرق اليومي)</div><div class="chart-wrap"><canvas id="growthSegmentsChart" style="max-height:280px"></canvas></div></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">جدول التفاصيل اليومية</div>
+      <div style="overflow-x:auto;margin-top:16px">
+        <table class="data-table" id="dailyTable">
+          <thead><tr><th>التاريخ</th><th>الإجمالي التراكمي</th><th>جديد اليوم</th><th>قدامى البهوتي (يومي)</th><th>طلاب البهوتي (يومي)</th><th>متوقفو البهوتي (يومي)</th><th>خارج البهوتي (يومي)</th></tr></thead>
+          <tbody id="dailyTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 4: MARKETING -->
+  <div class="section" id="section-marketing">
+    <div class="section-header"><h2>📣 تحليل <span>التسويق والمصادر</span></h2></div>
+    <div class="charts-grid">
+      <div class="chart-card col-7"><div class="chart-title">مصادر معرفة البرنامج</div><div class="chart-subtitle">من أين عرف الطالب بالبرنامج؟</div><div class="chart-wrap"><canvas id="sourceChart"></canvas></div></div>
+      <div class="chart-card col-5"><div class="chart-title">جدول المصادر التفصيلي</div>
+        <div style="overflow-y:auto;max-height:300px;margin-top:8px"><table class="data-table" id="sourceTable"><thead><tr><th>المصدر</th><th>العدد</th><th>النسبة</th></tr></thead><tbody></tbody></table></div>
+      </div>
+    </div>
+    <div class="charts-grid">
+      <div class="chart-card col-6"><div class="chart-title">مصدر التسجيل × الجنس</div><div class="chart-subtitle">هل يختلف مصدر التسجيل بين الذكور والإناث؟</div><div class="chart-wrap"><canvas id="sourceGenderChart"></canvas></div></div>
+      <div class="chart-card col-6"><div class="chart-title">مصدر التسجيل × الفئة العمرية</div><div class="chart-subtitle">أكثر المصادر فاعلية لكل فئة عمرية</div><div class="chart-wrap"><canvas id="sourceAgeChart"></canvas></div></div>
+    </div>
+  </div>
+
+  <!-- TAB 5: RECOMMENDATIONS -->
+  <div class="section" id="section-recommendations">
+    <div class="section-header"><h2>💡 التوصيات والتحليل <span>الاستراتيجي</span></h2></div>
+    <div id="recommendations-content"></div>
+  </div>
+</div>
+
+<div class="footer">لوحة المؤشرات الحية | مركز تميز | برنامج التأهيل الفقهي الحنبلي — الدفعة 16</div>
+
+<script>
+const URLS = {
+  sheet13: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRmiO4XN9kssEddDdU8TuKtXOypsisNKiKejQ-DCDqcgmox6s7DV0zRJ6mxpLqpBA5XQr4JMgFE11_o/pub?gid=593259252&single=true&output=csv',
+  batch16: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRmiO4XN9kssEddDdU8TuKtXOypsisNKiKejQ-DCDqcgmox6s7DV0zRJ6mxpLqpBA5XQr4JMgFE11_o/pub?gid=1408762164&single=true&output=csv'
+};
+
+const PAL = ['#8d191b','#c9a84c','#2d6a4f','#1d3557','#6d6875','#e76f51','#457b9d','#a8dadc','#52b788','#f4a261'];
+let charts = {}, rawData = [], b16Data = [];
+
+// ── CSV parser ──────────────────────────────────────────────
+function parseRow(s){
+  const a=[];let c='',q=false;
+  for(let i=0;i<s.length;i++){
+    if(s[i]==='"'){q=!q;}
+    else if(s[i]===','&&!q){a.push(c);c='';}
+    else c+=s[i];
+  }
+  a.push(c);return a;
+}
+function parseCSV(txt){
+  const lines=txt.split(/\r?\n/).filter(l=>l.trim());
+  if(!lines.length)return[];
+  const hdrs=parseRow(lines[0]).map(h=>h.trim());
+  return lines.slice(1).map(l=>{
+    const v=parseRow(l);
+    const o={};
+    hdrs.forEach((h,i)=>o[h]=(v[i]||'').trim());
+    return o;
+  }).filter(r=>Object.values(r).some(v=>v));
+}
+async function fetchCSV(url){
+  const r=await fetch(url+'&nocache='+Date.now());
+  return parseCSV(await r.text());
+}
+
+// ── accessors ───────────────────────────────────────────────
+function getCol(row, names){
+  for(const n of names){
+    if(row[n]!==undefined && row[n]!=='') return row[n].trim();
+  }
+  return 'غير محدد';
+}
+function getNum(row, names){
+  const v = getCol(row, names);
+  return parseInt((v||'0').replace(/[,%\s\u202c\u200f]/g,''))||0;
+}
+
+// ── helpers ─────────────────────────────────────────────────
+function num(n){return Number(n).toLocaleString('en-US');}
+function pct(n,t){return t?((n/t)*100).toFixed(1)+'%':'0%';}
+function countBy(arr,fn){const m={};arr.forEach(r=>{const k=fn(r)||'غير محدد';m[k]=(m[k]||0)+1;});return m;}
+function topN(obj,n){return Object.entries(obj).sort((a,b)=>b[1]-a[1]).slice(0,n);}
+
+// ── chart factory ───────────────────────────────────────────
+const BASE={responsive:true,maintainAspectRatio:false,
+  plugins:{legend:{labels:{font:{family:'Cairo',size:12},color:'#333'}},
+           tooltip:{titleFont:{family:'Cairo'},bodyFont:{family:'Cairo'}}}};
+
+function mkChart(id,cfg){
+  if(charts[id])charts[id].destroy();
+  const c=document.getElementById(id);
+  if(c)charts[id]=new Chart(c,cfg);
+}
+
+function tipPct(total){
+  return{callbacks:{label(ctx){
+    const v=ctx.parsed.y??ctx.parsed.x??ctx.raw??0;
+    const p=total>0?((v/total)*100).toFixed(1):0;
+    const lbl=ctx.dataset.label?ctx.dataset.label+': ':'';
+    return ` ${lbl}${num(v)} طالب (${p}%)`;
+  }}};
+}
+function tipLine(){
+  return{callbacks:{label(ctx){
+    return ` ${ctx.dataset.label||''}: ${num(ctx.parsed.y??0)}`;
+  }}};
+}
+
+// ── status ──────────────────────────────────────────────────
+function setStatus(s,msg){
+  document.getElementById('statusDot').className='status-dot '+(s==='ok'?'':s);
+  document.getElementById('statusText').textContent=msg;
+}
+
+// ── tabs ────────────────────────────────────────────────────
+function switchTab(name){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('section-'+name).classList.add('active');
+  document.getElementById('tab-'+name).classList.add('active');
+}
+
+// ── LOAD ────────────────────────────────────────────────────
+async function loadAll(){
+  if(location.protocol==='file:'){
+    setStatus('error','⚠️ افتح الملف عبر GitHub Pages — file:// لا يسمح بجلب البيانات');
+    return;
+  }
+  setStatus('loading','جاري تحديث البيانات...');
+  try{
+    const [s13,b16]=await Promise.all([fetchCSV(URLS.sheet13),fetchCSV(URLS.batch16)]);
+
+    // ----- تشخيص أعمدة الدفعة 16 -----
+    if(b16.length){
+      const cols=Object.keys(b16[0]);
+      console.log('BATCH16 COLS:\n'+cols.join('\n'));
+      console.log('BATCH16 ROW1:',JSON.stringify(b16[0]));
+    }
+
+    rawData=s13.filter(r=>r['الاسم الكامل']&&r['الاسم الكامل'].trim());
+    b16Data=b16.filter(r=>r['التاريخ']&&r['التاريخ'].trim());
+
+    console.log('rawData count:',rawData.length,'  b16Data count:',b16Data.length);
+
+    const now=new Date().toLocaleString('ar-EG');
+    document.getElementById('lastUpdate').textContent='آخر تحديث: '+now;
+    document.getElementById('overview-date').textContent=now;
+
+    buildOverview();
+    buildStudents();
+    buildGrowth();
+    buildMarketing();
+    buildRecommendations();
+    setStatus('ok','متصل ومحدث — '+rawData.length+' طالب');
+  }catch(e){
+    console.error(e);
+    setStatus('error','خطأ في جلب البيانات: '+e.message);
+  }
+}
+
+// ── OVERVIEW ────────────────────────────────────────────────
+function buildOverview(){
+  const total=rawData.length;
+  const males=rawData.filter(r=>getCol(r,['الجنس (ذكر,أنثى)']).includes('ذكر')).length;
+  const females=total-males;
+
+  document.getElementById('kpi-total').textContent=num(total);
+  document.getElementById('kpi-male').textContent=pct(males,total);
+  document.getElementById('kpi-male-sub').textContent=num(males)+' طالب';
+  document.getElementById('kpi-female').textContent=pct(females,total);
+  document.getElementById('kpi-female-sub').textContent=num(females)+' طالبة';
+
+  const nonBahouti=rawData.filter(r=>getCol(r,['الموقف من البهوتي']).includes('غير')).length;
+  document.getElementById('kpi-new').textContent=num(nonBahouti);
+
+  // avg hours
+  let th=0,hc=0;
+  rawData.forEach(r=>{
+    const h=getCol(r,['كم ساعة يمكن أن توفرها للمعهد يوميًا؟']);
+    const n=parseFloat(h);
+    if(!isNaN(n)){th+=n;hc++;}
+    else if(h.includes('أقل')){th+=0.5;hc++;}
+    else if(h.includes('ساعتين')||h.includes('ساعتان')){th+=2;hc++;}
+    else if(h.includes('ساعة')){th+=1;hc++;}
+  });
+  document.getElementById('kpi-hours').textContent=hc?(th/hc).toFixed(1):'—';
+
+  // today from b16
+  if(b16Data.length){
+    const last=b16Data[b16Data.length-1];
+    // try multiple possible column names
+    const todayNames=[
+      'مسجلين اليوم (أنشأ حسابًا على الموقع)',
+      'مسجلين اليوم',
+      'اليوم'
+    ];
+    const v=getCol(last,todayNames);
+    document.getElementById('kpi-today').textContent=v!=='غير محدد'?v:'—';
+  }
+
+  // trend from b16
+  if(b16Data.length){
+    const totalNames=[
+      'إجمالي المسجلين الجدد (أنشأ حسابًا على الموقع)',
+      'إجمالي المسجلين الجدد',
+      'الإجمالي'
+    ];
+    const labels=b16Data.map(r=>getCol(r,['التاريخ']));
+    const totals=b16Data.map(r=>getNum(r,totalNames));
+    mkChart('overviewTrendChart',{type:'line',data:{labels,datasets:[{
+      label:'إجمالي المسجلين',data:totals,
+      borderColor:'#8d191b',backgroundColor:'rgba(141,25,27,0.12)',
+      fill:true,tension:0.35,pointRadius:3,pointBackgroundColor:'#8d191b'
+    }]},options:{...BASE,plugins:{...BASE.plugins,tooltip:tipLine()},
+      scales:{x:{ticks:{font:{family:'Cairo',size:11},maxRotation:45}},y:{ticks:{font:{family:'Cairo'}}}}}});
+  }
+
+  // gender donut
+  mkChart('overviewGenderChart',{type:'doughnut',data:{
+    labels:['ذكور','إناث'],
+    datasets:[{data:[males,females],backgroundColor:['#8d191b','#c9a84c'],borderWidth:2}]
+  },options:{...BASE,cutout:'65%',plugins:{...BASE.plugins,tooltip:tipPct(total)}}});
+
+  // bahouti
+  const bc=countBy(rawData,r=>getCol(r,['الموقف من البهوتي']));
+  const be=Object.entries(bc).sort((a,b)=>b[1]-a[1]);
+  mkChart('overviewBahoutiChart',{type:'bar',data:{labels:be.map(e=>e[0]),datasets:[{label:'العدد',data:be.map(e=>e[1]),backgroundColor:PAL}]},
+    options:{...BASE,indexAxis:'y',plugins:{...BASE.plugins,legend:{display:false},tooltip:tipPct(total)},
+      scales:{x:{ticks:{font:{family:'Cairo'}}},y:{ticks:{font:{family:'Cairo',size:11}}}}}});
+
+  // countries top10
+  const cc=countBy(rawData,r=>getCol(r,['الدولة']));
+  const t10=topN(cc,10);
+  mkChart('overviewCountryChart',{type:'bar',data:{labels:t10.map(e=>e[0]),datasets:[{label:'عدد الطلاب',data:t10.map(e=>e[1]),backgroundColor:PAL}]},
+    options:{...BASE,indexAxis:'y',plugins:{...BASE.plugins,legend:{display:false},tooltip:tipPct(total)},
+      scales:{x:{ticks:{font:{family:'Cairo'}}},y:{ticks:{font:{family:'Cairo',size:11}}}}}});
+}
+
+// ── STUDENTS ────────────────────────────────────────────────
+function buildStudents(){
+  const total=rawData.length;
+  const AGE_COL=['الفئة العمرية للطالب','الفئة العمرية'];
+  const AGE_ORDER=['أقل من 18','18-24','25-34','35-44','45-54','55'];
+
+  const ac=countBy(rawData,r=>getCol(r,AGE_COL));
+  const sortedAge=Object.entries(ac).sort((a,b)=>{
+    const ai=AGE_ORDER.findIndex(x=>a[0].startsWith(x));
+    const bi=AGE_ORDER.findIndex(x=>b[0].startsWith(x));
+    return(ai<0?99:ai)-(bi<0?99:bi);
+  });
+  const ageLabels=sortedAge.map(e=>e[0]);
+
+  mkChart('ageChart',{type:'bar',data:{labels:ageLabels,datasets:[{label:'عدد الطلاب',data:sortedAge.map(e=>e[1]),backgroundColor:'#8d191b',borderRadius:6}]},
+    options:{...BASE,plugins:{...BASE.plugins,legend:{display:false},tooltip:tipPct(total)},
+      scales:{x:{ticks:{font:{family:'Cairo',size:11},maxRotation:30}},y:{ticks:{font:{family:'Cairo'}}}}}});
+
+  const mByAge=ageLabels.map(a=>rawData.filter(r=>getCol(r,AGE_COL)===a&&getCol(r,['الجنس (ذكر,أنثى)']).includes('ذكر')).length);
+  const fByAge=ageLabels.map(a=>rawData.filter(r=>getCol(r,AGE_COL)===a&&getCol(r,['الجنس (ذكر,أنثى)']).includes('أنث')).length);
+  mkChart('ageGenderChart',{type:'bar',data:{labels:ageLabels,datasets:[
+    {label:'ذكور',data:mByAge,backgroundColor:'#8d191b',borderRadius:4},
+    {label:'إناث',data:fByAge,backgroundColor:'#c9a84c',borderRadius:4}
+  ]},options:{...BASE,plugins:{...BASE.plugins,tooltip:tipPct(total)},
+    scales:{x:{ticks:{font:{family:'Cairo',size:10},maxRotation:30}},y:{ticks:{font:{family:'Cairo'}}}}}});
+
+  const ec=countBy(rawData,r=>getCol(r,['المستوى التعليمي']));
+  const ee=Object.entries(ec).sort((a,b)=>b[1]-a[1]);
+  mkChart('eduChart',{type:'pie',data:{labels:ee.map(e=>e[0]),datasets:[{data:ee.map(e=>e[1]),backgroundColor:PAL}]},
+    options:{...BASE,plugins:{...BASE.plugins,tooltip:tipPct(total)}}});
+
+  const wc=countBy(rawData,r=>getCol(r,['هل تعمل بدوام؟']));
+  const we=Object.entries(wc).sort((a,b)=>b[1]-a[1]);
+  mkChart('workChart',{type:'doughnut',data:{labels:we.map(e=>e[0]),datasets:[{data:we.map(e=>e[1]),backgroundColor:PAL}]},
+    options:{...BASE,cutout:'55%',plugins:{...BASE.plugins,tooltip:tipPct(total)}}});
+
+  const hc2=countBy(rawData,r=>getCol(r,['كم ساعة يمكن أن توفرها للمعهد يوميًا؟']));
+  const he=Object.entries(hc2).sort((a,b)=>b[1]-a[1]);
+  mkChart('hoursChart',{type:'bar',data:{labels:he.map(e=>e[0]),datasets:[{label:'عدد الطلاب',data:he.map(e=>e[1]),backgroundColor:'#c9a84c',borderRadius:6}]},
+    options:{...BASE,plugins:{...BASE.plugins,legend:{display:false},tooltip:tipPct(total)},
+      scales:{x:{ticks:{font:{family:'Cairo',size:11},maxRotation:30}},y:{ticks:{font:{family:'Cairo'}}}}}});
+
+  const ctry=countBy(rawData,r=>getCol(r,['الدولة']));
+  const ctryList=Object.entries(ctry).sort((a,b)=>b[1]-a[1]);
+  document.querySelector('#countryTable tbody').innerHTML=ctryList.map((e,i)=>
+    `<tr><td>${i+1}</td><td>${e[0]}</td><td><strong>${num(e[1])}</strong></td><td><span class="badge badge-red">${pct(e[1],total)}</span></td></tr>`
+  ).join('');
+}
+
+// ── GROWTH ──────────────────────────────────────────────────
+function buildGrowth(){
+  if(!b16Data.length){
+    console.warn('buildGrowth: b16Data is empty!');
+    return;
+  }
+
+  console.log('buildGrowth: rows=',b16Data.length,'first row keys:',Object.keys(b16Data[0]));
+
+  // ---- تعريف أسماء الأعمدة مع بدائل ----
+  const COL_DATE    = ['التاريخ'];
+  const COL_TOTAL   = ['إجمالي المسجلين الجدد (أنشأ حسابًا على الموقع)','إجمالي المسجلين الجدد','الإجمالي التراكمي','الإجمالي'];
+  const COL_TODAY   = ['مسجلين اليوم (أنشأ حسابًا على الموقع)','مسجلين اليوم','اليوم'];
+  const COL_OLD     = ['المسجلين الجدد من قدامى البهوتي (لم يدرس ولم يدفع)','قدامى البهوتي'];
+  const COL_CURR    = ['المسجلين الجدد من طلاب البهوتي (طالب حالي يدرس البهوتي )','المسجلين الجدد من طلاب البهوتي','طلاب البهوتي الحاليون'];
+  const COL_STOPPED = ['المسجلين الجدد من طلاب البهوتي المتوقفين (درس ولم يكمل)','طلاب البهوتي المتوقفين','المتوقفون'];
+  const COL_NONBAH  = ['المسجلين الجدد غير المسجلين في البهوتي','غير المسجلين في البهوتي','خارج البهوتي'];
+
+  const labels   = b16Data.map(r=>getCol(r,COL_DATE));
+  const totals   = b16Data.map(r=>getNum(r,COL_TOTAL));
+  const daily    = b16Data.map(r=>getNum(r,COL_TODAY));
+  const oldCum   = b16Data.map(r=>getNum(r,COL_OLD));
+  const currCum  = b16Data.map(r=>getNum(r,COL_CURR));
+  const stopCum  = b16Data.map(r=>getNum(r,COL_STOPPED));
+  const nonCum   = b16Data.map(r=>getNum(r,COL_NONBAH));
+
+  console.log('sample totals:',totals.slice(0,5));
+  console.log('sample daily:',daily.slice(0,5));
+  console.log('sample nonCum:',nonCum.slice(0,5));
+
+  // daily diffs for cumulative cols
+  const diff=arr=>arr.map((v,i)=>i===0?v:Math.max(0,v-arr[i-1]));
+  const oldD=diff(oldCum), currD=diff(currCum), stopD=diff(stopCum), nonD=diff(nonCum);
+
+  const lastTotal  = totals[totals.length-1]||0;
+  const lastNon    = nonCum[nonCum.length-1]||0;
+  const peak       = Math.max(...daily);
+  const peakIdx    = daily.indexOf(peak);
+  const activeDays = daily.filter(d=>d>0);
+  const avg        = activeDays.length?(activeDays.reduce((a,b)=>a+b,0)/activeDays.length).toFixed(1):0;
+
+  document.getElementById('g-total').textContent=num(lastTotal);
+  document.getElementById('g-peak').textContent=num(peak);
+  document.getElementById('g-peak-date').textContent=labels[peakIdx]||'—';
+  document.getElementById('g-avg').textContent=avg;
+  document.getElementById('g-nonbahouti').textContent=num(lastNon);
+  document.getElementById('g-nonbahouti-pct').textContent=lastTotal?pct(lastNon,lastTotal)+' من الإجمالي':'—';
+
+  const scaleOpts={x:{ticks:{font:{family:'Cairo',size:11},maxRotation:45}},y:{ticks:{font:{family:'Cairo'}}}};
+
+  mkChart('growthTotalChart',{type:'line',data:{labels,datasets:[{
+    label:'إجمالي المسجلين',data:totals,
+    borderColor:'#8d191b',backgroundColor:'rgba(141,25,27,0.12)',
+    fill:true,tension:0.35,pointRadius:3,pointBackgroundColor:'#8d191b'
+  }]},options:{...BASE,plugins:{...BASE.plugins,tooltip:tipLine()},scales:scaleOpts}});
+
+  mkChart('growthDailyChart',{type:'bar',data:{labels,datasets:[{
+    label:'تسجيل اليوم',data:daily,borderRadius:4,
+    backgroundColor:daily.map(d=>d===peak?'#c9a84c':'rgba(141,25,27,0.15)'),
+    borderColor:daily.map(d=>d===peak?'#a07030':'#8d191b'),borderWidth:1
+  }]},options:{...BASE,plugins:{...BASE.plugins,legend:{display:false},tooltip:tipLine()},scales:scaleOpts}});
+
+  mkChart('growthSegmentsChart',{type:'bar',data:{labels,datasets:[
+    {label:'قدامى البهوتي (لم يدرس)',data:oldD,backgroundColor:'#2d6a4f',borderRadius:3},
+    {label:'طلاب البهوتي الحاليون',  data:currD,backgroundColor:'#1d3557',borderRadius:3},
+    {label:'متوقفون في البهوتي',      data:stopD,backgroundColor:'#c9a84c',borderRadius:3},
+    {label:'خارج البهوتي',            data:nonD, backgroundColor:'#8d191b',borderRadius:3}
+  ]},options:{...BASE,plugins:{...BASE.plugins,tooltip:tipLine()},
+    scales:{x:{stacked:true,ticks:{font:{family:'Cairo',size:11},maxRotation:45}},y:{stacked:true,ticks:{font:{family:'Cairo'}}}}}});
+
+  document.getElementById('dailyTableBody').innerHTML=
+    [...b16Data].reverse().map((r,ri)=>{
+      const idx=b16Data.length-1-ri;
+      return`<tr>
+        <td><strong>${getCol(r,COL_DATE)}</strong></td>
+        <td>${num(getNum(r,COL_TOTAL))}</td>
+        <td><span class="badge badge-red">${num(getNum(r,COL_TODAY))}</span></td>
+        <td>${num(oldD[idx])}</td>
+        <td>${num(currD[idx])}</td>
+        <td>${num(stopD[idx])}</td>
+        <td>${num(nonD[idx])}</td>
+      </tr>`;
+    }).join('');
+}
+
+// ── MARKETING ───────────────────────────────────────────────
+function buildMarketing(){
+  const total=rawData.length;
+  const AGE_COL=['الفئة العمرية للطالب','الفئة العمرية'];
+  const SRC_COL=['من أين عرفت المعهد؟'];
+
+  const sc=countBy(rawData,r=>getCol(r,SRC_COL));
+  const se=Object.entries(sc).sort((a,b)=>b[1]-a[1]);
+
+  mkChart('sourceChart',{type:'bar',data:{labels:se.map(e=>e[0]),datasets:[{label:'عدد الطلاب',data:se.map(e=>e[1]),backgroundColor:PAL,borderRadius:6}]},
+    options:{...BASE,indexAxis:'y',plugins:{...BASE.plugins,legend:{display:false},tooltip:tipPct(total)},
+      scales:{x:{ticks:{font:{family:'Cairo'}}},y:{ticks:{font:{family:'Cairo',size:11}}}}}});
+
+  document.querySelector('#sourceTable tbody').innerHTML=se.map(e=>
+    `<tr><td>${e[0]}</td><td><strong>${num(e[1])}</strong></td><td><span class="badge badge-red">${pct(e[1],total)}</span></td></tr>`
+  ).join('');
+
+  const srcTop8=se.slice(0,8).map(e=>e[0]);
+  mkChart('sourceGenderChart',{type:'bar',data:{labels:srcTop8,datasets:[
+    {label:'ذكور',data:srcTop8.map(s=>rawData.filter(r=>getCol(r,SRC_COL)===s&&getCol(r,['الجنس (ذكر,أنثى)']).includes('ذكر')).length),backgroundColor:'#8d191b',borderRadius:4},
+    {label:'إناث',data:srcTop8.map(s=>rawData.filter(r=>getCol(r,SRC_COL)===s&&getCol(r,['الجنس (ذكر,أنثى)']).includes('أنث')).length),backgroundColor:'#c9a84c',borderRadius:4}
+  ]},options:{...BASE,indexAxis:'y',plugins:{...BASE.plugins,tooltip:tipPct(total)},
+    scales:{x:{ticks:{font:{family:'Cairo'}}},y:{ticks:{font:{family:'Cairo',size:10}}}}}});
+
+  const top5src=se.slice(0,5).map(e=>e[0]);
+  const ac2=countBy(rawData,r=>getCol(r,AGE_COL));
+  const top4age=topN(ac2,4).map(e=>e[0]);
+  mkChart('sourceAgeChart',{type:'bar',data:{labels:top5src,datasets:
+    top4age.map((age,i)=>({label:age,borderRadius:4,backgroundColor:PAL[i],
+      data:top5src.map(s=>rawData.filter(r=>getCol(r,SRC_COL)===s&&getCol(r,AGE_COL)===age).length)}))
+  },options:{...BASE,indexAxis:'y',plugins:{...BASE.plugins,tooltip:tipPct(total)},
+    scales:{x:{ticks:{font:{family:'Cairo'}}},y:{ticks:{font:{family:'Cairo',size:10}}}}}});
+}
+
+// ── RECOMMENDATIONS ─────────────────────────────────────────
+function buildRecommendations(){
+  const total=rawData.length;
+  const males=rawData.filter(r=>getCol(r,['الجنس (ذكر,أنثى)']).includes('ذكر')).length;
+  const females=total-males;
+  const cc=countBy(rawData,r=>getCol(r,['الدولة']));
+  const topC=topN(cc,1)[0];
+  const sc=countBy(rawData,r=>getCol(r,['من أين عرفت المعهد؟']));
+  const topS=topN(sc,2);
+  const nonBah=rawData.filter(r=>getCol(r,['الموقف من البهوتي']).includes('غير')).length;
+  const ac=countBy(rawData,r=>getCol(r,['الفئة العمرية للطالب','الفئة العمرية']));
+  const topA=topN(ac,1)[0];
+  const noWork=rawData.filter(r=>getCol(r,['هل تعمل بدوام؟']).includes('لا')).length;
+
+  document.getElementById('recommendations-content').innerHTML=`
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:28px">
+    <div style="background:var(--crimson);color:white;border-radius:16px;padding:24px;text-align:center">
+      <div style="font-size:40px;font-weight:900">${num(total)}</div><div style="font-size:14px;opacity:0.85;margin-top:4px">إجمالي المسجلين</div></div>
+    <div style="background:var(--gold);color:white;border-radius:16px;padding:24px;text-align:center">
+      <div style="font-size:40px;font-weight:900">${Object.keys(cc).length}</div><div style="font-size:14px;opacity:0.85;margin-top:4px">دولة مشاركة</div></div>
+    <div style="background:#2d6a4f;color:white;border-radius:16px;padding:24px;text-align:center">
+      <div style="font-size:40px;font-weight:900">${pct(nonBah,total)}</div><div style="font-size:14px;opacity:0.85;margin-top:4px">وجوه جديدة (خارج البهوتي)</div></div>
+  </div>
+  <h3 style="font-size:17px;font-weight:800;color:var(--crimson);margin-bottom:16px">📋 توصيات للإدارة</h3>
+  <div class="insights-grid" style="margin-bottom:28px">
+    <div class="insight-card"><div class="insight-icon red">🎯</div><div>
+      <div class="insight-title">الانتشار الجغرافي الواسع</div>
+      <div class="insight-text">البرنامج يستقطب طلاباً من ${Object.keys(cc).length} دولة، أبرزها ${topC?.[0]} بـ ${topC?.[1]} طالب. ادرس التوقيتات المناسبة للمحاضرات المباشرة.</div>
+    </div></div>
+    <div class="insight-card"><div class="insight-icon gold">⚖️</div><div>
+      <div class="insight-title">التوازن الجنسي</div>
+      <div class="insight-text">الذكور ${pct(males,total)} والإناث ${pct(females,total)}. ${pct(females,total)>'40%'?'نسبة الإناث ملحوظة وتستوجب التفكير في احتياجاتهن التعليمية.':'يمكن العمل على استقطاب شريحة الإناث بمحتوى مخصص.'}</div>
+    </div></div>
+    <div class="insight-card"><div class="insight-icon green">🔄</div><div>
+      <div class="insight-title">إعادة اكتساب المتوقفين</div>
+      <div class="insight-text">شريحة المتوقفين عن البهوتي فرصة ذهبية. ضع برنامج متابعة خاص للتحقق من استمراريتهم في التأهيل.</div>
+    </div></div>
+  </div>
+  <h3 style="font-size:17px;font-weight:800;color:var(--crimson);margin-bottom:16px">📣 توصيات للتسويق</h3>
+  <div class="insights-grid" style="margin-bottom:28px">
+    <div class="insight-card"><div class="insight-icon red">🏆</div><div>
+      <div class="insight-title">المصدر الأول: ${topS[0]?.[0]||'—'}</div>
+      <div class="insight-text">يمثل ${pct(topS[0]?.[1]||0,total)} من التسجيلات. كثّف الحضور والمحتوى وضخ ميزانية إضافية لتعظيم العائد.</div>
+    </div></div>
+    <div class="insight-card"><div class="insight-icon gold">📱</div><div>
+      <div class="insight-title">المصدر الثاني: ${topS[1]?.[0]||'—'}</div>
+      <div class="insight-text">يمثل ${pct(topS[1]?.[1]||0,total)} من التسجيلات. حسّن هذه القناة بمحتوى أكثر استهدافاً وانتظاماً.</div>
+    </div></div>
+    <div class="insight-card"><div class="insight-icon blue">🎯</div><div>
+      <div class="insight-title">الفئة الأكثر استجابةً: ${topA?.[0]||'—'}</div>
+      <div class="insight-text">تمثل ${pct(topA?.[1]||0,total)} من المسجلين. صمّم محتوى تسويقياً يخاطبها مباشرةً من حيث اللغة والمحتوى البصري.</div>
+    </div></div>
+  </div>
+  <h3 style="font-size:17px;font-weight:800;color:var(--crimson);margin-bottom:16px">⚙️ توصيات للتشغيل</h3>
+  <div class="insights-grid">
+    <div class="insight-card"><div class="insight-icon green">📅</div><div>
+      <div class="insight-title">جدولة تراعي ظروف الطلاب</div>
+      <div class="insight-text">${pct(noWork,total)} من الطلاب لا يعملون مما يتيح مرونة، لكن راعِ العاملين بدوام جزئي أو كلي بجداول مسائية أو نهاية أسبوع.</div>
+    </div></div>
+    <div class="insight-card"><div class="insight-icon red">🌍</div><div>
+      <div class="insight-title">فوارق التوقيت الجغرافية</div>
+      <div class="insight-text">وجود طلاب من ${Object.keys(cc).length} دولة يعني فوارق توقيت. سجّل المحاضرات وأتحها لاحقاً للمشاركة الأشمل.</div>
+    </div></div>
+    <div class="insight-card"><div class="insight-icon gold">📊</div><div>
+      <div class="insight-title">تابع اللوحة يومياً</div>
+      <div class="insight-text">ارصد ذروات التسجيل واربطها بالحملات التسويقية لقياس فعاليتها وتوجيه القرارات بشكل أدق.</div>
+    </div></div>
+  </div>`;
+}
+
+// ── INIT ────────────────────────────────────────────────────
+loadAll();
+setInterval(loadAll,10*60*1000);
+</script>
+</body>
+</html>
