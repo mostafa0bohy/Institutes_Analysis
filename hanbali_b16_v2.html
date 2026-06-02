@@ -312,7 +312,21 @@ async function loadAll(){
   setStatus('loading','جاري تحديث البيانات...');
   try{
     const [s13,b16]=await Promise.all([fetchCSV(URLS.sheet13),fetchCSV(URLS.batch16,1)]);
+    // 1. تحديد تاريخ اليوم لاستخدامه كمرجع
+const today = new Date();
+today.setHours(23, 59, 59, 999);
 
+// 2. فلترة بيانات الشيت اليومي لاستبعاد تواريخ المستقبل
+const validS13 = s13.filter(row => {
+    if (!row['التاريخ']) return false;
+    
+    // تحويل التاريخ من الشيت إلى صيغة يفهمها المتصفح (بافتراض الصيغة يوم/شهر/سنة)
+    let parts = row['التاريخ'].split('/');
+    let rowDate = new Date(parts[2], parts[1] - 1, parts[0]);
+    
+    // الاحتفاظ فقط بالتواريخ التي تسبق أو تساوي اليوم، والتي تحتوي على قيمة فعلية للمسجلين
+    return rowDate <= today && row['التاريخ'].trim() !== '';
+});
     // ----- تشخيص أعمدة الدفعة 16 -----
     if(b16.length){
       const cols=Object.keys(b16[0]);
