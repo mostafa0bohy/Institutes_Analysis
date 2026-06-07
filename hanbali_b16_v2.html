@@ -320,7 +320,20 @@ async function loadAll(){
     }
 
     rawData=s13.filter(r=>r['الاسم الكامل']&&r['الاسم الكامل'].trim());
-    b16Data=b16.filter(r=>r['التاريخ']&&r['التاريخ'].trim());
+
+    // فلتر الدفعة 16: خذ فقط الصفوف التي فيها إجمالي > 0 (يتجاهل الصفوف المستقبلية الفارغة)
+    const COL_TOTAL_NAMES=['إجمالي المسجلين الجدد (أنشأ حسابًا على الموقع)','إجمالي المسجلين الجدد','الإجمالي'];
+    b16Data=b16.filter(r=>{
+      if(!r['التاريخ']||!r['التاريخ'].trim()) return false;
+      const v=getNum(r,COL_TOTAL_NAMES);
+      return v>0;
+    });
+
+    // debug: اطبع قيم الموقف من البهوتي
+    if(rawData.length){
+      const bahVals=[...new Set(rawData.map(r=>r['الموقف من البهوتي']||'').filter(v=>v))];
+      console.log('قيم الموقف من البهوتي:', bahVals);
+    }
 
     console.log('rawData count:',rawData.length,'  b16Data count:',b16Data.length);
 
@@ -352,7 +365,11 @@ function buildOverview(){
   document.getElementById('kpi-female').textContent=pct(females,total);
   document.getElementById('kpi-female-sub').textContent=num(females)+' طالبة';
 
-  const nonBahouti=rawData.filter(r=>getCol(r,['الموقف من البهوتي']).includes('غير')).length;
+  // غير ملتحقين بالبهوتي — يبحث عن أي قيمة تحتوي على "غير" أو "لم" أو "جديد"
+  const nonBahouti=rawData.filter(r=>{
+    const v=getCol(r,['الموقف من البهوتي']);
+    return v.includes('غير') || v.includes('لم') || v.includes('جديد') || v==='لا';
+  }).length;
   document.getElementById('kpi-new').textContent=num(nonBahouti);
 
   // avg hours
@@ -367,17 +384,12 @@ function buildOverview(){
   });
   document.getElementById('kpi-hours').textContent=hc?(th/hc).toFixed(1):'—';
 
-  // today from b16
+  // today from b16 — آخر صف فعلي (بعد فلتر الفارغ والمستقبلي)
   if(b16Data.length){
     const last=b16Data[b16Data.length-1];
-    // try multiple possible column names
-    const todayNames=[
-      'مسجلين اليوم (أنشأ حسابًا على الموقع)',
-      'مسجلين اليوم',
-      'اليوم'
-    ];
-    const v=getCol(last,todayNames);
-    document.getElementById('kpi-today').textContent=v!=='غير محدد'?v:'—';
+    const COL_TODAY_OV=['مسجلين اليوم (أنشأ حسابًا على الموقع)','مسجلين اليوم','اليوم'];
+    const v=getNum(last,COL_TODAY_OV);
+    document.getElementById('kpi-today').textContent=v>0?num(v):'0';
   }
 
   // trend from b16
@@ -595,7 +607,7 @@ function buildRecommendations(){
   const topC=topN(cc,1)[0];
   const sc=countBy(rawData,r=>getCol(r,['من أين عرفت المعهد؟']));
   const topS=topN(sc,2);
-  const nonBah=rawData.filter(r=>getCol(r,['الموقف من البهوتي']).includes('غير')).length;
+  const nonBah=rawData.filter(r=>{const v=getCol(r,['الموقف من البهوتي']);return v.includes('غير')||v.includes('لم')||v.includes('جديد')||v==='لا';}).length;
   const ac=countBy(rawData,r=>getCol(r,['الفئة العمرية للطالب','الفئة العمرية']));
   const topA=topN(ac,1)[0];
   const noWork=rawData.filter(r=>getCol(r,['هل تعمل بدوام؟']).includes('لا')).length;
