@@ -368,7 +368,7 @@ function buildOverview(){
   // غير ملتحقين بالبهوتي — يبحث عن أي قيمة تحتوي على "غير" أو "لم" أو "جديد"
   const nonBahouti=rawData.filter(r=>{
     const v=getCol(r,['الموقف من البهوتي']);
-    return v.includes('غير') || v.includes('لم') || v.includes('جديد') || v==='لا';
+    return v.includes('من قبل') ;
   }).length;
   document.getElementById('kpi-new').textContent=num(nonBahouti);
 
