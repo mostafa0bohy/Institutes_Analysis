@@ -277,7 +277,7 @@ function mkChart(id,cfg){
 
 function tipPct(total){
   return{callbacks:{label(ctx){
-    const v=ctx.parsed.y??ctx.parsed.x??ctx.raw??0;
+    const v=ctx.parsed.x??ctx.parsed.y??ctx.raw??0;
     const p=total>0?((v/total)*100).toFixed(1):0;
     const lbl=ctx.dataset.label?ctx.dataset.label+': ':'';
     return ` ${lbl}${num(v)} طالب (${p}%)`;
@@ -285,7 +285,7 @@ function tipPct(total){
 }
 function tipLine(){
   return{callbacks:{label(ctx){
-    return ` ${ctx.dataset.label||''}: ${num(ctx.parsed.y??0)}`;
+    return ` ${ctx.dataset.label||''}: ${num(ctx.parsed.x??0)}`;
   }}};
 }
 
