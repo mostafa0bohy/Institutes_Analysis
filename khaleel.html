@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>لوحة المؤشرات الحية | معهد العلامة خليل 2026</title>
+<title>لوحة المؤشرات الحيةة | معهد العلامة خليل 2026</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
 <style>
@@ -57,14 +57,7 @@ body{font-family:'Cairo',sans-serif;background:var(--cream);color:var(--text-pri
 .kpi-card.tl .kpi-value{color:var(--teal);}
 .kpi-card.pu .kpi-value{color:var(--purple);}
 .kpi-sub{font-size:12px;color:var(--text-muted);}
-.kpi-card.gr::before{background:var(--green);}
-.kpi-card.ac::before{background:#e8a020;}
-.kpi-card.tl::before{background:#6d4c8e;}
-.kpi-card.pu::before{background:#0d6e6e;}
-.kpi-card.gr .kpi-value{color:var(--green);}
-.kpi-card.ac .kpi-value{color:#a07010;}
-.kpi-card.tl .kpi-value{color:#6d4c8e;}
-.kpi-card.pu .kpi-value{color:#0d6e6e;}
+.kpi-icon{position:absolute;bottom:10px;left:14px;font-size:28px;opacity:0.07;}
 .charts-grid{display:grid;grid-template-columns:repeat(12,1fr);gap:18px;margin-bottom:22px;}
 .chart-card{background:var(--card);border-radius:16px;padding:20px;border:1px solid var(--border);box-shadow:var(--shadow);}
 .col-12{grid-column:span 12;}.col-8{grid-column:span 8;}.col-7{grid-column:span 7;}
@@ -118,7 +111,7 @@ body{font-family:'Cairo',sans-serif;background:var(--cream);color:var(--text-pri
     </div>
     <div class="header-status">
       <div class="status-dot loading" id="statusDot"></div>
-      <span id="statusText">جارٍ تحميل البيانات...</span>
+      <span id="statusText">جاري تحميل البيانات...</span>
     </div>
   </div>
 </div>
@@ -126,18 +119,16 @@ body{font-family:'Cairo',sans-serif;background:var(--cream);color:var(--text-pri
 <div class="tabs-bar">
   <button class="tab-btn active" onclick="switchTab('overview')"      id="tab-overview">🏠 نظرة عامة</button>
   <button class="tab-btn"        onclick="switchTab('conversion')"    id="tab-conversion">🔄 قمع التحويل</button>
-  <button class="tab-btn"        onclick="switchTab('daily')"         id="tab-daily">📅 المتابعة اليومية</button>
-  <button class="tab-btn"        onclick="switchTab('demographics')"  id="tab-demographics">👥 الفئات والجنس</button>
   <button class="tab-btn"        onclick="switchTab('revenue')"       id="tab-revenue">💰 الإيرادات</button>
   <button class="tab-btn"        onclick="switchTab('payments')"      id="tab-payments">💳 طرق الدفع</button>
-  <button class="tab-btn"        onclick="switchTab('students')"      id="tab-students">📋 المتقدمون</button>
+  <button class="tab-btn"        onclick="switchTab('students')"      id="tab-students">👥 المتقدمون</button>
   <button class="tab-btn"        onclick="switchTab('marketing')"     id="tab-marketing">📣 التسويق</button>
   <button class="tab-btn"        onclick="switchTab('recommendations')" id="tab-recommendations">💡 التوصيات</button>
 </div>
 
 <div class="container">
   <div class="update-bar">
-    <div class="update-info"><span>🕐</span><span id="lastUpdate">جارٍ التحميل...</span></div>
+    <div class="update-info"><span>🕐</span><span id="lastUpdate">جاري التحميل...</span></div>
     <button class="refresh-btn" onclick="loadAll()">🔄 تحديث البيانات</button>
   </div>
 
@@ -146,16 +137,16 @@ body{font-family:'Cairo',sans-serif;background:var(--cream);color:var(--text-pri
   <div class="section-header"><h2>🏠 النظرة <span>العامة</span></h2></div>
   <div class="kpi-grid">
     <div class="kpi-card"><div class="kpi-label">المتقدمون</div><div class="kpi-value" id="kpi-applicants">—</div><div class="kpi-sub">إجمالي طلبات التسجيل</div><div class="kpi-icon">📋</div></div>
-    <div class="kpi-card gr"><div class="kpi-label">الطلاب الفعليون</div><div class="kpi-value" id="kpi-students">—</div><div class="kpi-sub">أتموا التسجيل ودفعوا الرسوم</div><div class="kpi-icon">👥</div></div>
-    <div class="kpi-card ac"><div class="kpi-label">معدل التحويل</div><div class="kpi-value" id="kpi-conversion">—</div><div class="kpi-sub">من المتقدم إلى الطالب الفعلي</div><div class="kpi-icon">🔄</div></div>
-    <div class="kpi-card tl"><div class="kpi-label">إجمالي الإيرادات</div><div class="kpi-value" id="kpi-revenue">—</div><div class="kpi-sub">كاش وأقساط محصَّلة</div><div class="kpi-icon">💰</div></div>
-    <div class="kpi-card pu"><div class="kpi-label">متوسط الدفع للطالب</div><div class="kpi-value" id="kpi-avgpay">—</div><div class="kpi-sub">لكل طالب مدفوع عنه</div><div class="kpi-icon">📊</div></div>
-    <div class="kpi-card"><div class="kpi-label">الإعفاء الكلي</div><div class="kpi-value" id="kpi-exempt">—</div><div class="kpi-sub">طلاب حصلوا على إعفاء كامل</div><div class="kpi-icon">🎁</div></div>
+    <div class="kpi-card gr"><div class="kpi-label">الطلاب الفعليون</div><div class="kpi-value" id="kpi-students">—</div><div class="kpi-sub">التحقوا ودفعوا</div><div class="kpi-icon">👥</div></div>
+    <div class="kpi-card ac"><div class="kpi-label">معدل التحويل</div><div class="kpi-value" id="kpi-conversion">—</div><div class="kpi-sub">من المتقدم للطالب</div><div class="kpi-icon">🔄</div></div>
+    <div class="kpi-card tl"><div class="kpi-label">إجمالي الإيرادات</div><div class="kpi-value" id="kpi-revenue">—</div><div class="kpi-sub">كاش + أقساط محصّلة</div><div class="kpi-icon">💰</div></div>
+    <div class="kpi-card pu"><div class="kpi-label">متوسط الدفع للطالب</div><div class="kpi-value" id="kpi-avgpay">—</div><div class="kpi-sub">لكل طالب دافع</div><div class="kpi-icon">📊</div></div>
+    <div class="kpi-card"><div class="kpi-label">الإعفاء الكلي</div><div class="kpi-value" id="kpi-exempt">—</div><div class="kpi-sub">طلاب معفيون من الرسوم</div><div class="kpi-icon">🎁</div></div>
   </div>
   <div class="charts-grid">
     <div class="chart-card col-8">
       <div class="chart-title">الإيرادات الأسبوعية</div>
-      <div class="chart-subtitle">إجمالي المحصَّل (كاش وأقساط) أسبوعاً بأسبوع</div>
+      <div class="chart-subtitle">إجمالي المحصّل (كاش + أقساط) أسبوعاً بأسبوع</div>
       <div class="chart-wrap"><canvas id="overviewRevenueChart"></canvas></div>
     </div>
     <div class="chart-card col-4">
@@ -167,12 +158,12 @@ body{font-family:'Cairo',sans-serif;background:var(--cream);color:var(--text-pri
   <div class="charts-grid">
     <div class="chart-card col-6">
       <div class="chart-title">الإيرادات حسب الدولة — أبرز 10</div>
-      <div class="chart-subtitle">إجمالي الإيرادات المحصَّلة بالدولار</div>
+      <div class="chart-subtitle">إجمالي المبالغ المحصّلة بالدولار</div>
       <div class="chart-wrap"><canvas id="overviewCountryRevChart"></canvas></div>
     </div>
     <div class="chart-card col-6">
       <div class="chart-title">التوزيع الجغرافي للمتقدمين — أبرز 10 دول</div>
-      <div class="chart-subtitle">الدول التي ينتمي إليها المتقدمون</div>
+      <div class="chart-subtitle">بلد إقامة المتقدمين</div>
       <div class="chart-wrap"><canvas id="overviewCountryAppChart"></canvas></div>
     </div>
   </div>
@@ -182,7 +173,7 @@ body{font-family:'Cairo',sans-serif;background:var(--cream);color:var(--text-pri
 <div class="section" id="section-conversion">
   <div class="section-header"><h2>🔄 قمع <span>التحويل</span></h2></div>
   <div class="kpi-grid">
-    <div class="kpi-card"><div class="kpi-label">المتقدمون</div><div class="kpi-value" id="c-applicants">—</div><div class="kpi-sub">تقدّموا بطلب تسجيل</div><div class="kpi-icon">📋</div></div>
+    <div class="kpi-card"><div class="kpi-label">المتقدمون</div><div class="kpi-value" id="c-applicants">—</div><div class="kpi-sub">ملأوا استمارة التسجيل</div><div class="kpi-icon">📋</div></div>
     <div class="kpi-card ac"><div class="kpi-label">دفعوا كاش</div><div class="kpi-value" id="c-cash">—</div><div class="kpi-sub" id="c-cash-pct">—</div><div class="kpi-icon">💵</div></div>
     <div class="kpi-card gr"><div class="kpi-label">دفعوا قسط أول</div><div class="kpi-value" id="c-inst">—</div><div class="kpi-sub" id="c-inst-pct">—</div><div class="kpi-icon">📅</div></div>
     <div class="kpi-card tl"><div class="kpi-label">معفيون كلياً</div><div class="kpi-value" id="c-exempt">—</div><div class="kpi-sub" id="c-exempt-pct">—</div><div class="kpi-icon">🎁</div></div>
@@ -191,213 +182,60 @@ body{font-family:'Cairo',sans-serif;background:var(--cream);color:var(--text-pri
   <div class="charts-grid">
     <div class="chart-card col-6">
       <div class="chart-title">قمع التحويل المرئي</div>
-      <div class="chart-subtitle">من مرحلة التقدم حتى الالتحاق الفعلي</div>
+      <div class="chart-subtitle">من التقدم للالتحاق الفعلي</div>
       <div id="funnelViz"></div>
     </div>
     <div class="chart-card col-6">
       <div class="chart-title">معدلات التحويل</div>
-      <div class="chart-subtitle">النسب المئوية لكل مرحلة من مراحل التحويل</div>
+      <div class="chart-subtitle">النسب المئوية لكل مرحلة</div>
       <div class="chart-wrap"><canvas id="conversionRatesChart"></canvas></div>
     </div>
   </div>
   <div class="charts-grid">
     <div class="chart-card col-12">
       <div class="chart-title">تحليل قمع التحويل</div>
-      <div class="chart-subtitle">تفصيل الأعداد والنسب لكل مرحلة</div>
+      <div class="chart-subtitle">فهم الأعداد والنسب بشكل أعمق</div>
       <table class="data-table">
         <thead><tr><th>المرحلة</th><th>العدد</th><th>% من المتقدمين</th><th>% من الطلاب</th><th>الحالة</th></tr></thead>
         <tbody id="funnelTableBody"></tbody>
       </table>
     </div>
   </div>
-  <div class="charts-grid">
-    <div class="chart-card col-6">
-      <div class="chart-title">التحويل حسب الجنس</div>
-      <div class="chart-subtitle">من تحوّل لطالب فعلي من كل جنس — بالعدد والنسبة</div>
-      <div class="chart-wrap"><canvas id="convGenderChart"></canvas></div>
-    </div>
-    <div class="chart-card col-6">
-      <div class="chart-title">التحويل حسب الفئة العمرية</div>
-      <div class="chart-subtitle">أي فئة عمرية أعلى معدل تحويل؟</div>
-      <div class="chart-wrap"><canvas id="convAgeChart"></canvas></div>
-    </div>
-  </div>
-  <div class="charts-grid">
-    <div class="chart-card col-6">
-      <div class="chart-title">التحويل حسب حالة الطالب</div>
-      <div class="chart-subtitle">هل الطلاب الجدد أم القدامى يتحولون أكثر؟</div>
-      <div class="chart-wrap"><canvas id="convStatusChart"></canvas></div>
-    </div>
-    <div class="chart-card col-6">
-      <div class="chart-title">التحويل حسب المصدر التسويقي</div>
-      <div class="chart-subtitle">أي قناة تجلب أعلى نسبة تحويل فعلي؟</div>
-      <div class="chart-wrap"><canvas id="convSourceChart"></canvas></div>
-    </div>
-  </div>
 </div>
 
-<!-- ══════════════ TAB: DAILY ══════════════ -->
-<div class="section" id="section-daily">
-  <div class="section-header"><h2>📅 المتابعة <span>اليومية</span></h2></div>
-  <div class="kpi-grid">
-    <div class="kpi-card"><div class="kpi-label">إجمالي المتقدمين</div><div class="kpi-value" id="d-total-app">—</div><div class="kpi-sub">حتى آخر تحديث</div><div class="kpi-icon">📋</div></div>
-    <div class="kpi-card gr"><div class="kpi-label">إجمالي الطلاب</div><div class="kpi-value" id="d-total-stu">—</div><div class="kpi-sub">دفعوا والتحقوا</div><div class="kpi-icon">✅</div></div>
-    <div class="kpi-card ac"><div class="kpi-label">أعلى يوم تسجيلاً</div><div class="kpi-value" id="d-peak-reg">—</div><div class="kpi-sub" id="d-peak-reg-date">—</div><div class="kpi-icon">🏆</div></div>
-    <div class="kpi-card tl"><div class="kpi-label">متوسط التسجيل اليومي</div><div class="kpi-value" id="d-avg-reg">—</div><div class="kpi-sub">متقدم/يوم</div><div class="kpi-icon">📊</div></div>
-    <div class="kpi-card pu"><div class="kpi-label">أعلى يوم دفعاً</div><div class="kpi-value" id="d-peak-pay">—</div><div class="kpi-sub" id="d-peak-pay-date">—</div><div class="kpi-icon">💰</div></div>
-  </div>
-  <div class="charts-grid">
-    <div class="chart-card col-12">
-      <div class="chart-title">منحنى التسجيل اليومي التراكمي — المتقدمون</div>
-      <div class="chart-subtitle">إجمالي المتقدمين يوماً بيوم منذ فتح باب التسجيل</div>
-      <div class="chart-wrap"><canvas id="dailyAppCumChart" style="max-height:250px"></canvas></div>
-    </div>
-  </div>
-  <div class="charts-grid">
-    <div class="chart-card col-6">
-      <div class="chart-title">التسجيل اليومي (غير تراكمي)</div>
-      <div class="chart-subtitle">عدد المتقدمين الجدد كل يوم — اليوم الذروة مميز</div>
-      <div class="chart-wrap"><canvas id="dailyAppBarChart" style="max-height:240px"></canvas></div>
-    </div>
-    <div class="chart-card col-6">
-      <div class="chart-title">الدفعات اليومية (المتحولون للطلاب)</div>
-      <div class="chart-subtitle">عدد من دفع كل يوم من المتقدمين</div>
-      <div class="chart-wrap"><canvas id="dailyPayBarChart" style="max-height:240px"></canvas></div>
-    </div>
-  </div>
-  <div class="charts-grid">
-    <div class="chart-card col-12">
-      <div class="chart-title">مقارنة: التسجيل اليومي vs الدفع اليومي</div>
-      <div class="chart-subtitle">العلاقة بين أيام التسجيل وأيام الدفع — يكشف وقت الذروة الفعلية</div>
-      <div class="chart-wrap"><canvas id="dailyCompareChart" style="max-height:260px"></canvas></div>
-    </div>
-  </div>
-  <div class="chart-card">
-    <div class="chart-title">جدول التسجيل اليومي التفصيلي</div>
-    <div style="overflow-x:auto;margin-top:14px">
-      <table class="data-table">
-        <thead><tr><th>التاريخ</th><th>متقدمون جدد</th><th>الإجمالي التراكمي</th><th>دفعات اليوم</th></tr></thead>
-        <tbody id="dailyTableBody"></tbody>
-      </table>
-    </div>
-  </div>
-</div>
-
-<!-- ══════════════ TAB: DEMOGRAPHICS ══════════════ -->
-<div class="section" id="section-demographics">
-  <div class="section-header"><h2>👥 الفئات العمرية والجنس <span>وحالة الطالب</span></h2></div>
-
-  <!-- KPIs -->
-  <div class="kpi-grid">
-    <div class="kpi-card"><div class="kpi-label">ذكور (متقدمون)</div><div class="kpi-value" id="dem-male-app">—</div><div class="kpi-sub" id="dem-male-app-n">—</div><div class="kpi-icon">🧑</div></div>
-    <div class="kpi-card ac"><div class="kpi-label">إناث (متقدمات)</div><div class="kpi-value" id="dem-female-app">—</div><div class="kpi-sub" id="dem-female-app-n">—</div><div class="kpi-icon">👩</div></div>
-    <div class="kpi-card gr"><div class="kpi-label">ذكور (طلاب فعليون)</div><div class="kpi-value" id="dem-male-stu">—</div><div class="kpi-sub" id="dem-male-stu-n">—</div><div class="kpi-icon">🧑‍🎓</div></div>
-    <div class="kpi-card tl"><div class="kpi-label">إناث (طالبات فعليات)</div><div class="kpi-value" id="dem-female-stu">—</div><div class="kpi-sub" id="dem-female-stu-n">—</div><div class="kpi-icon">👩‍🎓</div></div>
-    <div class="kpi-card pu"><div class="kpi-label">أكبر فئة عمرية</div><div class="kpi-value" id="dem-top-age" style="font-size:18px;padding-top:4px">—</div><div class="kpi-sub" id="dem-top-age-n">—</div><div class="kpi-icon">📊</div></div>
-  </div>
-
-  <!-- Gender: Applicants vs Students -->
-  <div class="charts-grid">
-    <div class="chart-card col-6">
-      <div class="chart-title">الجنس — المتقدمون</div>
-      <div class="chart-subtitle">توزيع الذكور والإناث بين إجمالي المتقدمين</div>
-      <div class="chart-wrap"><canvas id="genderAppChart"></canvas></div>
-    </div>
-    <div class="chart-card col-6">
-      <div class="chart-title">الجنس — الطلاب الفعليون</div>
-      <div class="chart-subtitle">توزيع الذكور والإناث بين من دفع والتحق</div>
-      <div class="chart-wrap"><canvas id="genderStuChart"></canvas></div>
-    </div>
-  </div>
-
-  <!-- Age: Applicants vs Students -->
-  <div class="charts-grid">
-    <div class="chart-card col-6">
-      <div class="chart-title">الفئات العمرية — المتقدمون</div>
-      <div class="chart-subtitle">توزيع الفئات العمرية بين إجمالي المتقدمين</div>
-      <div class="chart-wrap"><canvas id="ageAppChart"></canvas></div>
-    </div>
-    <div class="chart-card col-6">
-      <div class="chart-title">الفئات العمرية — الطلاب الفعليون</div>
-      <div class="chart-subtitle">توزيع الفئات العمرية بين من دفع والتحق</div>
-      <div class="chart-wrap"><canvas id="ageStuChart"></canvas></div>
-    </div>
-  </div>
-
-  <!-- Age × Gender comparison -->
-  <div class="charts-grid">
-    <div class="chart-card col-8">
-      <div class="chart-title">الفئة العمرية × الجنس (المتقدمون)</div>
-      <div class="chart-subtitle">مقارنة الذكور والإناث في كل فئة عمرية</div>
-      <div class="chart-wrap"><canvas id="ageGenderChart"></canvas></div>
-    </div>
-    <div class="chart-card col-4">
-      <div class="chart-title">معدل تحويل الجنس</div>
-      <div class="chart-subtitle">من تحول لطالب فعلي من كل جنس؟</div>
-      <div class="chart-wrap"><canvas id="genderConvChart"></canvas></div>
-    </div>
-  </div>
-
-  <!-- Student status -->
-  <div class="charts-grid">
-    <div class="chart-card col-6">
-      <div class="chart-title">حالة الطالب — المتقدمون</div>
-      <div class="chart-subtitle">خبرة المتقدمين السابقة مع معاهد تميز</div>
-      <div class="chart-wrap"><canvas id="statusAppChart"></canvas></div>
-    </div>
-    <div class="chart-card col-6">
-      <div class="chart-title">حالة الطالب — الطلاب الفعليون</div>
-      <div class="chart-subtitle">خبرة من التحق فعلياً مع معاهد تميز</div>
-      <div class="chart-wrap"><canvas id="statusStuChart"></canvas></div>
-    </div>
-  </div>
-
-  <!-- Detailed conversion table by age & gender -->
-  <div class="charts-grid">
-    <div class="chart-card col-12">
-      <div class="chart-title">معدل التحويل تفصيلياً حسب الفئة العمرية</div>
-      <div class="chart-subtitle">كم تحوّل للطالب الفعلي من كل فئة؟</div>
-      <div style="overflow-x:auto;margin-top:14px">
-        <table class="data-table">
-          <thead><tr><th>الفئة العمرية</th><th>المتقدمون</th><th>الطلاب الفعليون</th><th>معدل التحويل</th><th>ذكور</th><th>إناث</th></tr></thead>
-          <tbody id="ageConvTableBody"></tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-</div>
+<!-- ══════════════ TAB 3: REVENUE ══════════════ -->
 <div class="section" id="section-revenue">
   <div class="section-header"><h2>💰 تحليل <span>الإيرادات</span></h2></div>
   <div class="kpi-grid">
-    <div class="kpi-card tl"><div class="kpi-label">إجمالي الإيرادات</div><div class="kpi-value" id="r-total">—</div><div class="kpi-sub">كاش وأقساط</div><div class="kpi-icon">💰</div></div>
+    <div class="kpi-card tl"><div class="kpi-label">إجمالي الإيرادات</div><div class="kpi-value" id="r-total">—</div><div class="kpi-sub">كاش + أقساط</div><div class="kpi-icon">💰</div></div>
     <div class="kpi-card"><div class="kpi-label">إيرادات الكاش</div><div class="kpi-value" id="r-cash">—</div><div class="kpi-sub" id="r-cash-pct">—</div><div class="kpi-icon">💵</div></div>
     <div class="kpi-card ac"><div class="kpi-label">إيرادات الأقساط</div><div class="kpi-value" id="r-inst">—</div><div class="kpi-sub" id="r-inst-pct">—</div><div class="kpi-icon">📅</div></div>
-    <div class="kpi-card gr"><div class="kpi-label">متوسط الدفعة</div><div class="kpi-value" id="r-avg">—</div><div class="kpi-sub">لكل طالب مدفوع عنه</div><div class="kpi-icon">📊</div></div>
+    <div class="kpi-card gr"><div class="kpi-label">متوسط الدفعة</div><div class="kpi-value" id="r-avg">—</div><div class="kpi-sub">لكل طالب دافع</div><div class="kpi-icon">📊</div></div>
     <div class="kpi-card pu"><div class="kpi-label">أعلى أسبوع إيراداً</div><div class="kpi-value" id="r-peak">—</div><div class="kpi-sub" id="r-peak-week">—</div><div class="kpi-icon">🏆</div></div>
   </div>
   <div class="charts-grid">
     <div class="chart-card col-8">
-      <div class="chart-title">الإيرادات الأسبوعية (كاش وأقساط)</div>
-      <div class="chart-subtitle">إجمالي المبالغ المحصَّلة بالدولار أسبوعاً بأسبوع</div>
+      <div class="chart-title">الإيرادات الأسبوعية (كاش + أقساط)</div>
+      <div class="chart-subtitle">المبالغ المحصّلة أسبوعاً بأسبوع بالدولار</div>
       <div class="chart-wrap"><canvas id="revenueWeeklyChart"></canvas></div>
     </div>
     <div class="chart-card col-4">
       <div class="chart-title">توزيع الإيرادات</div>
-      <div class="chart-subtitle">نسبة الكاش مقابل الأقساط</div>
+      <div class="chart-subtitle">كاش مقابل أقساط</div>
       <div class="chart-wrap"><canvas id="revenueSplitChart"></canvas></div>
     </div>
   </div>
   <div class="charts-grid">
     <div class="chart-card col-7">
       <div class="chart-title">الإيرادات حسب الدولة</div>
-      <div class="chart-subtitle">أعلى 10 دول من حيث الإيرادات المحصَّلة</div>
+      <div class="chart-subtitle">أعلى 10 دول في المبالغ المحصّلة</div>
       <div class="chart-wrap"><canvas id="revenueCountryChart"></canvas></div>
     </div>
     <div class="chart-card col-5">
       <div class="chart-title">جدول الإيرادات الأسبوعي</div>
       <div style="overflow-y:auto;max-height:280px;margin-top:8px;">
         <table class="data-table">
-          <thead><tr><th>الأسبوع</th><th>الفترة</th><th>المحصَّل ($)</th></tr></thead>
+          <thead><tr><th>الأسبوع</th><th>الفترة</th><th>المحصّل ($)</th></tr></thead>
           <tbody id="weeklyRevTableBody"></tbody>
         </table>
       </div>
@@ -449,11 +287,23 @@ body{font-family:'Cairo',sans-serif;background:var(--cream);color:var(--text-pri
 <div class="section" id="section-students">
   <div class="section-header"><h2>👥 تحليل <span>شريحة المتقدمين</span></h2></div>
   <div class="kpi-grid">
-    <div class="kpi-card"><div class="kpi-label">إجمالي المتقدمين</div><div class="kpi-value" id="s-total">—</div><div class="kpi-sub">طالب وطالبة</div><div class="kpi-icon">👥</div></div>
+    <div class="kpi-card"><div class="kpi-label">إجمالي المتقدمين</div><div class="kpi-value" id="s-total">—</div><div class="kpi-sub">متقدم ومتقدمة</div><div class="kpi-icon">👥</div></div>
     <div class="kpi-card ac"><div class="kpi-label">الذكور</div><div class="kpi-value" id="s-male">—</div><div class="kpi-sub" id="s-male-sub">—</div><div class="kpi-icon">🧑</div></div>
     <div class="kpi-card gr"><div class="kpi-label">الإناث</div><div class="kpi-value" id="s-female">—</div><div class="kpi-sub" id="s-female-sub">—</div><div class="kpi-icon">👩</div></div>
     <div class="kpi-card tl"><div class="kpi-label">عدد الدول</div><div class="kpi-value" id="s-countries">—</div><div class="kpi-sub">دولة مشاركة</div><div class="kpi-icon">🌍</div></div>
-    <div class="kpi-card pu"><div class="kpi-label">أكثر مستوى تعليمي</div><div class="kpi-value" id="s-topedu" style="font-size:20px;padding-top:4px">—</div><div class="kpi-sub" id="s-topedu-sub">—</div><div class="kpi-icon">🎓</div></div>
+    <div class="kpi-card pu"><div class="kpi-label">أكثر فئة عمرية</div><div class="kpi-value" id="s-topage" style="font-size:22px;padding-top:4px">—</div><div class="kpi-sub" id="s-topage-sub">—</div><div class="kpi-icon">🎂</div></div>
+  </div>
+  <div class="charts-grid">
+    <div class="chart-card col-6">
+      <div class="chart-title">الفئات العمرية</div>
+      <div class="chart-subtitle">توزيع المتقدمين حسب العمر</div>
+      <div class="chart-wrap"><canvas id="ageChart"></canvas></div>
+    </div>
+    <div class="chart-card col-6">
+      <div class="chart-title">توزيع الجنس</div>
+      <div class="chart-subtitle">ذكور وإناث</div>
+      <div class="chart-wrap"><canvas id="genderChart"></canvas></div>
+    </div>
   </div>
   <div class="charts-grid">
     <div class="chart-card col-6">
@@ -470,13 +320,27 @@ body{font-family:'Cairo',sans-serif;background:var(--cream);color:var(--text-pri
   <div class="charts-grid">
     <div class="chart-card col-6">
       <div class="chart-title">الساعات اليومية المتاحة</div>
-      <div class="chart-subtitle">كم ساعة يستطيع المتقدم تخصيصها للدراسة يومياً؟</div>
+      <div class="chart-subtitle">كم ساعة يستطيع المتقدم أن يخصص يومياً؟</div>
       <div class="chart-wrap"><canvas id="hoursChart"></canvas></div>
     </div>
     <div class="chart-card col-6">
       <div class="chart-title">المشاركة في برامج شرعية أخرى</div>
-      <div class="chart-subtitle">هل يشارك المتقدم في برامج شرعية موازية؟</div>
+      <div class="chart-subtitle">هل يتابع المتقدم برامج موازية؟</div>
       <div class="chart-wrap"><canvas id="otherProgramsChart"></canvas></div>
+    </div>
+  </div>
+  <div class="charts-grid">
+    <div class="chart-card col-12">
+      <div class="chart-title">حالة الطالب في معاهد المركز الأخرى</div>
+      <div class="chart-subtitle">أبرز 10 حالات — تصف علاقة المتقدم ببقية معاهد وبرامج مركز تميز</div>
+      <div class="chart-wrap"><canvas id="statusChart" style="max-height:300px"></canvas></div>
+    </div>
+  </div>
+  <div class="charts-grid">
+    <div class="chart-card col-12">
+      <div class="chart-title">الأعداد اليومية للمتقدمين</div>
+      <div class="chart-subtitle">عدد طلبات التسجيل الجديدة في كل يوم</div>
+      <div class="chart-wrap"><canvas id="dailyCountChart" style="max-height:280px"></canvas></div>
     </div>
   </div>
   <div class="charts-grid">
@@ -515,12 +379,12 @@ body{font-family:'Cairo',sans-serif;background:var(--cream);color:var(--text-pri
   <div class="charts-grid">
     <div class="chart-card col-6">
       <div class="chart-title">مصدر التسجيل × الجنس</div>
-      <div class="chart-subtitle">هل تختلف مصادر التسجيل بين الذكور والإناث؟</div>
+      <div class="chart-subtitle">هل يختلف المصدر بين الذكور والإناث؟</div>
       <div class="chart-wrap"><canvas id="sourceGenderChart"></canvas></div>
     </div>
     <div class="chart-card col-6">
       <div class="chart-title">منحنى التسجيل التراكمي</div>
-      <div class="chart-subtitle">إجمالي المتقدمين التراكمي يوماً بيوم</div>
+      <div class="chart-subtitle">إجمالي المتقدمين يوماً بيوم</div>
       <div class="chart-wrap"><canvas id="trendChart"></canvas></div>
     </div>
   </div>
@@ -597,6 +461,7 @@ function mkChart(id,cfg){
   const c=document.getElementById(id);
   if(c)charts[id]=new Chart(c,cfg);
 }
+Chart.defaults.locale='en-US';
 const BASE={responsive:true,maintainAspectRatio:false,
   plugins:{legend:{labels:{font:{family:'Cairo',size:12},color:'#333'}},
     tooltip:{titleFont:{family:'Cairo'},bodyFont:{family:'Cairo'}}}};
@@ -646,34 +511,13 @@ async function loadAll(){
     appData = app.filter(r => getCol(r,['الدفعة'])===TARGET_BATCH && getCol(r,['الاسم'])!=='غير محدد');
     payData = pay.filter(r => getCol(r,['الدفعة'])===TARGET_BATCH);
 
-    console.log('Applicants rows:', appData.length, '| Payments rows:', payData.length);
-    if(appData.length){
-      console.log('APP COLS:', Object.keys(appData[0]));
-      console.log('APP ROW1:', JSON.stringify(appData[0]));
-    }
-    if(payData.length){
-      console.log('PAY COLS:', Object.keys(payData[0]));
-      console.log('PAY ROW1:', JSON.stringify(payData[0]));
-    }
-    // debug: unique values for key columns
-    const ages = [...new Set(appData.map(r=>r['الفئة العمرية']||'').filter(v=>v))];
-    console.log('AGE VALUES:', ages.slice(0,10));
-    const genders = [...new Set(appData.map(r=>r['النوع']||'').filter(v=>v))];
-    console.log('GENDER VALUES:', genders);
-    const payDates = [...new Set(payData.map(r=>Object.keys(r).find(k=>k.includes('تاريخ'))||''))];
-    console.log('DATE COLS IN PAY:', [...new Set(payData.flatMap(r=>Object.keys(r).filter(k=>k.includes('تاريخ'))))]);
-    const acadIds = [...new Set(payData.map(r=>Object.keys(r).find(k=>k.includes('الرقم'))||''))];
-    console.log('ID COLS IN PAY:', [...new Set(payData.flatMap(r=>Object.keys(r).filter(k=>k.includes('الرقم'))))]);
-    const acadIdsApp = [...new Set(appData.flatMap(r=>Object.keys(r).filter(k=>k.includes('الرقم'))))];
-    console.log('ID COLS IN APP:', acadIdsApp);
+    console.log('Applicants (batch5):', appData.length, 'Payments (batch5):', payData.length);
 
-    const now=new Date().toLocaleString('ar-EG');
+    const now=new Date().toLocaleString('en-GB');
     document.getElementById('lastUpdate').textContent='آخر تحديث: '+now;
 
     buildOverview();
     buildConversion();
-    buildDaily();
-    buildDemographics();
     buildRevenue();
     buildPayments();
     buildStudents();
@@ -744,8 +588,6 @@ function buildConversion(){
   const exemptStudents = new Set(payData.filter(r=>getCol(r,['نظام السداد'])==='إعفاء كلي').map(r=>getCol(r,['الرقم الأكاديمي']))).size;
   const firstPayments = payData.filter(r=>['كاش','قسط أول'].includes(getCol(r,['نوع  القسط'])));
   const totalStudents = new Set([...firstPayments.map(r=>getCol(r,['الرقم الأكاديمي'])), ...payData.filter(r=>getCol(r,['نظام السداد'])==='إعفاء كلي').map(r=>getCol(r,['الرقم الأكاديمي']))]).size;
-  // set of paid academic IDs for cross-analysis
-  const paidIds = new Set([...firstPayments.map(r=>getCol(r,['الرقم الأكاديمي'])), ...payData.filter(r=>getCol(r,['نظام السداد'])==='إعفاء كلي').map(r=>getCol(r,['الرقم الأكاديمي']))]);
 
   document.getElementById('c-applicants').textContent = num(totalApp);
   document.getElementById('c-cash').textContent = num(cashStudents);
@@ -789,259 +631,11 @@ function buildConversion(){
     <tr><td>📅 دفعوا قسطاً أول</td><td><strong>${num(instStudents)}</strong></td><td><span class="badge badge-gold">${pct(instStudents,totalApp)}</span></td><td><span class="badge badge-gold">${pct(instStudents,totalStudents)}</span></td><td>طلاب بأقساط</td></tr>
     <tr><td>🎁 إعفاء كلي</td><td><strong>${num(exemptStudents)}</strong></td><td><span class="badge badge-red">${pct(exemptStudents,totalApp)}</span></td><td><span class="badge badge-red">${pct(exemptStudents,totalStudents)}</span></td><td>منح دراسية</td></tr>
     <tr style="font-weight:700"><td>✅ إجمالي الطلاب</td><td><strong>${num(totalStudents)}</strong></td><td><span class="badge badge-blue">${pct(totalStudents,totalApp)}</span></td><td><span class="badge badge-blue">100%</span></td><td>ملتحقون فعلياً</td></tr>
-    <tr style="color:#999"><td>❌ لم يكملوا</td><td><strong>${num(notConverted)}</strong></td><td><span class="badge" style="background:#eee;color:#999">${pct(notConverted,totalApp)}</span></td><td>—</td><td>تسرّبوا قبل الدفع</td></tr>
+    <tr style="color:#999"><td>❌ لم يكملوا</td><td><strong>${num(notConverted)}</strong></td><td><span class="badge" style="background:#eee;color:#999">${pct(notConverted,totalApp)}</span></td><td>—</td><td>تسربوا قبل الدفع</td></tr>
   `;
-
-  // Conversion by gender
-  const maleApp = appData.filter(r=>getCol(r,['النوع'])==='ذكر').length;
-  const femApp  = appData.filter(r=>getCol(r,['النوع'])==='أنثى').length;
-  const maleStu = appData.filter(r=>paidIds.has(getCol(r,['الرقم الأكاديمي']))&&getCol(r,['النوع'])==='ذكر').length;
-  const femStu  = appData.filter(r=>paidIds.has(getCol(r,['الرقم الأكاديمي']))&&getCol(r,['النوع'])==='أنثى').length;
-  mkChart('convGenderChart',{type:'bar',data:{
-    labels:['ذكور','إناث'],
-    datasets:[
-      {label:'المتقدمون',data:[maleApp,femApp],backgroundColor:'rgba(26,79,122,0.3)',borderRadius:4},
-      {label:'الطلاب الفعليون',data:[maleStu,femStu],backgroundColor:['#1a4f7a','#e8a020'],borderRadius:4}
-    ]},options:{...BASE,
-      plugins:{...BASE.plugins,tooltip:{titleFont:{family:'Cairo'},bodyFont:{family:'Cairo'},callbacks:{label(ctx){return ` ${ctx.dataset.label}: ${num(ctx.parsed.y)}`;}}}}
-      ,scales:{x:{ticks:{font:{family:'Cairo'}}},y:{ticks:{font:{family:'Cairo'}}}}}});
-
-  // Conversion by age
-  const AGE_COL=['الفئة العمرية'];
-  const AGE_ORDER=['أقل من 18','18-24','25-34','35-44','45-54','55'];
-  const ageApp=countBy(appData,r=>getCol(r,AGE_COL));
-  const ageStu=countBy(appData.filter(r=>paidIds.has(getCol(r,['الرقم الأكاديمي']))),r=>getCol(r,AGE_COL));
-  const sortedAgeApp=Object.entries(ageApp).sort((a,b)=>{
-    const ai=AGE_ORDER.findIndex(x=>a[0].startsWith(x));
-    const bi=AGE_ORDER.findIndex(x=>b[0].startsWith(x));
-    return(ai<0?99:ai)-(bi<0?99:bi);
-  });
-  const ageLabels=sortedAgeApp.map(e=>e[0]);
-  const ageConvRates=ageLabels.map(a=>ageApp[a]>0?parseFloat((ageStu[a]||0)/ageApp[a]*100).toFixed(1):0);
-  mkChart('convAgeChart',{type:'bar',data:{labels:ageLabels,datasets:[{
-    label:'معدل التحويل %',data:ageConvRates,
-    backgroundColor:ageConvRates.map(v=>v>=50?'#2d6a4f':v>=30?'#e8a020':'#8d191b'),borderRadius:6
-  }]},options:{...BASE,plugins:{...BASE.plugins,legend:{display:false},tooltip:{titleFont:{family:'Cairo'},bodyFont:{family:'Cairo'},callbacks:{label(ctx){return ` ${ctx.parsed.y}% (${num(ageStu[ageLabels[ctx.dataIndex]]||0)} من ${num(ageApp[ageLabels[ctx.dataIndex]]||0)})`;}}}}
-  ,scales:{x:{ticks:{font:{family:'Cairo',size:10},maxRotation:30}},y:{ticks:{font:{family:'Cairo'},callback:v=>v+'%'},max:100}}}});
-
-  // Conversion by status
-  const statusApp=countBy(appData,r=>getCol(r,['حالة الطالب']));
-  const statusStu=countBy(appData.filter(r=>paidIds.has(getCol(r,['الرقم الأكاديمي']))),r=>getCol(r,['حالة الطالب']));
-  const statusLabels=Object.keys(statusApp).sort((a,b)=>statusApp[b]-statusApp[a]).slice(0,8);
-  const statusConvRates=statusLabels.map(s=>statusApp[s]>0?parseFloat((statusStu[s]||0)/statusApp[s]*100).toFixed(1):0);
-  mkChart('convStatusChart',{type:'bar',data:{labels:statusLabels,datasets:[{
-    label:'معدل التحويل %',data:statusConvRates,backgroundColor:'#1a4f7a',borderRadius:5
-  }]},options:{...BASE,indexAxis:'y',plugins:{...BASE.plugins,legend:{display:false},tooltip:{titleFont:{family:'Cairo'},bodyFont:{family:'Cairo'},callbacks:{label(ctx){return ` ${ctx.parsed.x}%`;}}}}
-  ,scales:{x:{ticks:{font:{family:'Cairo'},callback:v=>v+'%'},max:100},y:{ticks:{font:{family:'Cairo',size:10}}}}}});
-
-  // Conversion by source
-  const srcApp=countBy(appData,r=>getCol(r,['من أين عرفت المعهد؟']));
-  const srcStu=countBy(appData.filter(r=>paidIds.has(getCol(r,['الرقم الأكاديمي']))),r=>getCol(r,['من أين عرفت المعهد؟']));
-  const srcLabels=Object.keys(srcApp).sort((a,b)=>srcApp[b]-srcApp[a]).slice(0,8);
-  const srcConvRates=srcLabels.map(s=>srcApp[s]>0?parseFloat((srcStu[s]||0)/srcApp[s]*100).toFixed(1):0);
-  mkChart('convSourceChart',{type:'bar',data:{labels:srcLabels,datasets:[{
-    label:'معدل التحويل %',data:srcConvRates,backgroundColor:PAL,borderRadius:5
-  }]},options:{...BASE,indexAxis:'y',plugins:{...BASE.plugins,legend:{display:false},tooltip:{titleFont:{family:'Cairo'},bodyFont:{family:'Cairo'},callbacks:{label(ctx){const s=srcLabels[ctx.dataIndex];return ` ${ctx.parsed.x}% (${num(srcStu[s]||0)} من ${num(srcApp[s]||0)})`;}}}}
-  ,scales:{x:{ticks:{font:{family:'Cairo'},callback:v=>v+'%'},max:100},y:{ticks:{font:{family:'Cairo',size:10}}}}}});
 }
 
-// ── DAILY ────────────────────────────────────────────────────
-function buildDaily(){
-  // Registration dates
-  const regByDate = {};
-  appData.forEach(r=>{
-    const d = getCol(r,['تاريخ التسجيل']);
-    if(d==='غير محدد') return;
-    const day = d.split(' ')[0].split('T')[0];
-    if(day) regByDate[day] = (regByDate[day]||0)+1;
-  });
-
-  // Payment dates
-  const payByDate = {};
-  payData.forEach(r=>{
-    const d = getCol(r,['تاريخ الدفع','تاريخ  الدفع']);
-    if(d==='غير محدد') return;
-    const day = d.split(' ')[0].split('T')[0];
-    if(day) payByDate[day] = (payByDate[day]||0)+1;
-  });
-
-  const firstPayments = payData.filter(r=>['كاش','قسط أول'].includes(getCol(r,['نوع  القسط'])));
-  const totalStudents = new Set([...firstPayments.map(r=>getCol(r,['الرقم الأكاديمي'])), ...payData.filter(r=>getCol(r,['نظام السداد'])==='إعفاء كلي').map(r=>getCol(r,['الرقم الأكاديمي']))]).size;
-
-  const regDates = Object.keys(regByDate).sort();
-  const regVals  = regDates.map(d=>regByDate[d]);
-  let cum=0;
-  const regCum = regDates.map(d=>{cum+=regByDate[d];return cum;});
-
-  const peakReg = Math.max(...regVals);
-  const peakRegDate = regDates[regVals.indexOf(peakReg)];
-  const avgReg = regDates.length ? (regVals.reduce((a,b)=>a+b,0)/regDates.length).toFixed(1) : 0;
-
-  const payDates = Object.keys(payByDate).sort();
-  const payVals  = payDates.map(d=>payByDate[d]);
-  const peakPay  = Math.max(...payVals);
-  const peakPayDate = payDates[payVals.indexOf(peakPay)];
-
-  document.getElementById('d-total-app').textContent = num(appData.length);
-  document.getElementById('d-total-stu').textContent = num(totalStudents);
-  document.getElementById('d-peak-reg').textContent  = num(peakReg);
-  document.getElementById('d-peak-reg-date').textContent = peakRegDate||'—';
-  document.getElementById('d-avg-reg').textContent   = avgReg;
-  document.getElementById('d-peak-pay').textContent  = num(peakPay);
-  document.getElementById('d-peak-pay-date').textContent = peakPayDate||'—';
-
-  // Cumulative registration line
-  mkChart('dailyAppCumChart',{type:'line',data:{labels:regDates,datasets:[{
-    label:'إجمالي المتقدمين',data:regCum,
-    borderColor:'#1a4f7a',backgroundColor:'rgba(26,79,122,0.1)',
-    fill:true,tension:0.3,pointRadius:2,pointBackgroundColor:'#1a4f7a'
-  }]},options:{...BASE,plugins:{...BASE.plugins,legend:{display:false},tooltip:{titleFont:{family:'Cairo'},bodyFont:{family:'Cairo'},callbacks:{label(ctx){return ` الإجمالي: ${num(ctx.parsed.y)}`;}}}}
-  ,scales:{x:{ticks:{font:{family:'Cairo',size:9},maxRotation:45,maxTicksLimit:20}},y:{ticks:{font:{family:'Cairo'}}}}}});
-
-  // Daily registration bar
-  mkChart('dailyAppBarChart',{type:'bar',data:{labels:regDates,datasets:[{
-    label:'متقدمون جدد',data:regVals,borderRadius:4,
-    backgroundColor:regVals.map(v=>v===peakReg?'#e8a020':'rgba(26,79,122,0.6)'),
-    borderColor:regVals.map(v=>v===peakReg?'#a07030':'#1a4f7a'),borderWidth:1
-  }]},options:{...BASE,plugins:{...BASE.plugins,legend:{display:false},tooltip:{titleFont:{family:'Cairo'},bodyFont:{family:'Cairo'},callbacks:{label(ctx){return ` ${num(ctx.parsed.y)} متقدم`;}}}}
-  ,scales:{x:{ticks:{font:{family:'Cairo',size:9},maxRotation:45,maxTicksLimit:20}},y:{ticks:{font:{family:'Cairo'}}}}}});
-
-  // Daily payments bar
-  mkChart('dailyPayBarChart',{type:'bar',data:{labels:payDates,datasets:[{
-    label:'دفعات اليوم',data:payVals,borderRadius:4,
-    backgroundColor:payVals.map(v=>v===peakPay?'#2d6a4f':'rgba(45,106,79,0.55)'),
-    borderColor:payVals.map(v=>v===peakPay?'#1a4020':'#2d6a4f'),borderWidth:1
-  }]},options:{...BASE,plugins:{...BASE.plugins,legend:{display:false},tooltip:{titleFont:{family:'Cairo'},bodyFont:{family:'Cairo'},callbacks:{label(ctx){return ` ${num(ctx.parsed.y)} دفعة`;}}}}
-  ,scales:{x:{ticks:{font:{family:'Cairo',size:9},maxRotation:45,maxTicksLimit:20}},y:{ticks:{font:{family:'Cairo'}}}}}});
-
-  // Compare: reg vs pay on same labels
-  const allDates = [...new Set([...regDates,...payDates])].sort();
-  mkChart('dailyCompareChart',{type:'line',data:{labels:allDates,datasets:[
-    {label:'تسجيل يومي',data:allDates.map(d=>regByDate[d]||0),borderColor:'#1a4f7a',backgroundColor:'rgba(26,79,122,0.08)',fill:true,tension:0.3,pointRadius:2},
-    {label:'دفع يومي',data:allDates.map(d=>payByDate[d]||0),borderColor:'#2d6a4f',backgroundColor:'rgba(45,106,79,0.08)',fill:true,tension:0.3,pointRadius:2}
-  ]},options:{...BASE,scales:{x:{ticks:{font:{family:'Cairo',size:9},maxRotation:45,maxTicksLimit:20}},y:{ticks:{font:{family:'Cairo'}}}}}});
-
-  // Table (latest first)
-  document.getElementById('dailyTableBody').innerHTML =
-    [...regDates].reverse().map(d=>`
-      <tr>
-        <td><strong>${d}</strong></td>
-        <td><span class="badge ${regByDate[d]===peakReg?'badge-gold':'badge-blue'}">${num(regByDate[d]||0)}</span></td>
-        <td>${num(regCum[regDates.indexOf(d)])}</td>
-        <td>${num(payByDate[d]||0)}</td>
-      </tr>`).join('');
-}
-
-// ── DEMOGRAPHICS ─────────────────────────────────────────────
-function buildDemographics(){
-  const totalApp = appData.length;
-  const firstPayments = payData.filter(r=>['كاش','قسط أول'].includes(getCol(r,['نوع  القسط'])));
-  const paidIds = new Set([...firstPayments.map(r=>getCol(r,['الرقم الأكاديمي'])), ...payData.filter(r=>getCol(r,['نظام السداد'])==='إعفاء كلي').map(r=>getCol(r,['الرقم الأكاديمي']))]);
-  const stuData = appData.filter(r=>paidIds.has(getCol(r,['الرقم الأكاديمي'])));
-  const totalStu = stuData.length;
-
-  // Gender KPIs
-  const maleApp = appData.filter(r=>getCol(r,['النوع'])==='ذكر').length;
-  const femApp  = appData.filter(r=>getCol(r,['النوع'])==='أنثى').length;
-  const maleStu = stuData.filter(r=>getCol(r,['النوع'])==='ذكر').length;
-  const femStu  = stuData.filter(r=>getCol(r,['النوع'])==='أنثى').length;
-
-  document.getElementById('dem-male-app').textContent   = pct(maleApp,totalApp);
-  document.getElementById('dem-male-app-n').textContent = num(maleApp)+' متقدم';
-  document.getElementById('dem-female-app').textContent   = pct(femApp,totalApp);
-  document.getElementById('dem-female-app-n').textContent = num(femApp)+' متقدمة';
-  document.getElementById('dem-male-stu').textContent   = pct(maleStu,totalStu);
-  document.getElementById('dem-male-stu-n').textContent = num(maleStu)+' طالب';
-  document.getElementById('dem-female-stu').textContent   = pct(femStu,totalStu);
-  document.getElementById('dem-female-stu-n').textContent = num(femStu)+' طالبة';
-
-  // Age
-  const AGE_COL = ['الفئة العمرية'];
-  const AGE_ORDER = ['أقل من 18','18-24','25-34','35-44','45-54','55'];
-  function sortAge(obj){
-    return Object.entries(obj).sort((a,b)=>{
-      const ai=AGE_ORDER.findIndex(x=>a[0].startsWith(x));
-      const bi=AGE_ORDER.findIndex(x=>b[0].startsWith(x));
-      return(ai<0?99:ai)-(bi<0?99:bi);
-    });
-  }
-  const ageApp = countBy(appData, r=>getCol(r,AGE_COL));
-  const ageStu = countBy(stuData, r=>getCol(r,AGE_COL));
-  const sortedAgeApp = sortAge(ageApp);
-  const sortedAgeStu = sortAge(ageStu);
-
-  const topAge = sortedAgeApp[0];
-  document.getElementById('dem-top-age').textContent   = topAge?.[0]||'—';
-  document.getElementById('dem-top-age-n').textContent = topAge ? pct(topAge[1],totalApp)+' من المتقدمين' : '—';
-
-  // Gender donuts
-  mkChart('genderAppChart',{type:'doughnut',data:{
-    labels:['ذكور','إناث'],datasets:[{data:[maleApp,femApp],backgroundColor:['#1a4f7a','#e8a020'],borderWidth:2}]
-  },options:{...BASE,cutout:'62%',plugins:{...BASE.plugins,tooltip:{titleFont:{family:'Cairo'},bodyFont:{family:'Cairo'},callbacks:{label(ctx){const v=ctx.raw;return ` ${ctx.label}: ${num(v)} (${pct(v,totalApp)})`;}}}}}});
-
-  mkChart('genderStuChart',{type:'doughnut',data:{
-    labels:['ذكور','إناث'],datasets:[{data:[maleStu,femStu],backgroundColor:['#2d6a4f','#0d6e6e'],borderWidth:2}]
-  },options:{...BASE,cutout:'62%',plugins:{...BASE.plugins,tooltip:{titleFont:{family:'Cairo'},bodyFont:{family:'Cairo'},callbacks:{label(ctx){const v=ctx.raw;return ` ${ctx.label}: ${num(v)} (${pct(v,totalStu)})`;}}}}}});
-
-  // Age bars
-  mkChart('ageAppChart',{type:'bar',data:{labels:sortedAgeApp.map(e=>e[0]),datasets:[{label:'المتقدمون',data:sortedAgeApp.map(e=>e[1]),backgroundColor:'#1a4f7a',borderRadius:6}]},
-    options:{...BASE,plugins:{...BASE.plugins,legend:{display:false},tooltip:{titleFont:{family:'Cairo'},bodyFont:{family:'Cairo'},callbacks:{label(ctx){return ` ${num(ctx.parsed.y)} (${pct(ctx.parsed.y,totalApp)})`;}}}}
-    ,scales:{x:{ticks:{font:{family:'Cairo',size:10},maxRotation:30}},y:{ticks:{font:{family:'Cairo'}}}}}});
-
-  mkChart('ageStuChart',{type:'bar',data:{labels:sortedAgeStu.map(e=>e[0]),datasets:[{label:'الطلاب الفعليون',data:sortedAgeStu.map(e=>e[1]),backgroundColor:'#2d6a4f',borderRadius:6}]},
-    options:{...BASE,plugins:{...BASE.plugins,legend:{display:false},tooltip:{titleFont:{family:'Cairo'},bodyFont:{family:'Cairo'},callbacks:{label(ctx){return ` ${num(ctx.parsed.y)} (${pct(ctx.parsed.y,totalStu)})`;}}}}
-    ,scales:{x:{ticks:{font:{family:'Cairo',size:10},maxRotation:30}},y:{ticks:{font:{family:'Cairo'}}}}}});
-
-  // Age × Gender grouped bar
-  const ageLabels = sortedAgeApp.map(e=>e[0]);
-  const mByAge = ageLabels.map(a=>appData.filter(r=>getCol(r,AGE_COL)===a&&getCol(r,['النوع'])==='ذكر').length);
-  const fByAge = ageLabels.map(a=>appData.filter(r=>getCol(r,AGE_COL)===a&&getCol(r,['النوع'])==='أنثى').length);
-  mkChart('ageGenderChart',{type:'bar',data:{labels:ageLabels,datasets:[
-    {label:'ذكور',data:mByAge,backgroundColor:'#1a4f7a',borderRadius:4},
-    {label:'إناث',data:fByAge,backgroundColor:'#e8a020',borderRadius:4}
-  ]},options:{...BASE,scales:{x:{ticks:{font:{family:'Cairo',size:10},maxRotation:30}},y:{ticks:{font:{family:'Cairo'}}}}}});
-
-  // Gender conversion rate
-  const maleConv = maleApp>0?(maleStu/maleApp*100).toFixed(1):0;
-  const femConv  = femApp>0?(femStu/femApp*100).toFixed(1):0;
-  mkChart('genderConvChart',{type:'bar',data:{
-    labels:['ذكور','إناث'],
-    datasets:[{label:'معدل التحويل %',data:[maleConv,femConv],backgroundColor:['#1a4f7a','#e8a020'],borderRadius:8}]
-  },options:{...BASE,plugins:{...BASE.plugins,legend:{display:false},tooltip:{titleFont:{family:'Cairo'},bodyFont:{family:'Cairo'},callbacks:{label(ctx){return ` ${ctx.parsed.y}%`;}}}},
-    scales:{x:{ticks:{font:{family:'Cairo'}}},y:{ticks:{font:{family:'Cairo'},callback:v=>v+'%'},max:100}}}});
-
-  // Status charts
-  const statusApp = countBy(appData, r=>getCol(r,['حالة الطالب']));
-  const statusStu = countBy(stuData, r=>getCol(r,['حالة الطالب']));
-  const statusAppE = Object.entries(statusApp).sort((a,b)=>b[1]-a[1]);
-  const statusStuE = Object.entries(statusStu).sort((a,b)=>b[1]-a[1]);
-
-  mkChart('statusAppChart',{type:'bar',data:{labels:statusAppE.map(e=>e[0]),datasets:[{label:'المتقدمون',data:statusAppE.map(e=>e[1]),backgroundColor:PAL,borderRadius:5}]},
-    options:{...BASE,indexAxis:'y',plugins:{...BASE.plugins,legend:{display:false},tooltip:{titleFont:{family:'Cairo'},bodyFont:{family:'Cairo'},callbacks:{label(ctx){return ` ${num(ctx.parsed.x)} (${pct(ctx.parsed.x,totalApp)})`;}}}}
-    ,scales:{x:{ticks:{font:{family:'Cairo'}}},y:{ticks:{font:{family:'Cairo',size:10}}}}}});
-
-  mkChart('statusStuChart',{type:'bar',data:{labels:statusStuE.map(e=>e[0]),datasets:[{label:'الطلاب الفعليون',data:statusStuE.map(e=>e[1]),backgroundColor:PAL,borderRadius:5}]},
-    options:{...BASE,indexAxis:'y',plugins:{...BASE.plugins,legend:{display:false},tooltip:{titleFont:{family:'Cairo'},bodyFont:{family:'Cairo'},callbacks:{label(ctx){return ` ${num(ctx.parsed.x)} (${pct(ctx.parsed.x,totalStu)})`;}}}}
-    ,scales:{x:{ticks:{font:{family:'Cairo'}}},y:{ticks:{font:{family:'Cairo',size:10}}}}}});
-
-  // Age conversion table
-  document.getElementById('ageConvTableBody').innerHTML = sortedAgeApp.map(([age,appN])=>{
-    const stuN = ageStu[age]||0;
-    const convRate = appN>0?(stuN/appN*100).toFixed(1)+'%':'0%';
-    const mN = appData.filter(r=>getCol(r,AGE_COL)===age&&getCol(r,['النوع'])==='ذكر').length;
-    const fN = appData.filter(r=>getCol(r,AGE_COL)===age&&getCol(r,['النوع'])==='أنثى').length;
-    const convNum = parseFloat(convRate);
-    const badge = convNum>=50?'badge-green':convNum>=25?'badge-gold':'badge-red';
-    return`<tr>
-      <td><strong>${age}</strong></td>
-      <td>${num(appN)} <span class="badge badge-blue">${pct(appN,totalApp)}</span></td>
-      <td>${num(stuN)} <span class="badge badge-green">${pct(stuN,totalStu)}</span></td>
-      <td><span class="badge ${badge}">${convRate}</span></td>
-      <td>${num(mN)}</td>
-      <td>${num(fN)}</td>
-    </tr>`;
-  }).join('');
-}
+// ── REVENUE ─────────────────────────────────────────────────
 function buildRevenue(){
   const totalRevenue = payData.reduce((s,r)=>s+getNum(r,['المبلغ بالدولار']),0);
   const cashRev = payData.filter(r=>getCol(r,['نظام السداد'])==='كاش').reduce((s,r)=>s+getNum(r,['المبلغ بالدولار']),0);
@@ -1149,11 +743,39 @@ function buildStudents(){
   const countries = countBy(appData, r=>normCountry(getCol(r,['بلد الإقامة'])));
   document.getElementById('s-countries').textContent = Object.keys(countries).length;
 
-  const edu = countBy(appData, r=>getCol(r,['المستوي التعليمي']));
-  const eduTop = topN(edu,1)[0];
-  document.getElementById('s-topedu').textContent = eduTop?.[0] || '—';
-  document.getElementById('s-topedu-sub').textContent = eduTop ? num(eduTop[1])+' متقدم ('+pct(eduTop[1],total)+')' : '—';
+  // ── Age groups (calculated from تاريخ الميلاد) ──
+  function getAgeGroup(row){
+    const dob = getCol(row,['تاريخ الميلاد']);
+    if(dob==='غير محدد') return 'غير محدد';
+    const d = new Date(dob);
+    if(isNaN(d.getTime())) return 'غير محدد';
+    const ageMs = Date.now() - d.getTime();
+    const age = Math.floor(ageMs / (1000*60*60*24*365.25));
+    if(age<18) return 'أقل من 18';
+    if(age<25) return '18-24';
+    if(age<35) return '25-34';
+    if(age<45) return '35-44';
+    if(age<55) return '45-54';
+    return '55+';
+  }
+  const ageOrder = ['أقل من 18','18-24','25-34','35-44','45-54','55+','غير محدد'];
+  const ageGroups = countBy(appData, getAgeGroup);
+  const ageE = ageOrder.filter(k=>ageGroups[k]).map(k=>[k,ageGroups[k]]);
+  const ageTop = Object.entries(ageGroups).filter(e=>e[0]!=='غير محدد').sort((a,b)=>b[1]-a[1])[0];
+  document.getElementById('s-topage').textContent = ageTop?.[0] || '—';
+  document.getElementById('s-topage-sub').textContent = ageTop ? num(ageTop[1])+' متقدم ('+pct(ageTop[1],total)+')' : '—';
 
+  mkChart('ageChart',{type:'bar',data:{labels:ageE.map(e=>e[0]),datasets:[{label:'عدد المتقدمين',data:ageE.map(e=>e[1]),backgroundColor:'#1a4f7a',borderRadius:6}]},
+    options:{...BASE,plugins:{...BASE.plugins,legend:{display:false},tooltip:tipNum('متقدم')},
+      scales:{x:{ticks:{font:{family:'Cairo',size:11}}},y:{ticks:{font:{family:'Cairo'}}}}}});
+
+  // ── Gender ──
+  mkChart('genderChart',{type:'doughnut',data:{
+    labels:['ذكور','إناث'],
+    datasets:[{data:[males,females],backgroundColor:['#1a4f7a','#e8a020'],borderWidth:2}]
+  },options:{...BASE,cutout:'65%',plugins:{...BASE.plugins,tooltip:tipNum('متقدم')}}});
+
+  const edu = countBy(appData, r=>getCol(r,['المستوي التعليمي']));
   const eduE = Object.entries(edu).sort((a,b)=>b[1]-a[1]);
   mkChart('eduChart',{type:'pie',data:{labels:eduE.map(e=>e[0]),datasets:[{data:eduE.map(e=>e[1]),backgroundColor:PAL}]},
     options:{...BASE,plugins:{...BASE.plugins,tooltip:tipNum('متقدم')}}});
@@ -1173,6 +795,30 @@ function buildStudents(){
   const otherE = Object.entries(other).sort((a,b)=>b[1]-a[1]);
   mkChart('otherProgramsChart',{type:'doughnut',data:{labels:otherE.map(e=>e[0]),datasets:[{data:otherE.map(e=>e[1]),backgroundColor:['#2d6a4f','#1a4f7a','#e8a020','#8a9ab0']}]},
     options:{...BASE,cutout:'60%',plugins:{...BASE.plugins,tooltip:tipNum('متقدم')}}});
+
+  // ── Student status in other institutes (multi-select field, top 10) ──
+  const status = countBy(appData, r=>getCol(r,['حالة الطالب']));
+  const statusTop = topN(status,10);
+  mkChart('statusChart',{type:'bar',data:{labels:statusTop.map(e=>e[0]),datasets:[{label:'عدد المتقدمين',data:statusTop.map(e=>e[1]),backgroundColor:PAL,borderRadius:5}]},
+    options:{...BASE,indexAxis:'y',plugins:{...BASE.plugins,legend:{display:false},tooltip:tipNum('متقدم')},
+      scales:{x:{ticks:{font:{family:'Cairo'}}},y:{ticks:{font:{family:'Cairo',size:10}}}}}});
+
+  // ── Daily applicant counts ──
+  const dateCount = {};
+  appData.forEach(r=>{
+    const d = getCol(r,['تاريخ التسجيل']);
+    if(d==='غير محدد') return;
+    const dateOnly = d.split(' ')[0];
+    dateCount[dateOnly] = (dateCount[dateOnly]||0)+1;
+  });
+  const dailyDates = Object.keys(dateCount).sort((a,b)=>new Date(a)-new Date(b));
+  const dailyVals = dailyDates.map(d=>dateCount[d]);
+  const dailyPeak = Math.max(...dailyVals);
+  mkChart('dailyCountChart',{type:'bar',data:{labels:dailyDates,datasets:[{
+    label:'متقدمون جدد',data:dailyVals,borderRadius:3,
+    backgroundColor:dailyVals.map(v=>v===dailyPeak?'#e8a020':'rgba(26,79,122,0.55)')
+  }]},options:{...BASE,plugins:{...BASE.plugins,legend:{display:false},tooltip:tipNum('متقدم')},
+    scales:{x:{ticks:{font:{family:'Cairo',size:9},maxRotation:45,maxTicksLimit:20}},y:{ticks:{font:{family:'Cairo'}}}}}});
 
   const ctryList = Object.entries(countries).sort((a,b)=>b[1]-a[1]);
   document.getElementById('countryTableBody').innerHTML = ctryList.map((e,i)=>
@@ -1254,11 +900,11 @@ function buildRecommendations(){
   <div class="insights-grid" style="margin-bottom:22px">
     <div class="insight-card"><div class="insight-icon blue">🚨</div><div>
       <div class="insight-title">${pct(notConverted,totalApp)} من المتقدمين لم يدفعوا</div>
-      <div class="insight-text">${num(notConverted)} شخص تقدموا ولم يتحولوا لطلاب. هذه قاعدة ضخمة للمتابعة. ضع سلسلة رسائل تذكيرية عبر التليجرام والبريد الإلكتروني لاستعادة المترددين.</div>
+      <div class="insight-text">${num(notConverted)} شخص تقدموا ولم يتحولوا لطلاب. هذه قاعدة ضخمة للمتابعة. ضع سلسلة رسائل تذكيرية (تليجرام + إيميل) للمترددين.</div>
     </div></div>
     <div class="insight-card"><div class="insight-icon gold">📅</div><div>
       <div class="insight-title">نظام الأقساط فرصة للتوسع</div>
-      <div class="insight-text">خيار التقسيط يُخفِّف عبء التكلفة ويُسهّل القرار لدى المتردد. ادرس تسهيل الوصول إليه وإبرازه في صفحة التسجيل لرفع معدل التحويل.</div>
+      <div class="insight-text">خيار التقسيط يسهّل اتخاذ القرار للمتقدم المتردد بسبب التكلفة. ادرس توسيع نطاقه وتسهيل الوصول إليه لرفع معدل التحويل.</div>
     </div></div>
     <div class="insight-card"><div class="insight-icon green">🏆</div><div>
       <div class="insight-title">تابع أداء كل أسبوع</div>
@@ -1270,15 +916,15 @@ function buildRecommendations(){
   <div class="insights-grid" style="margin-bottom:22px">
     <div class="insight-card"><div class="insight-icon purple">🏷️</div><div>
       <div class="insight-title">${pct(discountedStudents,totalStudents)} يحصلون على خصم</div>
-      <div class="insight-text">${num(discountedStudents)} طالب حصلوا على خصم بنسب مختلفة. راجع سياسة الخصم — هل ضروري لإتمام الدفع أم يُمنح بسهولة؟</div>
+      <div class="insight-text">${num(discountedStudents)} طالب حصلوا على خصومات بنسب مختلفة. راجع سياسة الخصم — هل هو ضروري لإتمام الدفع أم يُمنح بسهولة؟</div>
     </div></div>
     <div class="insight-card"><div class="insight-icon blue">🌍</div><div>
       <div class="insight-title">${topRevCountry?.[0]||'—'} الأعلى إيراداً</div>
-      <div class="insight-text">إجمالي ${usd(topRevCountry?.[1]||0)} من هذه الدولة. قد يتباين ترتيب الدول بين الأكثر تسجيلاً والأعلى إيراداً بسبب فوارق القدرة الشرائية والعملات.</div>
+      <div class="insight-text">إجمالي ${usd(topRevCountry?.[1]||0)} من هذه الدولة. قد يختلف ترتيب الدول بين الأكثر عدداً والأعلى إيراداً بسبب فروق العملات.</div>
     </div></div>
     <div class="insight-card"><div class="insight-icon gold">📱</div><div>
       <div class="insight-title">${topProvider?.[0]||'—'} الوسيلة الأكثر استخداماً</div>
-      <div class="insight-text">${num(topProvider?.[1]||0)} معاملة عبرها. احرص على أن تكون تجربة الدفع سلسة وخالية من العقبات للحدّ من التسرب عند مرحلة السداد.</div>
+      <div class="insight-text">${num(topProvider?.[1]||0)} معاملة عبرها. تأكد من أن تجربة الدفع سلسة وبدون احتكاك لتخفيض التسرب عند الدفع.</div>
     </div></div>
   </div>
 
@@ -1294,7 +940,7 @@ function buildRecommendations(){
     </div></div>
     <div class="insight-card"><div class="insight-icon gold">⚙️</div><div>
       <div class="insight-title">${pct(noWork,totalApp)} من المتقدمين لا يعملون</div>
-      <div class="insight-text">نسبة من المتقدمين تتمتع بمرونة وقتية، غير أنه ينبغي مراعاة العاملين بدوام جزئي أو كلي عبر جداول مسائية أو في نهاية الأسبوع.</div>
+      <div class="insight-text">مرونة وقتية لدى نسبة من المتقدمين، لكن راعِ العاملين بدوام جزئي أو كلي بجداول مسائية أو نهاية أسبوع.</div>
     </div></div>
   </div>`;
 }
