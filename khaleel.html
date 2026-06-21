@@ -371,18 +371,25 @@ function parseCSV(txt){
   return lines.slice(1).map(l=>{const v=parseRow(l);const o={};hdrs.forEach((h,i)=>o[h]=(v[i]||'').trim());return o;}).filter(r=>Object.values(r).some(v=>v));
 }
 async function fetchCSV(url){
-  // CORS proxy عشان يشتغل من GitHub Pages
-  const proxy = 'https://corsproxy.io/?';
-  let text = '';
-  try {
-    const r = await fetch(proxy + encodeURIComponent(url) + '&nocache=' + Date.now());
-    text = await r.text();
-  } catch(e) {
-    // fallback: direct fetch
-    const r = await fetch(url + '&nocache=' + Date.now());
-    text = await r.text();
+  // جرب الروابط مباشرة أول (بيشتغل لو CORS مسموح)
+  // ثم جرب proxies مختلفة
+  const proxies = [
+    u => u, // direct
+    u => 'https://api.allorigins.win/raw?url=' + encodeURIComponent(u),
+    u => 'https://corsproxy.io/?' + encodeURIComponent(u),
+  ];
+
+  for(const makeUrl of proxies){
+    try{
+      const r = await fetch(makeUrl(url + '&nocache=' + Date.now()));
+      const text = await r.text();
+      // تأكد إنه CSV وليس HTML
+      if(text.trim().startsWith('<')) continue;
+      const parsed = parseCSV(text);
+      if(parsed.length > 0) return parsed;
+    }catch(e){ continue; }
   }
-  return parseCSV(text);
+  throw new Error('فشل جلب البيانات من كل المصادر');
 }
 
 // ── helpers ─────────────────────────────────────────────────
