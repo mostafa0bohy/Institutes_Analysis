@@ -407,7 +407,9 @@ function parseCSV(txt){
 }
 async function fetchCSV(url){
   const r=await fetch(url+'&nocache='+Date.now());
-  return parseCSV(await r.text());
+  const buf=await r.arrayBuffer();
+  const txt=new TextDecoder('utf-8').decode(buf);
+  return parseCSV(txt);
 }
 
 // ── helpers ─────────────────────────────────────────────────
