@@ -3,110 +3,110 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>لوحة المؤشرات | معهد العلامة خليل</title>
+<title>لوحة المؤشرات الحية | معهد العلامة خليل 2026</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
 <style>
 :root{
-  --primary:#1a4a6b;--primary-dark:#0f2d42;--primary-light:#2563a8;
-  --primary-pale:rgba(26,74,107,0.08);
-  --gold:#c9a84c;--gold-light:#e8d5a3;
-  --green:#2d6a4f;--red:#8d191b;
-  --cream:#f4f7fa;--card:#ffffff;
-  --text-primary:#1a1a1a;--text-secondary:#5a5a5a;--text-muted:#9a9a9a;
+  --primary:#1a4f7a;--primary-dark:#0f3354;--primary-light:#2d6fa8;
+  --accent:#e8a020;--accent-light:#f5c76a;
+  --green:#2d6a4f;--teal:#0d6e6e;--purple:#6d4c8e;
+  --cream:#f4f7fb;--card:#ffffff;
+  --text-primary:#1a1a2e;--text-secondary:#4a5568;--text-muted:#8a9ab0;
   --border:#e2e8f0;
-  --shadow:0 4px 24px rgba(26,74,107,0.08);--shadow-hover:0 8px 40px rgba(26,74,107,0.16);
+  --shadow:0 2px 16px rgba(26,79,122,0.08);
+  --shadow-hover:0 6px 32px rgba(26,79,122,0.16);
 }
 *{margin:0;padding:0;box-sizing:border-box;}
 body{font-family:'Cairo',sans-serif;background:var(--cream);color:var(--text-primary);min-height:100vh;}
 .header{background:linear-gradient(135deg,var(--primary-dark) 0%,var(--primary) 60%,var(--primary-light) 100%);padding:0;position:relative;overflow:hidden;}
-.header::before{content:'';position:absolute;top:-60px;left:-60px;width:300px;height:300px;border-radius:50%;background:rgba(255,255,255,0.04);}
-.header::after{content:'';position:absolute;bottom:-80px;right:10%;width:250px;height:250px;border-radius:50%;background:rgba(201,168,76,0.12);}
-.header-inner{position:relative;z-index:1;padding:28px 40px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;}
-.header-brand{display:flex;align-items:center;gap:16px;}
-.brand-icon{width:54px;height:54px;background:rgba(255,255,255,0.15);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:26px;border:1px solid rgba(255,255,255,0.2);}
-.brand-text h1{font-size:20px;font-weight:900;color:white;line-height:1.2;}
-.brand-text p{font-size:13px;color:var(--gold-light);font-weight:400;}
+.header::before{content:'';position:absolute;top:-80px;right:-60px;width:320px;height:320px;border-radius:50%;background:rgba(255,255,255,0.04);}
+.header::after{content:'';position:absolute;bottom:-60px;left:8%;width:200px;height:200px;border-radius:50%;background:rgba(232,160,32,0.12);}
+.header-inner{position:relative;z-index:1;padding:26px 40px 22px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;}
+.brand{display:flex;align-items:center;gap:16px;}
+.brand-icon{width:52px;height:52px;background:rgba(255,255,255,0.15);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:26px;border:1px solid rgba(255,255,255,0.2);}
+.brand-text h1{font-size:19px;font-weight:900;color:white;line-height:1.3;}
+.brand-text p{font-size:12px;color:var(--accent-light);margin-top:2px;}
 .header-status{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:50px;padding:8px 18px;font-size:13px;color:white;}
 .status-dot{width:8px;height:8px;border-radius:50%;background:#4ade80;animation:pulse 2s infinite;}
-.status-dot.loading{background:var(--gold);}.status-dot.error{background:#f87171;animation:none;}
+.status-dot.loading{background:var(--accent);}
+.status-dot.error{background:#f87171;animation:none;}
 @keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.4;}}
-.tabs-bar{background:var(--card);border-bottom:2px solid var(--border);padding:0 40px;display:flex;gap:0;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,0.06);overflow-x:auto;}
-.tab-btn{padding:16px 20px;font-family:'Cairo',sans-serif;font-size:13px;font-weight:600;color:var(--text-muted);background:none;border:none;border-bottom:3px solid transparent;margin-bottom:-2px;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:7px;white-space:nowrap;}
+.tabs-bar{background:var(--card);border-bottom:2px solid var(--border);padding:0 40px;display:flex;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,0.05);overflow-x:auto;}
+.tab-btn{padding:15px 20px;font-family:'Cairo',sans-serif;font-size:13px;font-weight:600;color:var(--text-muted);background:none;border:none;border-bottom:3px solid transparent;margin-bottom:-2px;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:6px;white-space:nowrap;}
 .tab-btn:hover{color:var(--primary);}
 .tab-btn.active{color:var(--primary);border-bottom-color:var(--primary);}
-.container{padding:32px 40px;max-width:1500px;margin:0 auto;}
+.container{padding:28px 40px;max-width:1500px;margin:0 auto;}
 .section{display:none;}.section.active{display:block;}
-.update-bar{display:flex;align-items:center;justify-content:space-between;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 20px;margin-bottom:28px;font-size:13px;}
+.update-bar{display:flex;align-items:center;justify-content:space-between;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 20px;margin-bottom:24px;font-size:13px;}
 .update-info{display:flex;align-items:center;gap:10px;color:var(--text-secondary);}
 .refresh-btn{background:var(--primary);color:white;border:none;padding:8px 20px;border-radius:8px;font-family:'Cairo',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:background 0.2s;}
 .refresh-btn:hover{background:var(--primary-dark);}
-.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:18px;margin-bottom:28px;}
-.kpi-card{background:var(--card);border-radius:16px;padding:20px 18px;border:1px solid var(--border);box-shadow:var(--shadow);position:relative;overflow:hidden;transition:box-shadow 0.2s,transform 0.2s;}
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(185px,1fr));gap:16px;margin-bottom:26px;}
+.kpi-card{background:var(--card);border-radius:16px;padding:20px 18px;border:1px solid var(--border);box-shadow:var(--shadow);position:relative;overflow:hidden;transition:all 0.2s;}
 .kpi-card:hover{box-shadow:var(--shadow-hover);transform:translateY(-2px);}
-.kpi-card::before{content:'';position:absolute;top:0;right:0;width:5px;height:100%;background:var(--primary);border-radius:0 16px 16px 0;}
-.kpi-card.green::before{background:var(--green);}
-.kpi-card.gold::before{background:var(--gold);}
-.kpi-card.red::before{background:var(--red);}
-.kpi-label{font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;}
-.kpi-value{font-size:32px;font-weight:900;color:var(--primary);line-height:1;margin-bottom:5px;}
-.kpi-card.green .kpi-value{color:var(--green);}
-.kpi-card.gold .kpi-value{color:#7a5c1a;}
-.kpi-card.red .kpi-value{color:var(--red);}
-.kpi-sub{font-size:11px;color:var(--text-muted);}
+.kpi-card::before{content:'';position:absolute;top:0;right:0;width:4px;height:100%;background:var(--primary);border-radius:0 16px 16px 0;}
+.kpi-card.ac::before{background:var(--accent);}
+.kpi-card.gr::before{background:var(--green);}
+.kpi-card.tl::before{background:var(--teal);}
+.kpi-card.pu::before{background:var(--purple);}
+.kpi-label{font-size:11px;font-weight:700;color:var(--text-muted);letter-spacing:0.4px;margin-bottom:8px;}
+.kpi-value{font-size:32px;font-weight:900;color:var(--primary);line-height:1;margin-bottom:4px;}
+.kpi-card.ac .kpi-value{color:var(--accent);}
+.kpi-card.gr .kpi-value{color:var(--green);}
+.kpi-card.tl .kpi-value{color:var(--teal);}
+.kpi-card.pu .kpi-value{color:var(--purple);}
+.kpi-sub{font-size:12px;color:var(--text-muted);}
 .kpi-icon{position:absolute;bottom:10px;left:14px;font-size:28px;opacity:0.07;}
-.charts-grid{display:grid;grid-template-columns:repeat(12,1fr);gap:20px;margin-bottom:24px;}
+.charts-grid{display:grid;grid-template-columns:repeat(12,1fr);gap:18px;margin-bottom:22px;}
 .chart-card{background:var(--card);border-radius:16px;padding:20px;border:1px solid var(--border);box-shadow:var(--shadow);}
 .col-12{grid-column:span 12;}.col-8{grid-column:span 8;}.col-7{grid-column:span 7;}
-.col-6{grid-column:span 6;}.col-5{grid-column:span 5;}.col-4{grid-column:span 4;}.col-3{grid-column:span 3;}
+.col-6{grid-column:span 6;}.col-5{grid-column:span 5;}.col-4{grid-column:span 4;}
 .chart-title{font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:3px;display:flex;align-items:center;gap:8px;}
 .chart-title::before{content:'';display:inline-block;width:4px;height:16px;background:var(--primary);border-radius:2px;}
 .chart-subtitle{font-size:11px;color:var(--text-muted);margin-bottom:14px;padding-right:12px;}
-.chart-wrap canvas{max-height:260px;}
+.chart-wrap canvas{max-height:270px;}
 .data-table{width:100%;border-collapse:collapse;font-size:13px;}
-.data-table th{background:var(--primary-pale);color:var(--primary);font-weight:700;padding:10px 14px;text-align:right;border-bottom:2px solid var(--primary);white-space:nowrap;}
-.data-table td{padding:9px 14px;border-bottom:1px solid var(--border);color:var(--text-secondary);}
-.data-table tr:hover td{background:var(--primary-pale);}
+.data-table th{background:rgba(26,79,122,0.07);color:var(--primary);font-weight:700;padding:10px 13px;text-align:right;border-bottom:2px solid var(--primary);white-space:nowrap;}
+.data-table td{padding:9px 13px;border-bottom:1px solid var(--border);color:var(--text-secondary);}
+.data-table tr:hover td{background:rgba(26,79,122,0.03);}
 .data-table tr:last-child td{border-bottom:none;}
-.badge{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:700;}
-.badge-blue{background:rgba(26,74,107,0.1);color:var(--primary);}
+.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;}
+.badge-blue{background:rgba(26,79,122,0.1);color:var(--primary);}
+.badge-gold{background:rgba(232,160,32,0.15);color:#8a5e0a;}
 .badge-green{background:rgba(45,106,79,0.12);color:var(--green);}
-.badge-gold{background:rgba(201,168,76,0.15);color:#7a5c1a;}
-.badge-red{background:rgba(141,25,27,0.1);color:var(--red);}
-.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
-.section-header h2{font-size:19px;font-weight:900;color:var(--text-primary);display:flex;align-items:center;gap:10px;}
+.badge-red{background:rgba(180,30,30,0.1);color:#8b1a1a;}
+.section-header{display:flex;align-items:center;margin-bottom:20px;}
+.section-header h2{font-size:18px;font-weight:900;color:var(--text-primary);display:flex;align-items:center;gap:10px;}
 .section-header h2 span{color:var(--primary);}
-.insights-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:14px;margin-bottom:24px;}
-.insight-card{background:var(--card);border-radius:14px;padding:16px 18px;border:1px solid var(--border);display:flex;gap:12px;align-items:flex-start;}
-.insight-icon{width:40px;height:40px;min-width:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;}
-.insight-icon.blue{background:rgba(26,74,107,0.1);}.insight-icon.gold{background:rgba(201,168,76,0.15);}
-.insight-icon.green{background:rgba(45,106,79,0.12);}.insight-icon.red{background:rgba(141,25,27,0.1);}
-.insight-title{font-size:12px;font-weight:700;color:var(--text-primary);margin-bottom:3px;}
-.insight-text{font-size:11px;color:var(--text-secondary);line-height:1.6;}
-/* conversion funnel */
-.funnel{display:flex;gap:0;align-items:stretch;margin:16px 0;}
-.funnel-step{flex:1;text-align:center;padding:16px 8px;background:var(--primary-pale);border-radius:0;position:relative;}
-.funnel-step:first-child{border-radius:12px 0 0 12px;}
-.funnel-step:last-child{border-radius:0 12px 12px 0;}
-.funnel-step::after{content:'◀';position:absolute;left:-10px;top:50%;transform:translateY(-50%);color:var(--primary);font-size:16px;z-index:1;}
-.funnel-step:first-child::after{display:none;}
-.funnel-num{font-size:26px;font-weight:900;color:var(--primary);}
-.funnel-label{font-size:11px;color:var(--text-secondary);margin-top:4px;}
-.funnel-pct{font-size:12px;font-weight:700;color:var(--gold);margin-top:2px;}
-@media(max-width:1100px){.col-8{grid-column:span 12;}.col-7{grid-column:span 12;}.col-5{grid-column:span 12;}.col-4{grid-column:span 6;}}
-@media(max-width:768px){.container{padding:16px;}.header-inner{padding:16px;}.tabs-bar{padding:0 12px;}.col-4,.col-6,.col-3{grid-column:span 12;}.kpi-value{font-size:26px;}}
-.footer{text-align:center;padding:20px;color:var(--text-muted);font-size:12px;border-top:1px solid var(--border);margin-top:16px;}
+.funnel-wrap{display:flex;flex-direction:column;gap:8px;padding:10px 0;}
+.funnel-bar{display:flex;align-items:center;gap:14px;}
+.funnel-label{min-width:130px;font-size:13px;font-weight:600;color:var(--text-secondary);text-align:left;}
+.funnel-fill{height:40px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:white;transition:width 0.5s ease;}
+.funnel-num{font-size:13px;font-weight:700;color:var(--text-secondary);min-width:60px;}
+.insights-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin-bottom:22px;}
+.insight-card{background:var(--card);border-radius:14px;padding:16px 18px;border:1px solid var(--border);display:flex;gap:13px;align-items:flex-start;}
+.insight-icon{width:40px;height:40px;min-width:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:19px;}
+.insight-icon.blue{background:rgba(26,79,122,0.1);}
+.insight-icon.gold{background:rgba(232,160,32,0.15);}
+.insight-icon.green{background:rgba(45,106,79,0.12);}
+.insight-icon.purple{background:rgba(109,76,142,0.12);}
+.insight-title{font-size:13px;font-weight:700;color:var(--text-primary);margin-bottom:4px;}
+.insight-text{font-size:12px;color:var(--text-secondary);line-height:1.7;}
+.footer{text-align:center;padding:20px;color:var(--text-muted);font-size:12px;border-top:1px solid var(--border);margin-top:14px;}
+@media(max-width:1100px){.col-8,.col-7,.col-5{grid-column:span 12;}.col-4{grid-column:span 6;}}
+@media(max-width:768px){.container{padding:14px;}.header-inner{padding:16px;}.tabs-bar{padding:0 12px;}.col-4,.col-6{grid-column:span 12;}.kpi-value{font-size:26px;}.funnel-label{min-width:90px;font-size:11px;}}
 </style>
 </head>
 <body>
 
 <div class="header">
   <div class="header-inner">
-    <div class="header-brand">
-      <div class="brand-icon">📚</div>
+    <div class="brand">
+      <div class="brand-icon">📊</div>
       <div class="brand-text">
-        <h1>لوحة المؤشرات الحية | معهد العلامة خليل</h1>
-        <p>مركز تميز للتعليم الشرعي عن بعد — الدفعة الخامسة | الفصل الأول 2026</p>
+        <h1>لوحة المؤشرات الحية | معهد العلامة خليل 2026</h1>
+        <p>مركز تميز للتعليم الشرعي — الدفعة الخامسة</p>
       </div>
     </div>
     <div class="header-status">
@@ -117,13 +117,13 @@ body{font-family:'Cairo',sans-serif;background:var(--cream);color:var(--text-pri
 </div>
 
 <div class="tabs-bar">
-  <button class="tab-btn active" onclick="switchTab('overview')" id="tab-overview">🏠 نظرة عامة</button>
-  <button class="tab-btn" onclick="switchTab('funnel')" id="tab-funnel">🔄 قمع التحويل</button>
-  <button class="tab-btn" onclick="switchTab('finance')" id="tab-finance">💰 المالية والمدفوعات</button>
-  <button class="tab-btn" onclick="switchTab('students')" id="tab-students">👥 تحليل المتقدمين</button>
-  <button class="tab-btn" onclick="switchTab('geo')" id="tab-geo">🌍 التوزيع الجغرافي</button>
-  <button class="tab-btn" onclick="switchTab('marketing')" id="tab-marketing">📣 التسويق</button>
-  <button class="tab-btn" onclick="switchTab('recommendations')" id="tab-recommendations">💡 التوصيات</button>
+  <button class="tab-btn active" onclick="switchTab('overview')"      id="tab-overview">🏠 نظرة عامة</button>
+  <button class="tab-btn"        onclick="switchTab('conversion')"    id="tab-conversion">🔄 قمع التحويل</button>
+  <button class="tab-btn"        onclick="switchTab('revenue')"       id="tab-revenue">💰 الإيرادات</button>
+  <button class="tab-btn"        onclick="switchTab('payments')"      id="tab-payments">💳 طرق الدفع</button>
+  <button class="tab-btn"        onclick="switchTab('students')"      id="tab-students">👥 المتقدمون</button>
+  <button class="tab-btn"        onclick="switchTab('marketing')"     id="tab-marketing">📣 التسويق</button>
+  <button class="tab-btn"        onclick="switchTab('recommendations')" id="tab-recommendations">💡 التوصيات</button>
 </div>
 
 <div class="container">
@@ -132,669 +132,741 @@ body{font-family:'Cairo',sans-serif;background:var(--cream);color:var(--text-pri
     <button class="refresh-btn" onclick="loadAll()">🔄 تحديث البيانات</button>
   </div>
 
-  <!-- TAB 1: OVERVIEW -->
-  <div class="section active" id="section-overview">
-    <div class="section-header"><h2>🏠 النظرة العامة — <span id="overview-date">...</span></h2></div>
-    <div class="kpi-grid">
-      <div class="kpi-card"><div class="kpi-label">إجمالي المتقدمين</div><div class="kpi-value" id="k-applicants">—</div><div class="kpi-sub">سجلوا في البرنامج</div><div class="kpi-icon">📋</div></div>
-      <div class="kpi-card green"><div class="kpi-label">الطلاب الفعليون</div><div class="kpi-value" id="k-students">—</div><div class="kpi-sub" id="k-students-sub">أتموا الدفع</div><div class="kpi-icon">🎓</div></div>
-      <div class="kpi-card gold"><div class="kpi-label">معدل التحويل</div><div class="kpi-value" id="k-conversion">—</div><div class="kpi-sub">من المتقدمين → طلاب</div><div class="kpi-icon">🔄</div></div>
-      <div class="kpi-card green"><div class="kpi-label">إجمالي الإيرادات</div><div class="kpi-value" id="k-revenue">—</div><div class="kpi-sub">دولار أمريكي</div><div class="kpi-icon">💵</div></div>
-      <div class="kpi-card"><div class="kpi-label">نسبة الذكور</div><div class="kpi-value" id="k-male">—</div><div class="kpi-sub" id="k-male-sub">من المتقدمين</div><div class="kpi-icon">🧑</div></div>
-      <div class="kpi-card"><div class="kpi-label">نسبة الإناث</div><div class="kpi-value" id="k-female">—</div><div class="kpi-sub" id="k-female-sub">من المتقدمين</div><div class="kpi-icon">👩</div></div>
-      <div class="kpi-card gold"><div class="kpi-label">الدول المشاركة</div><div class="kpi-value" id="k-countries">—</div><div class="kpi-sub">دولة حول العالم</div><div class="kpi-icon">🌍</div></div>
-      <div class="kpi-card red"><div class="kpi-label">طلاب بأقساط معلقة</div><div class="kpi-value" id="k-pending">—</div><div class="kpi-sub">لم يكملوا السداد</div><div class="kpi-icon">⏳</div></div>
+<!-- ══════════════ TAB 1: OVERVIEW ══════════════ -->
+<div class="section active" id="section-overview">
+  <div class="section-header"><h2>🏠 النظرة <span>العامة</span></h2></div>
+  <div class="kpi-grid">
+    <div class="kpi-card"><div class="kpi-label">المتقدمون</div><div class="kpi-value" id="kpi-applicants">—</div><div class="kpi-sub">إجمالي طلبات التسجيل</div><div class="kpi-icon">📋</div></div>
+    <div class="kpi-card gr"><div class="kpi-label">الطلاب الفعليون</div><div class="kpi-value" id="kpi-students">—</div><div class="kpi-sub">التحقوا ودفعوا</div><div class="kpi-icon">👥</div></div>
+    <div class="kpi-card ac"><div class="kpi-label">معدل التحويل</div><div class="kpi-value" id="kpi-conversion">—</div><div class="kpi-sub">من المتقدم للطالب</div><div class="kpi-icon">🔄</div></div>
+    <div class="kpi-card tl"><div class="kpi-label">إجمالي الإيرادات</div><div class="kpi-value" id="kpi-revenue">—</div><div class="kpi-sub">كاش + أقساط محصّلة</div><div class="kpi-icon">💰</div></div>
+    <div class="kpi-card pu"><div class="kpi-label">متوسط الدفع للطالب</div><div class="kpi-value" id="kpi-avgpay">—</div><div class="kpi-sub">لكل طالب دافع</div><div class="kpi-icon">📊</div></div>
+    <div class="kpi-card"><div class="kpi-label">الإعفاء الكلي</div><div class="kpi-value" id="kpi-exempt">—</div><div class="kpi-sub">طلاب معفيون من الرسوم</div><div class="kpi-icon">🎁</div></div>
+  </div>
+  <div class="charts-grid">
+    <div class="chart-card col-8">
+      <div class="chart-title">الإيرادات الأسبوعية</div>
+      <div class="chart-subtitle">إجمالي المحصّل (كاش + أقساط) أسبوعاً بأسبوع</div>
+      <div class="chart-wrap"><canvas id="overviewRevenueChart"></canvas></div>
     </div>
-    <div class="charts-grid">
-      <div class="chart-card col-8">
-        <div class="chart-title">منحنى التسجيل التراكمي</div>
-        <div class="chart-subtitle">إجمالي المتقدمين يوماً بيوم منذ فتح باب التسجيل</div>
-        <div class="chart-wrap"><canvas id="trendChart"></canvas></div>
-      </div>
-      <div class="chart-card col-4">
-        <div class="chart-title">توزيع الجنس</div>
-        <div class="chart-subtitle">بين المتقدمين</div>
-        <div class="chart-wrap"><canvas id="genderChart"></canvas></div>
-      </div>
-    </div>
-    <div class="charts-grid">
-      <div class="chart-card col-6">
-        <div class="chart-title">توزيع حالة الطالب في المعهد</div>
-        <div class="chart-subtitle">خبرة المتقدمين السابقة مع معاهد تميز</div>
-        <div class="chart-wrap"><canvas id="statusChart"></canvas></div>
-      </div>
-      <div class="chart-card col-6">
-        <div class="chart-title">التوزيع الجغرافي — أبرز 10 دول</div>
-        <div class="chart-subtitle">الدول الأكثر تسجيلاً</div>
-        <div class="chart-wrap"><canvas id="topCountriesChart"></canvas></div>
-      </div>
+    <div class="chart-card col-4">
+      <div class="chart-title">توزيع نظام الدفع</div>
+      <div class="chart-subtitle">كاش / أقساط / إعفاء</div>
+      <div class="chart-wrap"><canvas id="overviewPaySysChart"></canvas></div>
     </div>
   </div>
-
-  <!-- TAB 2: FUNNEL -->
-  <div class="section" id="section-funnel">
-    <div class="section-header"><h2>🔄 قمع <span>التحويل</span></h2></div>
-    <div class="chart-card" style="margin-bottom:24px">
-      <div class="chart-title">رحلة المتقدم من التسجيل إلى الدفع</div>
-      <div class="chart-subtitle">نسب التحويل في كل مرحلة</div>
-      <div class="funnel" id="funnelViz"></div>
+  <div class="charts-grid">
+    <div class="chart-card col-6">
+      <div class="chart-title">الإيرادات حسب الدولة — أبرز 10</div>
+      <div class="chart-subtitle">إجمالي المبالغ المحصّلة بالدولار</div>
+      <div class="chart-wrap"><canvas id="overviewCountryRevChart"></canvas></div>
     </div>
-    <div class="kpi-grid">
-      <div class="kpi-card"><div class="kpi-label">دفعوا خلال 24 ساعة</div><div class="kpi-value" id="f-24h">—</div><div class="kpi-sub">من الطلاب الفعليين</div><div class="kpi-icon">⚡</div></div>
-      <div class="kpi-card gold"><div class="kpi-label">متوسط وقت التحويل</div><div class="kpi-value" id="f-avgtime">—</div><div class="kpi-sub">ساعة من التسجيل للدفع</div><div class="kpi-icon">⏱️</div></div>
-      <div class="kpi-card green"><div class="kpi-label">دفعوا كاش كامل</div><div class="kpi-value" id="f-cash">—</div><div class="kpi-sub">من الطلاب الفعليين</div><div class="kpi-icon">💵</div></div>
-      <div class="kpi-card"><div class="kpi-label">اختاروا الأقساط</div><div class="kpi-value" id="f-install">—</div><div class="kpi-sub">من الطلاب الفعليين</div><div class="kpi-icon">📅</div></div>
-      <div class="kpi-card red"><div class="kpi-label">إعفاء كلي</div><div class="kpi-value" id="f-exempt">—</div><div class="kpi-sub">منح مجانية</div><div class="kpi-icon">🎁</div></div>
+    <div class="chart-card col-6">
+      <div class="chart-title">التوزيع الجغرافي للمتقدمين — أبرز 10 دول</div>
+      <div class="chart-subtitle">بلد إقامة المتقدمين</div>
+      <div class="chart-wrap"><canvas id="overviewCountryAppChart"></canvas></div>
     </div>
-    <div class="charts-grid">
-      <div class="chart-card col-6">
-        <div class="chart-title">توزيع نظام السداد</div>
-        <div class="chart-subtitle">كاش / أقساط / إعفاء</div>
-        <div class="chart-wrap"><canvas id="payMethodChart"></canvas></div>
-      </div>
-      <div class="chart-card col-6">
-        <div class="chart-title">سرعة التحويل</div>
-        <div class="chart-subtitle">توزيع الفارق الزمني بين التسجيل والدفع</div>
-        <div class="chart-wrap"><canvas id="conversionSpeedChart"></canvas></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- TAB 3: FINANCE -->
-  <div class="section" id="section-finance">
-    <div class="section-header"><h2>💰 المالية <span>والمدفوعات</span></h2></div>
-    <div class="kpi-grid">
-      <div class="kpi-card green"><div class="kpi-label">إجمالي الإيرادات</div><div class="kpi-value" id="fin-total">—</div><div class="kpi-sub">دولار أمريكي</div><div class="kpi-icon">💵</div></div>
-      <div class="kpi-card gold"><div class="kpi-label">متوسط الدفع للطالب</div><div class="kpi-value" id="fin-avg">—</div><div class="kpi-sub">دولار للطالب الواحد</div><div class="kpi-icon">📊</div></div>
-      <div class="kpi-card"><div class="kpi-label">إجمالي الخصومات</div><div class="kpi-value" id="fin-discount">—</div><div class="kpi-sub">دولار قيمة الخصومات</div><div class="kpi-icon">🏷️</div></div>
-      <div class="kpi-card red"><div class="kpi-label">أقساط معلقة (مستحقة)</div><div class="kpi-value" id="fin-pending">—</div><div class="kpi-sub">طالب لم يكمل</div><div class="kpi-icon">⏳</div></div>
-    </div>
-    <div class="charts-grid">
-      <div class="chart-card col-6">
-        <div class="chart-title">الإيرادات الأسبوعية</div>
-        <div class="chart-subtitle">مجموع المدفوعات (بالدولار) أسبوعاً بأسبوع</div>
-        <div class="chart-wrap"><canvas id="weeklyRevenueChart"></canvas></div>
-      </div>
-      <div class="chart-card col-6">
-        <div class="chart-title">وسائل الدفع المستخدمة</div>
-        <div class="chart-subtitle">بايبال / فواتيرك / التونسي / غيره</div>
-        <div class="chart-wrap"><canvas id="payTypeChart"></canvas></div>
-      </div>
-    </div>
-    <div class="charts-grid">
-      <div class="chart-card col-6">
-        <div class="chart-title">نوع الخصم</div>
-        <div class="chart-subtitle">بلا خصم / كوبون / إعفاء جزئي / كامل</div>
-        <div class="chart-wrap"><canvas id="discountTypeChart"></canvas></div>
-      </div>
-      <div class="chart-card col-6">
-        <div class="chart-title">الإيرادات حسب فئة البلد</div>
-        <div class="chart-subtitle">من أي منطقة جغرافية جاءت أعلى إيرادات؟</div>
-        <div class="chart-wrap"><canvas id="revenueByRegionChart"></canvas></div>
-      </div>
-    </div>
-    <div class="chart-card">
-      <div class="chart-title">جدول أعلى 10 دول إيراداً</div>
-      <div style="overflow-x:auto;margin-top:14px">
-        <table class="data-table" id="revenueCountryTable">
-          <thead><tr><th>#</th><th>الدولة</th><th>عدد الطلاب</th><th>الإيرادات ($)</th><th>متوسط الدفع</th></tr></thead>
-          <tbody></tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-
-  <!-- TAB 4: STUDENTS -->
-  <div class="section" id="section-students">
-    <div class="section-header"><h2>👥 تحليل <span>المتقدمين والطلاب</span></h2></div>
-    <div class="charts-grid">
-      <div class="chart-card col-6">
-        <div class="chart-title">الفئات العمرية</div>
-        <div class="chart-subtitle">توزيع المتقدمين حسب الفئة العمرية</div>
-        <div class="chart-wrap"><canvas id="ageChart"></canvas></div>
-      </div>
-      <div class="chart-card col-6">
-        <div class="chart-title">المستوى التعليمي</div>
-        <div class="chart-subtitle">توزيع المتقدمين حسب المؤهل الدراسي</div>
-        <div class="chart-wrap"><canvas id="eduChart"></canvas></div>
-      </div>
-    </div>
-    <div class="charts-grid">
-      <div class="chart-card col-6">
-        <div class="chart-title">الوضع الوظيفي</div>
-        <div class="chart-subtitle">هل يعمل المتقدم؟</div>
-        <div class="chart-wrap"><canvas id="workChart"></canvas></div>
-      </div>
-      <div class="chart-card col-6">
-        <div class="chart-title">الساعات اليومية المتاحة</div>
-        <div class="chart-subtitle">كم ساعة يستطيع تخصيصها للدراسة</div>
-        <div class="chart-wrap"><canvas id="hoursChart"></canvas></div>
-      </div>
-    </div>
-    <div class="charts-grid">
-      <div class="chart-card col-6">
-        <div class="chart-title">حالة الطالب في المعهد (تفصيل)</div>
-        <div class="chart-subtitle">خبرة المتقدمين مع بقية برامج تميز</div>
-        <div class="chart-wrap"><canvas id="prevExpChart"></canvas></div>
-      </div>
-      <div class="chart-card col-6">
-        <div class="chart-title">مشاركة في برامج أخرى</div>
-        <div class="chart-subtitle">هل يشارك في معاهد أو برامج شرعية أخرى؟</div>
-        <div class="chart-wrap"><canvas id="otherProgChart"></canvas></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- TAB 5: GEO -->
-  <div class="section" id="section-geo">
-    <div class="section-header"><h2>🌍 التوزيع <span>الجغرافي</span></h2></div>
-    <div class="charts-grid">
-      <div class="chart-card col-6">
-        <div class="chart-title">توزيع المتقدمين حسب المنطقة</div>
-        <div class="chart-subtitle">فئات جغرافية (مصر / الخليج / شمال أفريقيا...)</div>
-        <div class="chart-wrap"><canvas id="regionChart"></canvas></div>
-      </div>
-      <div class="chart-card col-6">
-        <div class="chart-title">معدل التحويل حسب المنطقة</div>
-        <div class="chart-subtitle">نسبة من دفع من كل منطقة</div>
-        <div class="chart-wrap"><canvas id="regionConversionChart"></canvas></div>
-      </div>
-    </div>
-    <div class="chart-card">
-      <div class="chart-title">جدول التوزيع الجغرافي الكامل</div>
-      <div style="overflow-x:auto;margin-top:14px">
-        <table class="data-table" id="geoTable">
-          <thead><tr><th>#</th><th>الدولة</th><th>المتقدمون</th><th>الطلاب</th><th>معدل التحويل</th><th>المنطقة</th></tr></thead>
-          <tbody></tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-
-  <!-- TAB 6: MARKETING -->
-  <div class="section" id="section-marketing">
-    <div class="section-header"><h2>📣 تحليل <span>التسويق والمصادر</span></h2></div>
-    <div class="charts-grid">
-      <div class="chart-card col-7">
-        <div class="chart-title">مصادر معرفة المعهد</div>
-        <div class="chart-subtitle">من أين عرف المتقدم بمعهد خليل؟</div>
-        <div class="chart-wrap"><canvas id="sourceChart"></canvas></div>
-      </div>
-      <div class="chart-card col-5">
-        <div class="chart-title">جدول المصادر</div>
-        <div style="overflow-y:auto;max-height:280px;margin-top:8px">
-          <table class="data-table" id="sourceTable">
-            <thead><tr><th>المصدر</th><th>العدد</th><th>النسبة</th><th>تحويل</th></tr></thead>
-            <tbody></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-    <div class="charts-grid">
-      <div class="chart-card col-6">
-        <div class="chart-title">معدل التحويل حسب المصدر</div>
-        <div class="chart-subtitle">أي قناة تسويقية تجلب أكثر الطلاب الفعليين؟</div>
-        <div class="chart-wrap"><canvas id="sourceConvChart"></canvas></div>
-      </div>
-      <div class="chart-card col-6">
-        <div class="chart-title">المصدر × الجنس</div>
-        <div class="chart-subtitle">هل يختلف مصدر التسجيل بين الذكور والإناث؟</div>
-        <div class="chart-wrap"><canvas id="sourceGenderChart"></canvas></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- TAB 7: RECOMMENDATIONS -->
-  <div class="section" id="section-recommendations">
-    <div class="section-header"><h2>💡 التوصيات والتحليل <span>الاستراتيجي</span></h2></div>
-    <div id="rec-content"></div>
   </div>
 </div>
 
-<div class="footer">لوحة المؤشرات الحية | مركز تميز | معهد العلامة خليل — الدفعة الخامسة 2026</div>
+<!-- ══════════════ TAB 2: CONVERSION ══════════════ -->
+<div class="section" id="section-conversion">
+  <div class="section-header"><h2>🔄 قمع <span>التحويل</span></h2></div>
+  <div class="kpi-grid">
+    <div class="kpi-card"><div class="kpi-label">المتقدمون</div><div class="kpi-value" id="c-applicants">—</div><div class="kpi-sub">ملأوا استمارة التسجيل</div><div class="kpi-icon">📋</div></div>
+    <div class="kpi-card ac"><div class="kpi-label">دفعوا كاش</div><div class="kpi-value" id="c-cash">—</div><div class="kpi-sub" id="c-cash-pct">—</div><div class="kpi-icon">💵</div></div>
+    <div class="kpi-card gr"><div class="kpi-label">دفعوا قسط أول</div><div class="kpi-value" id="c-inst">—</div><div class="kpi-sub" id="c-inst-pct">—</div><div class="kpi-icon">📅</div></div>
+    <div class="kpi-card tl"><div class="kpi-label">معفيون كلياً</div><div class="kpi-value" id="c-exempt">—</div><div class="kpi-sub" id="c-exempt-pct">—</div><div class="kpi-icon">🎁</div></div>
+    <div class="kpi-card pu"><div class="kpi-label">إجمالي الطلاب</div><div class="kpi-value" id="c-total">—</div><div class="kpi-sub" id="c-total-pct">—</div><div class="kpi-icon">✅</div></div>
+  </div>
+  <div class="charts-grid">
+    <div class="chart-card col-6">
+      <div class="chart-title">قمع التحويل المرئي</div>
+      <div class="chart-subtitle">من التقدم للالتحاق الفعلي</div>
+      <div id="funnelViz"></div>
+    </div>
+    <div class="chart-card col-6">
+      <div class="chart-title">معدلات التحويل</div>
+      <div class="chart-subtitle">النسب المئوية لكل مرحلة</div>
+      <div class="chart-wrap"><canvas id="conversionRatesChart"></canvas></div>
+    </div>
+  </div>
+  <div class="charts-grid">
+    <div class="chart-card col-12">
+      <div class="chart-title">تحليل قمع التحويل</div>
+      <div class="chart-subtitle">فهم الأعداد والنسب بشكل أعمق</div>
+      <table class="data-table">
+        <thead><tr><th>المرحلة</th><th>العدد</th><th>% من المتقدمين</th><th>% من الطلاب</th><th>الحالة</th></tr></thead>
+        <tbody id="funnelTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ TAB 3: REVENUE ══════════════ -->
+<div class="section" id="section-revenue">
+  <div class="section-header"><h2>💰 تحليل <span>الإيرادات</span></h2></div>
+  <div class="kpi-grid">
+    <div class="kpi-card tl"><div class="kpi-label">إجمالي الإيرادات</div><div class="kpi-value" id="r-total">—</div><div class="kpi-sub">كاش + أقساط</div><div class="kpi-icon">💰</div></div>
+    <div class="kpi-card"><div class="kpi-label">إيرادات الكاش</div><div class="kpi-value" id="r-cash">—</div><div class="kpi-sub" id="r-cash-pct">—</div><div class="kpi-icon">💵</div></div>
+    <div class="kpi-card ac"><div class="kpi-label">إيرادات الأقساط</div><div class="kpi-value" id="r-inst">—</div><div class="kpi-sub" id="r-inst-pct">—</div><div class="kpi-icon">📅</div></div>
+    <div class="kpi-card gr"><div class="kpi-label">متوسط الدفعة</div><div class="kpi-value" id="r-avg">—</div><div class="kpi-sub">لكل طالب دافع</div><div class="kpi-icon">📊</div></div>
+    <div class="kpi-card pu"><div class="kpi-label">أعلى أسبوع إيراداً</div><div class="kpi-value" id="r-peak">—</div><div class="kpi-sub" id="r-peak-week">—</div><div class="kpi-icon">🏆</div></div>
+  </div>
+  <div class="charts-grid">
+    <div class="chart-card col-8">
+      <div class="chart-title">الإيرادات الأسبوعية (كاش + أقساط)</div>
+      <div class="chart-subtitle">المبالغ المحصّلة أسبوعاً بأسبوع بالدولار</div>
+      <div class="chart-wrap"><canvas id="revenueWeeklyChart"></canvas></div>
+    </div>
+    <div class="chart-card col-4">
+      <div class="chart-title">توزيع الإيرادات</div>
+      <div class="chart-subtitle">كاش مقابل أقساط</div>
+      <div class="chart-wrap"><canvas id="revenueSplitChart"></canvas></div>
+    </div>
+  </div>
+  <div class="charts-grid">
+    <div class="chart-card col-7">
+      <div class="chart-title">الإيرادات حسب الدولة</div>
+      <div class="chart-subtitle">أعلى 10 دول في المبالغ المحصّلة</div>
+      <div class="chart-wrap"><canvas id="revenueCountryChart"></canvas></div>
+    </div>
+    <div class="chart-card col-5">
+      <div class="chart-title">جدول الإيرادات الأسبوعي</div>
+      <div style="overflow-y:auto;max-height:280px;margin-top:8px;">
+        <table class="data-table">
+          <thead><tr><th>الأسبوع</th><th>الفترة</th><th>المحصّل ($)</th></tr></thead>
+          <tbody id="weeklyRevTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ TAB 4: PAYMENTS ══════════════ -->
+<div class="section" id="section-payments">
+  <div class="section-header"><h2>💳 تحليل <span>طرق الدفع</span></h2></div>
+  <div class="kpi-grid">
+    <div class="kpi-card"><div class="kpi-label">دفعوا كاملاً</div><div class="kpi-value" id="p-cash">—</div><div class="kpi-sub" id="p-cash-pct">—</div><div class="kpi-icon">💵</div></div>
+    <div class="kpi-card ac"><div class="kpi-label">دفعوا بالقسط</div><div class="kpi-value" id="p-inst">—</div><div class="kpi-sub" id="p-inst-pct">—</div><div class="kpi-icon">📅</div></div>
+    <div class="kpi-card gr"><div class="kpi-label">حصلوا على خصم</div><div class="kpi-value" id="p-disc">—</div><div class="kpi-sub" id="p-disc-pct">—</div><div class="kpi-icon">🏷️</div></div>
+    <div class="kpi-card tl"><div class="kpi-label">الوسيلة الأولى</div><div class="kpi-value" id="p-topmethod" style="font-size:18px;padding-top:4px">—</div><div class="kpi-sub" id="p-topmethod-sub">—</div><div class="kpi-icon">📱</div></div>
+    <div class="kpi-card pu"><div class="kpi-label">إعفاء كلي</div><div class="kpi-value" id="p-exempt">—</div><div class="kpi-sub">منح دراسية كاملة</div><div class="kpi-icon">🎁</div></div>
+  </div>
+  <div class="charts-grid">
+    <div class="chart-card col-6">
+      <div class="chart-title">وسائل الدفع المستخدمة</div>
+      <div class="chart-subtitle">عدد المعاملات لكل وسيلة دفع</div>
+      <div class="chart-wrap"><canvas id="providersChart"></canvas></div>
+    </div>
+    <div class="chart-card col-6">
+      <div class="chart-title">توزيع الخصومات</div>
+      <div class="chart-subtitle">كم طالب حصل على كل نسبة خصم؟</div>
+      <div class="chart-wrap"><canvas id="discountChart"></canvas></div>
+    </div>
+  </div>
+  <div class="charts-grid">
+    <div class="chart-card col-6">
+      <div class="chart-title">نظام السداد</div>
+      <div class="chart-subtitle">كاش / أقساط / إعفاء</div>
+      <div class="chart-wrap"><canvas id="paySystemChart"></canvas></div>
+    </div>
+    <div class="chart-card col-6">
+      <div class="chart-title">تفاصيل الخصومات</div>
+      <div style="overflow-y:auto;max-height:260px;margin-top:8px;">
+        <table class="data-table">
+          <thead><tr><th>نوع الخصم</th><th>العدد</th><th>النسبة من الطلاب</th></tr></thead>
+          <tbody id="discountTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ TAB 5: APPLICANTS / STUDENTS ══════════════ -->
+<div class="section" id="section-students">
+  <div class="section-header"><h2>👥 تحليل <span>شريحة المتقدمين</span></h2></div>
+  <div class="kpi-grid">
+    <div class="kpi-card"><div class="kpi-label">إجمالي المتقدمين</div><div class="kpi-value" id="s-total">—</div><div class="kpi-sub">طالب وطالبة</div><div class="kpi-icon">👥</div></div>
+    <div class="kpi-card ac"><div class="kpi-label">الذكور</div><div class="kpi-value" id="s-male">—</div><div class="kpi-sub" id="s-male-sub">—</div><div class="kpi-icon">🧑</div></div>
+    <div class="kpi-card gr"><div class="kpi-label">الإناث</div><div class="kpi-value" id="s-female">—</div><div class="kpi-sub" id="s-female-sub">—</div><div class="kpi-icon">👩</div></div>
+    <div class="kpi-card tl"><div class="kpi-label">عدد الدول</div><div class="kpi-value" id="s-countries">—</div><div class="kpi-sub">دولة مشاركة</div><div class="kpi-icon">🌍</div></div>
+    <div class="kpi-card pu"><div class="kpi-label">أكثر مستوى تعليمي</div><div class="kpi-value" id="s-topedu" style="font-size:20px;padding-top:4px">—</div><div class="kpi-sub" id="s-topedu-sub">—</div><div class="kpi-icon">🎓</div></div>
+  </div>
+  <div class="charts-grid">
+    <div class="chart-card col-6">
+      <div class="chart-title">المستوى التعليمي</div>
+      <div class="chart-subtitle">توزيع المتقدمين حسب المؤهل</div>
+      <div class="chart-wrap"><canvas id="eduChart"></canvas></div>
+    </div>
+    <div class="chart-card col-6">
+      <div class="chart-title">الوضع الوظيفي</div>
+      <div class="chart-subtitle">هل يعمل المتقدم؟</div>
+      <div class="chart-wrap"><canvas id="workChart"></canvas></div>
+    </div>
+  </div>
+  <div class="charts-grid">
+    <div class="chart-card col-6">
+      <div class="chart-title">الساعات اليومية المتاحة</div>
+      <div class="chart-subtitle">كم ساعة يستطيع المتقدم أن يخصص يومياً؟</div>
+      <div class="chart-wrap"><canvas id="hoursChart"></canvas></div>
+    </div>
+    <div class="chart-card col-6">
+      <div class="chart-title">المشاركة في برامج شرعية أخرى</div>
+      <div class="chart-subtitle">هل يتابع المتقدم برامج موازية؟</div>
+      <div class="chart-wrap"><canvas id="otherProgramsChart"></canvas></div>
+    </div>
+  </div>
+  <div class="charts-grid">
+    <div class="chart-card col-12">
+      <div class="chart-title">التوزيع الجغرافي الكامل</div>
+      <div class="chart-subtitle">جميع الدول المشاركة</div>
+      <div style="overflow-y:auto;max-height:320px;">
+        <table class="data-table" id="countryTable">
+          <thead><tr><th>#</th><th>الدولة</th><th>العدد</th><th>النسبة</th></tr></thead>
+          <tbody id="countryTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ TAB 6: MARKETING ══════════════ -->
+<div class="section" id="section-marketing">
+  <div class="section-header"><h2>📣 تحليل <span>التسويق</span></h2></div>
+  <div class="charts-grid">
+    <div class="chart-card col-7">
+      <div class="chart-title">مصادر معرفة البرنامج</div>
+      <div class="chart-subtitle">من أين عرف المتقدم بالبرنامج؟</div>
+      <div class="chart-wrap"><canvas id="sourceChart"></canvas></div>
+    </div>
+    <div class="chart-card col-5">
+      <div class="chart-title">جدول المصادر</div>
+      <div style="overflow-y:auto;max-height:280px;margin-top:8px;">
+        <table class="data-table">
+          <thead><tr><th>المصدر</th><th>العدد</th><th>النسبة</th></tr></thead>
+          <tbody id="sourceTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="charts-grid">
+    <div class="chart-card col-6">
+      <div class="chart-title">مصدر التسجيل × الجنس</div>
+      <div class="chart-subtitle">هل يختلف المصدر بين الذكور والإناث؟</div>
+      <div class="chart-wrap"><canvas id="sourceGenderChart"></canvas></div>
+    </div>
+    <div class="chart-card col-6">
+      <div class="chart-title">منحنى التسجيل التراكمي</div>
+      <div class="chart-subtitle">إجمالي المتقدمين يوماً بيوم</div>
+      <div class="chart-wrap"><canvas id="trendChart"></canvas></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ TAB 7: RECOMMENDATIONS ══════════════ -->
+<div class="section" id="section-recommendations">
+  <div class="section-header"><h2>💡 التوصيات <span>الاستراتيجية</span></h2></div>
+  <div id="recommendations-content"></div>
+</div>
+
+</div><!-- /container -->
+<div class="footer">لوحة المؤشرات الحية | معهد العلامة خليل 2026 — مركز تميز | الدفعة الخامسة</div>
 
 <script>
+// ═══════════ CONFIG ═══════════
 const URLS = {
   applicants: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR39Euzrn9aeftSlgqNXJv7MkqFXBwxwLQnVnx5UFFfKcwDMoNEoqOWnkFZDTvYtalBio34JajkC1Id/pub?gid=230227072&single=true&output=csv',
-  payments:   'https://docs.google.com/spreadsheets/d/e/2PACX-1vR39Euzrn9aeftSlgqNXJv7MkqFXBwxwLQnVnx5UFFfKcwDMoNEoqOWnkFZDTvYtalBio34JajkC1Id/pub?gid=1438763612&single=true&output=csv',
+  payments:   'https://docs.google.com/spreadsheets/d/e/2PACX-1vR39Euzrn9aeftSlgqNXJv7MkqFXBwxwLQnVnx5UFFfKcwDMoNEoqOWnkFZDTvYtalBio34JajkC1Id/pub?gid=1438763612&single=true&output=csv'
 };
+const TARGET_BATCH = 'الخامسة'; // فلتر دفعة معهد خليل
 
-const PAL=['#1a4a6b','#c9a84c','#2d6a4f','#8d191b','#6d6875','#e76f51','#457b9d','#52b788','#f4a261','#a8dadc'];
-let charts={}, appData=[], payData=[];
+const PAL = ['#1a4f7a','#e8a020','#2d6a4f','#0d6e6e','#6d4c8e','#e76f51','#457b9d','#52b788','#f4a261','#a8dadc'];
+let charts = {}, appData = [], payData = [];
 
-// ── CSV ─────────────────────────────────────────────────────
-function parseRow(s){const a=[];let c='',q=false;for(let i=0;i<s.length;i++){if(s[i]==='"'){q=!q;}else if(s[i]===','&&!q){a.push(c);c='';}else c+=s[i];}a.push(c);return a;}
+// ── CSV parser ──────────────────────────────────────────────
+function parseRow(s){
+  const a=[];let c='',q=false;
+  for(let i=0;i<s.length;i++){
+    if(s[i]==='"'){q=!q;}
+    else if(s[i]===','&&!q){a.push(c);c='';}
+    else c+=s[i];
+  }
+  a.push(c);return a;
+}
 function parseCSV(txt){
   const lines=txt.split(/\r?\n/).filter(l=>l.trim());
   if(!lines.length)return[];
   const hdrs=parseRow(lines[0]).map(h=>h.trim());
-  return lines.slice(1).map(l=>{const v=parseRow(l);const o={};hdrs.forEach((h,i)=>o[h]=(v[i]||'').trim());return o;}).filter(r=>Object.values(r).some(v=>v));
+  return lines.slice(1).map(l=>{
+    const v=parseRow(l);
+    const o={};
+    hdrs.forEach((h,i)=>o[h]=(v[i]||'').trim());
+    return o;
+  }).filter(r=>Object.values(r).some(v=>v));
 }
 async function fetchCSV(url){
-  // جرب الروابط مباشرة أول (بيشتغل لو CORS مسموح)
-  // ثم جرب proxies مختلفة
-  const proxies = [
-    u => u, // direct
-    u => 'https://api.allorigins.win/raw?url=' + encodeURIComponent(u),
-    u => 'https://corsproxy.io/?' + encodeURIComponent(u),
-  ];
-
-  for(const makeUrl of proxies){
-    try{
-      const r = await fetch(makeUrl(url + '&nocache=' + Date.now()));
-      const text = await r.text();
-      // تأكد إنه CSV وليس HTML
-      if(text.trim().startsWith('<')) continue;
-      const parsed = parseCSV(text);
-      if(parsed.length > 0) return parsed;
-    }catch(e){ continue; }
-  }
-  throw new Error('فشل جلب البيانات من كل المصادر');
+  const r=await fetch(url+'&nocache='+Date.now());
+  return parseCSV(await r.text());
 }
 
 // ── helpers ─────────────────────────────────────────────────
-function num(n){return Number(n).toLocaleString('en-US');}
+function getCol(row, names){
+  for(const n of names){
+    if(row[n]!==undefined && row[n]!=='') return row[n].trim();
+  }
+  return 'غير محدد';
+}
+function getNum(row, names){
+  const v = getCol(row, names);
+  return parseFloat((v||'0').replace(/[,%\s\u202c\u200f$]/g,''))||0;
+}
+function num(n){return Number(n).toLocaleString('ar-EG');}
+function usd(n){return '$'+Number(Math.round(n)).toLocaleString('en-US');}
 function pct(n,t){return t?((n/t)*100).toFixed(1)+'%':'0%';}
 function countBy(arr,fn){const m={};arr.forEach(r=>{const k=fn(r)||'غير محدد';m[k]=(m[k]||0)+1;});return m;}
-function sumBy(arr,fn,vfn){const m={};arr.forEach(r=>{const k=fn(r)||'غير محدد';m[k]=(m[k]||0)+(vfn(r)||0);});return m;}
-function topN(obj,n=10){return Object.entries(obj).sort((a,b)=>b[1]-a[1]).slice(0,n);}
-function getCol(row,names){for(const n of names){if(row[n]!==undefined&&row[n]!=='')return row[n].trim();}return'';}
+function sumBy(arr,keyFn,valFn){const m={};arr.forEach(r=>{const k=keyFn(r)||'غير محدد';m[k]=(m[k]||0)+valFn(r);});return m;}
+function topN(obj,n){return Object.entries(obj).sort((a,b)=>b[1]-a[1]).slice(0,n);}
 
-// ── chart factory ────────────────────────────────────────────
+function mkChart(id,cfg){
+  if(charts[id])charts[id].destroy();
+  const c=document.getElementById(id);
+  if(c)charts[id]=new Chart(c,cfg);
+}
 const BASE={responsive:true,maintainAspectRatio:false,
-  plugins:{legend:{labels:{font:{family:'Cairo',size:11},color:'#333'}},
-           tooltip:{titleFont:{family:'Cairo'},bodyFont:{family:'Cairo'}}}};
-function mkChart(id,cfg){if(charts[id])charts[id].destroy();const c=document.getElementById(id);if(c)charts[id]=new Chart(c,cfg);}
-function tipPct(total){return{callbacks:{label(ctx){const v=ctx.parsed.y??ctx.parsed.x??ctx.raw??0;const p=total>0?((v/total)*100).toFixed(1):0;const l=ctx.dataset.label?ctx.dataset.label+': ':'';return` ${l}${num(v)} (${p}%)`;}}};}
-function tipLine(){return{callbacks:{label(ctx){return` ${ctx.dataset.label||''}: ${num(ctx.parsed.y??0)}`;}}};}
+  plugins:{legend:{labels:{font:{family:'Cairo',size:12},color:'#333'}},
+    tooltip:{titleFont:{family:'Cairo'},bodyFont:{family:'Cairo'}}}};
+function tipNum(unit=''){return{callbacks:{label(ctx){
+  const v=ctx.parsed.x??ctx.parsed.y??ctx.raw??0;
+  return ` ${num(Math.round(v))} ${unit}`;
+}}};}
+function tipUsd(){return{callbacks:{label(ctx){
+  const v=ctx.parsed.x??ctx.parsed.y??ctx.raw??0;
+  return ` ${usd(v)}`;
+}}};}
 
-function setStatus(s,msg){document.getElementById('statusDot').className='status-dot '+(s==='ok'?'':s);document.getElementById('statusText').textContent=msg;}
-function switchTab(n){document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));document.getElementById('section-'+n).classList.add('active');document.getElementById('tab-'+n).classList.add('active');}
+function setStatus(s,msg){
+  document.getElementById('statusDot').className='status-dot '+(s==='ok'?'':s);
+  document.getElementById('statusText').textContent=msg;
+}
 
-// ── LOAD ─────────────────────────────────────────────────────
+// ── tabs ────────────────────────────────────────────────────
+function switchTab(name){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('section-'+name).classList.add('active');
+  document.getElementById('tab-'+name).classList.add('active');
+}
+
+// ── country normalization ──────────────────────────────────
+function normCountry(c){
+  if(!c) return 'غير محدد';
+  c = c.trim();
+  const map = {
+    'المملكة العربية السعودية':'السعودية',
+    'الإمارات العربية المتحدة':'الإمارات',
+  };
+  return map[c] || c;
+}
+
+// ── LOAD ────────────────────────────────────────────────────
 async function loadAll(){
-  if(location.protocol==='file:'){setStatus('error','⚠️ افتح عبر GitHub Pages');return;}
+  if(location.protocol==='file:'){
+    setStatus('error','⚠️ افتح الملف عبر استضافة ويب — file:// لا يسمح بجلب البيانات');
+    return;
+  }
   setStatus('loading','جاري تحديث البيانات...');
   try{
     const [app, pay] = await Promise.all([fetchCSV(URLS.applicants), fetchCSV(URLS.payments)]);
-    appData = app.filter(r=>r['الاسم']&&r['الاسم'].trim());
-    payData = pay.filter(r=>r['الاسم']&&r['الاسم'].trim()&&r['الحالة']==='ناجحة');
 
-    // لو مفيش بيانات جرب بدون فلتر الحالة
-    if(!payData.length) payData = pay.filter(r=>Object.values(r).some(v=>v));
-    if(!appData.length) appData = app.filter(r=>Object.values(r).some(v=>v));
+    appData = app.filter(r => getCol(r,['الدفعة'])===TARGET_BATCH && getCol(r,['الاسم'])!=='غير محدد');
+    payData = pay.filter(r => getCol(r,['الدفعة'])===TARGET_BATCH);
 
-    console.log('applicants rows:', appData.length, '| payments rows:', payData.length);
-    if(appData.length) console.log('APP COLS:', Object.keys(appData[0]));
-    if(payData.length) console.log('PAY COLS:', Object.keys(payData[0]));
-    if(appData.length) console.log('APP ROW1:', JSON.stringify(appData[0]));
-    if(payData.length) console.log('PAY ROW1:', JSON.stringify(payData[0]));
+    console.log('Applicants (batch5):', appData.length, 'Payments (batch5):', payData.length);
 
     const now=new Date().toLocaleString('ar-EG');
     document.getElementById('lastUpdate').textContent='آخر تحديث: '+now;
-    document.getElementById('overview-date').textContent=now;
 
-    buildOverview(); buildFunnel(); buildFinance();
-    buildStudents(); buildGeo(); buildMarketing(); buildRecommendations();
-    setStatus('ok','متصل ومحدث — '+appData.length+' متقدم | '+payData.length+' دفعة');
-  }catch(e){console.error(e);setStatus('error','خطأ: '+e.message);}
+    buildOverview();
+    buildConversion();
+    buildRevenue();
+    buildPayments();
+    buildStudents();
+    buildMarketing();
+    buildRecommendations();
+
+    setStatus('ok','متصل ومحدث — '+appData.length+' متقدم، '+payData.length+' دفعة');
+  }catch(e){
+    console.error(e);
+    setStatus('error','خطأ في جلب البيانات: '+e.message);
+  }
 }
 
-// ── helpers for paid students ────────────────────────────────
-function getPaidEmails(){return new Set(payData.map(r=>r['الإيميل']||r['email']||'').filter(e=>e));}
-function isPaid(row){const e=row['الإيميل']||'';return getPaidEmails().has(e);}
-function getPayment(email){return payData.filter(r=>(r['الإيميل']||r['email']||'')=== email);}
-
-// ── OVERVIEW ─────────────────────────────────────────────────
+// ── OVERVIEW ────────────────────────────────────────────────
 function buildOverview(){
-  const total=appData.length;
-  const paidEmails=getPaidEmails();
-  const students=appData.filter(r=>paidEmails.has(r['الإيميل']||'')).length;
-  const males=appData.filter(r=>(r['النوع']||'').includes('ذكر')).length;
-  const females=total-males;
-  const totalRev=payData.reduce((s,r)=>s+(parseFloat(r['المبلغ بالدولار'])||0),0);
-  const countries=new Set(appData.map(r=>r['بلد الإقامة']||'')).size;
-  const pending=appData.filter(r=>r['أتم الدفع']==='0'||r['أتم الدفع']===0||r['أتم الدفع']==='').length - (total-students);
+  const totalApp = appData.length;
+  const firstPayments = payData.filter(r=>['كاش','قسط أول'].includes(getCol(r,['نوع  القسط'])));
+  const totalStudents = new Set(firstPayments.map(r=>getCol(r,['الرقم الأكاديمي']))).size;
+  const totalRevenue = payData.reduce((s,r)=>s+getNum(r,['المبلغ بالدولار']),0);
+  const exemptCount = payData.filter(r=>getCol(r,['نظام السداد'])==='إعفاء كلي').length;
+  const avgPay = totalStudents ? totalRevenue/totalStudents : 0;
 
-  document.getElementById('k-applicants').textContent=num(total);
-  document.getElementById('k-students').textContent=num(students);
-  document.getElementById('k-students-sub').textContent=`${pct(students,total)} من المتقدمين`;
-  document.getElementById('k-conversion').textContent=pct(students,total);
-  document.getElementById('k-revenue').textContent='$'+num(Math.round(totalRev));
-  document.getElementById('k-male').textContent=pct(males,total);
-  document.getElementById('k-male-sub').textContent=num(males)+' متقدم';
-  document.getElementById('k-female').textContent=pct(females,total);
-  document.getElementById('k-female-sub').textContent=num(females)+' متقدمة';
-  document.getElementById('k-countries').textContent=num(countries);
-  document.getElementById('k-pending').textContent=num(Math.max(0,students - paidEmails.size + appData.filter(r=>r['أتم الدفع']==='1'||r['أتم الدفع']===1).length));
+  document.getElementById('kpi-applicants').textContent = num(totalApp);
+  document.getElementById('kpi-students').textContent = num(totalStudents);
+  document.getElementById('kpi-conversion').textContent = pct(totalStudents, totalApp);
+  document.getElementById('kpi-revenue').textContent = usd(totalRevenue);
+  document.getElementById('kpi-avgpay').textContent = usd(avgPay);
+  document.getElementById('kpi-exempt').textContent = num(exemptCount);
 
-  // trend — group by date
-  const dateMap={};
-  appData.forEach(r=>{
-    const d=(r['تاريخ التسجيل']||'').split('T')[0]||r['تاريخ التسجيل']||'';
-    if(d) dateMap[d]=(dateMap[d]||0)+1;
-  });
-  const sortedDates=Object.keys(dateMap).sort();
-  let cum=0;
-  const cumData=sortedDates.map(d=>{cum+=dateMap[d];return cum;});
-  mkChart('trendChart',{type:'line',data:{labels:sortedDates,datasets:[{
-    label:'إجمالي المتقدمين',data:cumData,borderColor:'#1a4a6b',
-    backgroundColor:'rgba(26,74,107,0.1)',fill:true,tension:0.35,pointRadius:2
-  }]},options:{...BASE,plugins:{...BASE.plugins,tooltip:tipLine()},
-    scales:{x:{ticks:{font:{family:'Cairo',size:10},maxRotation:45}},y:{ticks:{font:{family:'Cairo'}}}}}});
+  // Weekly revenue
+  const weekRev = sumBy(payData, r=>getCol(r,['رقم الأسبوع']), r=>getNum(r,['المبلغ بالدولار']));
+  const weekLbl = {};
+  payData.forEach(r=>{ const w=getCol(r,['رقم الأسبوع']); if(w!=='غير محدد') weekLbl[w]=getCol(r,['الأسبوع']); });
+  const weeks = Object.keys(weekRev).filter(w=>w!=='غير محدد').sort((a,b)=>Number(a)-Number(b));
+  mkChart('overviewRevenueChart',{type:'bar',data:{labels:weeks.map(w=>'أ'+w),datasets:[{
+    label:'الإيرادات ($)',data:weeks.map(w=>weekRev[w]),
+    backgroundColor:weeks.map((w,i)=>i===0?'#e8a020':'rgba(26,79,122,0.7)'),borderRadius:6
+  }]},options:{...BASE,plugins:{...BASE.plugins,legend:{display:false},tooltip:tipUsd()},
+    scales:{x:{ticks:{font:{family:'Cairo',size:11}}},y:{ticks:{font:{family:'Cairo'},callback:v=>'$'+v.toLocaleString()}}}}});
 
-  mkChart('genderChart',{type:'doughnut',data:{
-    labels:['ذكور','إناث'],datasets:[{data:[males,females],backgroundColor:['#1a4a6b','#c9a84c'],borderWidth:2}]
-  },options:{...BASE,cutout:'65%',plugins:{...BASE.plugins,tooltip:tipPct(total)}}});
+  // Pay system donut
+  const paySys = countBy(payData, r=>getCol(r,['نظام السداد']));
+  mkChart('overviewPaySysChart',{type:'doughnut',data:{
+    labels:Object.keys(paySys),
+    datasets:[{data:Object.values(paySys),backgroundColor:['#1a4f7a','#e8a020','#2d6a4f','#6d4c8e'],borderWidth:2}]
+  },options:{...BASE,cutout:'62%',plugins:{...BASE.plugins,tooltip:tipNum('طالب')}}});
 
-  const sc=countBy(appData,r=>r['حالة الطالب في المعهد']||r['حالة الطالب']||'غير محدد');
-  const se=Object.entries(sc).sort((a,b)=>b[1]-a[1]);
-  mkChart('statusChart',{type:'bar',data:{labels:se.map(e=>e[0]),datasets:[{label:'العدد',data:se.map(e=>e[1]),backgroundColor:PAL,borderRadius:6}]},
-    options:{...BASE,indexAxis:'y',plugins:{...BASE.plugins,legend:{display:false},tooltip:tipPct(total)},
-      scales:{x:{ticks:{font:{family:'Cairo'}}},y:{ticks:{font:{family:'Cairo',size:10}}}}}});
+  // Country revenue
+  const ctryRev = sumBy(payData, r=>normCountry(getCol(r,['الدولة'])), r=>getNum(r,['المبلغ بالدولار']));
+  const ctryRevTop = topN(ctryRev, 10);
+  mkChart('overviewCountryRevChart',{type:'bar',data:{labels:ctryRevTop.map(e=>e[0]),datasets:[{label:'الإيرادات ($)',data:ctryRevTop.map(e=>e[1]),backgroundColor:PAL,borderRadius:4}]},
+    options:{...BASE,indexAxis:'y',plugins:{...BASE.plugins,legend:{display:false},tooltip:tipUsd()},
+      scales:{x:{ticks:{font:{family:'Cairo'},callback:v=>'$'+v.toLocaleString()}},y:{ticks:{font:{family:'Cairo',size:11}}}}}});
 
-  const cc=countBy(appData,r=>r['بلد الإقامة']||'غير محدد');
-  const t10=topN(cc,10);
-  mkChart('topCountriesChart',{type:'bar',data:{labels:t10.map(e=>e[0]),datasets:[{label:'المتقدمون',data:t10.map(e=>e[1]),backgroundColor:PAL,borderRadius:6}]},
-    options:{...BASE,indexAxis:'y',plugins:{...BASE.plugins,legend:{display:false},tooltip:tipPct(total)},
-      scales:{x:{ticks:{font:{family:'Cairo'}}},y:{ticks:{font:{family:'Cairo',size:10}}}}}});
+  // Country applicants
+  const ctryApp = countBy(appData, r=>normCountry(getCol(r,['بلد الإقامة'])));
+  const ctryAppTop = topN(ctryApp, 10);
+  mkChart('overviewCountryAppChart',{type:'bar',data:{labels:ctryAppTop.map(e=>e[0]),datasets:[{label:'عدد المتقدمين',data:ctryAppTop.map(e=>e[1]),backgroundColor:PAL,borderRadius:4}]},
+    options:{...BASE,indexAxis:'y',plugins:{...BASE.plugins,legend:{display:false},tooltip:tipNum('متقدم')},
+      scales:{x:{ticks:{font:{family:'Cairo'}}},y:{ticks:{font:{family:'Cairo',size:11}}}}}});
 }
 
-// ── FUNNEL ────────────────────────────────────────────────────
-function buildFunnel(){
-  const total=appData.length;
-  const paidEmails=getPaidEmails();
-  const paid=appData.filter(r=>paidEmails.has(r['الإيميل']||'')).length;
-  const under24=appData.filter(r=>r['أقل من 24 ساعة']==='1'||r['أقل من 24 ساعة']===1||r['أقل من 24 ساعة']==='TRUE').length;
+// ── CONVERSION ──────────────────────────────────────────────
+function buildConversion(){
+  const totalApp = appData.length;
+  const cashStudents = new Set(payData.filter(r=>getCol(r,['نظام السداد'])==='كاش').map(r=>getCol(r,['الرقم الأكاديمي']))).size;
+  const instStudents = new Set(payData.filter(r=>getCol(r,['نوع  القسط'])==='قسط أول').map(r=>getCol(r,['الرقم الأكاديمي']))).size;
+  const exemptStudents = new Set(payData.filter(r=>getCol(r,['نظام السداد'])==='إعفاء كلي').map(r=>getCol(r,['الرقم الأكاديمي']))).size;
+  const firstPayments = payData.filter(r=>['كاش','قسط أول'].includes(getCol(r,['نوع  القسط'])));
+  const totalStudents = new Set([...firstPayments.map(r=>getCol(r,['الرقم الأكاديمي'])), ...payData.filter(r=>getCol(r,['نظام السداد'])==='إعفاء كلي').map(r=>getCol(r,['الرقم الأكاديمي']))]).size;
 
-  document.getElementById('funnelViz').innerHTML=`
-    <div class="funnel-step"><div class="funnel-num">${num(total)}</div><div class="funnel-label">تسجلوا</div><div class="funnel-pct">100%</div></div>
-    <div class="funnel-step"><div class="funnel-num">${num(paid)}</div><div class="funnel-label">دفعوا</div><div class="funnel-pct">${pct(paid,total)}</div></div>
-    <div class="funnel-step"><div class="funnel-num">${num(under24)}</div><div class="funnel-label">دفعوا < 24 ساعة</div><div class="funnel-pct">${pct(under24,paid)}</div></div>
+  document.getElementById('c-applicants').textContent = num(totalApp);
+  document.getElementById('c-cash').textContent = num(cashStudents);
+  document.getElementById('c-cash-pct').textContent = pct(cashStudents,totalApp)+' من المتقدمين';
+  document.getElementById('c-inst').textContent = num(instStudents);
+  document.getElementById('c-inst-pct').textContent = pct(instStudents,totalApp)+' من المتقدمين';
+  document.getElementById('c-exempt').textContent = num(exemptStudents);
+  document.getElementById('c-exempt-pct').textContent = pct(exemptStudents,totalApp)+' من المتقدمين';
+  document.getElementById('c-total').textContent = num(totalStudents);
+  document.getElementById('c-total-pct').textContent = pct(totalStudents,totalApp)+' معدل التحويل';
+
+  // funnel viz
+  const steps=[
+    {label:'المتقدمون',val:totalApp,color:'#1a4f7a'},
+    {label:'دفعوا كاش',val:cashStudents,color:'#2d6a4f'},
+    {label:'دفعوا قسطاً',val:instStudents,color:'#e8a020'},
+    {label:'إعفاء كلي',val:exemptStudents,color:'#6d4c8e'},
+  ];
+  document.getElementById('funnelViz').innerHTML=`<div class="funnel-wrap">`+
+    steps.map(s=>`<div class="funnel-bar">
+      <div class="funnel-label">${s.label}</div>
+      <div class="funnel-fill" style="width:${Math.max(s.val/totalApp*100,3)}%;background:${s.color};min-width:40px">${num(s.val)}</div>
+      <div class="funnel-num">${pct(s.val,totalApp)}</div>
+    </div>`).join('')+`</div>`;
+
+  mkChart('conversionRatesChart',{type:'bar',data:{
+    labels:['متقدم→طالب','متقدم→كاش','متقدم→قسط','متقدم→إعفاء'],
+    datasets:[{label:'معدل التحويل %',data:[
+      (totalStudents/totalApp*100).toFixed(1),
+      (cashStudents/totalApp*100).toFixed(1),
+      (instStudents/totalApp*100).toFixed(1),
+      (exemptStudents/totalApp*100).toFixed(1)
+    ],backgroundColor:['#1a4f7a','#2d6a4f','#e8a020','#6d4c8e'],borderRadius:8}]
+  },options:{...BASE,plugins:{...BASE.plugins,legend:{display:false},tooltip:{titleFont:{family:'Cairo'},bodyFont:{family:'Cairo'},callbacks:{label(ctx){return ` ${ctx.parsed.y}%`;}}}},
+    scales:{x:{ticks:{font:{family:'Cairo',size:11}}},y:{ticks:{font:{family:'Cairo'},callback:v=>v+'%'}}}}});
+
+  const notConverted = totalApp - totalStudents;
+  document.getElementById('funnelTableBody').innerHTML = `
+    <tr><td>📋 إجمالي المتقدمين</td><td><strong>${num(totalApp)}</strong></td><td><span class="badge badge-blue">100%</span></td><td>—</td><td>الخط الأساسي</td></tr>
+    <tr><td>💵 دفعوا كاملاً (كاش)</td><td><strong>${num(cashStudents)}</strong></td><td><span class="badge badge-green">${pct(cashStudents,totalApp)}</span></td><td><span class="badge badge-green">${pct(cashStudents,totalStudents)}</span></td><td>طلاب فعليون</td></tr>
+    <tr><td>📅 دفعوا قسطاً أول</td><td><strong>${num(instStudents)}</strong></td><td><span class="badge badge-gold">${pct(instStudents,totalApp)}</span></td><td><span class="badge badge-gold">${pct(instStudents,totalStudents)}</span></td><td>طلاب بأقساط</td></tr>
+    <tr><td>🎁 إعفاء كلي</td><td><strong>${num(exemptStudents)}</strong></td><td><span class="badge badge-red">${pct(exemptStudents,totalApp)}</span></td><td><span class="badge badge-red">${pct(exemptStudents,totalStudents)}</span></td><td>منح دراسية</td></tr>
+    <tr style="font-weight:700"><td>✅ إجمالي الطلاب</td><td><strong>${num(totalStudents)}</strong></td><td><span class="badge badge-blue">${pct(totalStudents,totalApp)}</span></td><td><span class="badge badge-blue">100%</span></td><td>ملتحقون فعلياً</td></tr>
+    <tr style="color:#999"><td>❌ لم يكملوا</td><td><strong>${num(notConverted)}</strong></td><td><span class="badge" style="background:#eee;color:#999">${pct(notConverted,totalApp)}</span></td><td>—</td><td>تسربوا قبل الدفع</td></tr>
   `;
+}
 
-  // payment method from payData
-  const pmCounts=countBy(payData,r=>r['نظام السداد']||r['نوع  القسط']||'غير محدد');
-  const cashN=pmCounts['كاش']||0;
-  const installN=pmCounts['قسط']||pmCounts['أقساط']||0;
-  const exemptN=payData.filter(r=>(r['منحة كلية']||'0')==='1'||(r['منحة كلية']||0)===1).length;
-  document.getElementById('f-cash').textContent=num(cashN);
-  document.getElementById('f-install').textContent=num(installN);
-  document.getElementById('f-exempt').textContent=num(exemptN);
-  document.getElementById('f-24h').textContent=num(under24);
+// ── REVENUE ─────────────────────────────────────────────────
+function buildRevenue(){
+  const totalRevenue = payData.reduce((s,r)=>s+getNum(r,['المبلغ بالدولار']),0);
+  const cashRev = payData.filter(r=>getCol(r,['نظام السداد'])==='كاش').reduce((s,r)=>s+getNum(r,['المبلغ بالدولار']),0);
+  const instRev = payData.filter(r=>getCol(r,['نظام السداد'])==='أقساط').reduce((s,r)=>s+getNum(r,['المبلغ بالدولار']),0);
+  const firstPayments = payData.filter(r=>['كاش','قسط أول'].includes(getCol(r,['نوع  القسط'])));
+  const totalStudents = new Set([...firstPayments.map(r=>getCol(r,['الرقم الأكاديمي'])), ...payData.filter(r=>getCol(r,['نظام السداد'])==='إعفاء كلي').map(r=>getCol(r,['الرقم الأكاديمي']))]).size;
+  const avgPay = totalStudents ? totalRevenue/totalStudents : 0;
 
-  // avg conversion time
-  const times=appData.map(r=>parseFloat(r['الفرق بين التسجيل والدفع']||'')).filter(v=>!isNaN(v)&&v>0);
-  document.getElementById('f-avgtime').textContent=times.length?(times.reduce((a,b)=>a+b,0)/times.length).toFixed(1):'—';
+  document.getElementById('r-total').textContent = usd(totalRevenue);
+  document.getElementById('r-cash').textContent = usd(cashRev);
+  document.getElementById('r-cash-pct').textContent = pct(cashRev,totalRevenue)+' من الإجمالي';
+  document.getElementById('r-inst').textContent = usd(instRev);
+  document.getElementById('r-inst-pct').textContent = pct(instRev,totalRevenue)+' من الإجمالي';
+  document.getElementById('r-avg').textContent = usd(avgPay);
 
-  // pay method donut
-  const pmEntries=Object.entries(pmCounts).sort((a,b)=>b[1]-a[1]);
-  mkChart('payMethodChart',{type:'doughnut',data:{labels:pmEntries.map(e=>e[0]),datasets:[{data:pmEntries.map(e=>e[1]),backgroundColor:PAL}]},
-    options:{...BASE,cutout:'55%',plugins:{...BASE.plugins,tooltip:tipPct(paid)}}});
+  const weekRev = sumBy(payData, r=>getCol(r,['رقم الأسبوع']), r=>getNum(r,['المبلغ بالدولار']));
+  const weekLbl = {};
+  payData.forEach(r=>{ const w=getCol(r,['رقم الأسبوع']); if(w!=='غير محدد') weekLbl[w]=getCol(r,['الأسبوع']); });
+  const weeks = Object.keys(weekRev).filter(w=>w!=='غير محدد').sort((a,b)=>Number(a)-Number(b));
+  const weekVals = weeks.map(w=>weekRev[w]);
+  const peakIdx = weekVals.indexOf(Math.max(...weekVals));
 
-  // conversion speed histogram
-  const buckets={'< 1 ساعة':0,'1-6 ساعات':0,'6-24 ساعة':0,'1-3 أيام':0,'3-7 أيام':0,'> 7 أيام':0};
-  times.forEach(h=>{
-    if(h<1)buckets['< 1 ساعة']++;
-    else if(h<6)buckets['1-6 ساعات']++;
-    else if(h<24)buckets['6-24 ساعة']++;
-    else if(h<72)buckets['1-3 أيام']++;
-    else if(h<168)buckets['3-7 أيام']++;
-    else buckets['> 7 أيام']++;
-  });
-  mkChart('conversionSpeedChart',{type:'bar',data:{labels:Object.keys(buckets),datasets:[{label:'عدد الطلاب',data:Object.values(buckets),backgroundColor:'#1a4a6b',borderRadius:6}]},
-    options:{...BASE,plugins:{...BASE.plugins,legend:{display:false},tooltip:tipPct(paid)},
+  document.getElementById('r-peak').textContent = usd(weekVals[peakIdx]||0);
+  document.getElementById('r-peak-week').textContent = 'الأسبوع '+(weeks[peakIdx]||'—')+' ('+(weekLbl[weeks[peakIdx]]||'')+')';
+
+  mkChart('revenueWeeklyChart',{type:'line',data:{labels:weeks.map(w=>'أ'+w+' — '+(weekLbl[w]||'')),datasets:[{
+    label:'الإيرادات ($)',data:weekVals,
+    borderColor:'#1a4f7a',backgroundColor:'rgba(26,79,122,0.1)',
+    fill:true,tension:0.35,pointRadius:5,pointBackgroundColor:'#1a4f7a',pointBorderColor:'white',pointBorderWidth:2
+  }]},options:{...BASE,plugins:{...BASE.plugins,legend:{display:false},tooltip:tipUsd()},
+    scales:{x:{ticks:{font:{family:'Cairo',size:10}}},y:{ticks:{font:{family:'Cairo'},callback:v=>'$'+v.toLocaleString()}}}}});
+
+  mkChart('revenueSplitChart',{type:'doughnut',data:{
+    labels:['كاش ('+usd(cashRev)+')','أقساط ('+usd(instRev)+')'],
+    datasets:[{data:[cashRev,instRev],backgroundColor:['#1a4f7a','#e8a020'],borderWidth:2}]
+  },options:{...BASE,cutout:'60%',plugins:{...BASE.plugins,tooltip:tipUsd()}}});
+
+  const ctryRev = sumBy(payData, r=>normCountry(getCol(r,['الدولة'])), r=>getNum(r,['المبلغ بالدولار']));
+  const ctryRevTop = topN(ctryRev, 10);
+  mkChart('revenueCountryChart',{type:'bar',data:{labels:ctryRevTop.map(e=>e[0]),datasets:[{label:'الإيرادات ($)',data:ctryRevTop.map(e=>e[1]),backgroundColor:PAL,borderRadius:4}]},
+    options:{...BASE,indexAxis:'y',plugins:{...BASE.plugins,legend:{display:false},tooltip:tipUsd()},
+      scales:{x:{ticks:{font:{family:'Cairo'},callback:v=>'$'+v.toLocaleString()}},y:{ticks:{font:{family:'Cairo',size:11}}}}}});
+
+  document.getElementById('weeklyRevTableBody').innerHTML = weeks.map(w=>
+    `<tr><td>أسبوع ${w}</td><td style="font-size:11px">${weekLbl[w]||'—'}</td><td><strong style="color:var(--green)">${usd(weekRev[w])}</strong></td></tr>`
+  ).reverse().join('');
+}
+
+// ── PAYMENTS ────────────────────────────────────────────────
+function buildPayments(){
+  const cashStudents = new Set(payData.filter(r=>getCol(r,['نظام السداد'])==='كاش').map(r=>getCol(r,['الرقم الأكاديمي']))).size;
+  const instStudents = new Set(payData.filter(r=>getCol(r,['نظام السداد'])==='أقساط').map(r=>getCol(r,['الرقم الأكاديمي']))).size;
+  const exemptStudents = new Set(payData.filter(r=>getCol(r,['نظام السداد'])==='إعفاء كلي').map(r=>getCol(r,['الرقم الأكاديمي']))).size;
+  const firstPayments = payData.filter(r=>['كاش','قسط أول'].includes(getCol(r,['نوع  القسط'])));
+  const totalStudents = new Set([...firstPayments.map(r=>getCol(r,['الرقم الأكاديمي'])), ...payData.filter(r=>getCol(r,['نظام السداد'])==='إعفاء كلي').map(r=>getCol(r,['الرقم الأكاديمي']))]).size;
+
+  const discounted = payData.filter(r=>getCol(r,['نوع الخصم'])!=='بلا خصم' && getCol(r,['نوع الخصم'])!=='غير محدد');
+  const discountedStudents = new Set(discounted.map(r=>getCol(r,['الرقم الأكاديمي']))).size;
+
+  document.getElementById('p-cash').textContent = num(cashStudents);
+  document.getElementById('p-cash-pct').textContent = pct(cashStudents,totalStudents)+' من الطلاب';
+  document.getElementById('p-inst').textContent = num(instStudents);
+  document.getElementById('p-inst-pct').textContent = pct(instStudents,totalStudents)+' من الطلاب';
+  document.getElementById('p-disc').textContent = num(discountedStudents);
+  document.getElementById('p-disc-pct').textContent = pct(discountedStudents,totalStudents)+' من الطلاب';
+  document.getElementById('p-exempt').textContent = num(exemptStudents);
+
+  const providers = countBy(payData, r=>getCol(r,['النوع']));
+  const provTop = topN(providers, 8);
+  document.getElementById('p-topmethod').textContent = provTop[0]?.[0] || '—';
+  document.getElementById('p-topmethod-sub').textContent = provTop[0] ? num(provTop[0][1])+' معاملة ('+pct(provTop[0][1],payData.length)+')' : '—';
+
+  mkChart('providersChart',{type:'bar',data:{labels:provTop.map(e=>e[0]),datasets:[{label:'عدد المعاملات',data:provTop.map(e=>e[1]),backgroundColor:PAL,borderRadius:5}]},
+    options:{...BASE,plugins:{...BASE.plugins,legend:{display:false},tooltip:tipNum('معاملة')},
       scales:{x:{ticks:{font:{family:'Cairo',size:11}}},y:{ticks:{font:{family:'Cairo'}}}}}});
+
+  const discTypes = countBy(payData, r=>getCol(r,['نوع الخصم']));
+  const discE = Object.entries(discTypes).sort((a,b)=>b[1]-a[1]);
+  mkChart('discountChart',{type:'pie',data:{labels:discE.map(e=>e[0]),datasets:[{data:discE.map(e=>e[1]),backgroundColor:PAL}]},
+    options:{...BASE,plugins:{...BASE.plugins,tooltip:tipNum('دفعة')}}});
+
+  const paySys = countBy(payData, r=>getCol(r,['نظام السداد']));
+  mkChart('paySystemChart',{type:'doughnut',data:{
+    labels:Object.keys(paySys).map(k=>k+' ('+paySys[k]+')'),
+    datasets:[{data:Object.values(paySys),backgroundColor:['#1a4f7a','#e8a020','#2d6a4f','#6d4c8e'],borderWidth:2}]
+  },options:{...BASE,cutout:'58%',plugins:{...BASE.plugins,tooltip:tipNum('دفعة')}}});
+
+  document.getElementById('discountTableBody').innerHTML = discE.map(e=>
+    `<tr><td>${e[0]}</td><td><strong>${num(e[1])}</strong></td><td><span class="badge badge-blue">${pct(e[1],payData.length)}</span></td></tr>`
+  ).join('');
 }
 
-// ── FINANCE ───────────────────────────────────────────────────
-function buildFinance(){
-  const totalRev=payData.reduce((s,r)=>s+(parseFloat(r['المبلغ بالدولار'])||0),0);
-  const totalDisc=payData.reduce((s,r)=>s+(parseFloat(r['المبلغ المخصوم'])||0),0);
-  const paidEmails=getPaidEmails();
-  const pending=appData.filter(r=>r['أتم الدفع']==='0'||r['أتم الدفع']===''||r['أتم الدفع']===0).length;
-
-  document.getElementById('fin-total').textContent='$'+num(Math.round(totalRev));
-  document.getElementById('fin-avg').textContent='$'+num(Math.round(totalRev/Math.max(1,paidEmails.size)));
-  document.getElementById('fin-discount').textContent='$'+num(Math.round(totalDisc));
-  document.getElementById('fin-pending').textContent=num(pending);
-
-  // weekly revenue
-  const weekMap={};
-  payData.forEach(r=>{
-    const w=r['الأسبوع']||r['رقم الأسبوع']||'';
-    const amt=parseFloat(r['المبلغ بالدولار'])||0;
-    weekMap[w]=(weekMap[w]||0)+amt;
-  });
-  const sortedWeeks=Object.entries(weekMap).filter(e=>e[0]).sort((a,b)=>a[0].localeCompare(b[0]));
-  mkChart('weeklyRevenueChart',{type:'bar',data:{labels:sortedWeeks.map(e=>e[0]),datasets:[{label:'الإيرادات ($)',data:sortedWeeks.map(e=>Math.round(e[1])),backgroundColor:'#2d6a4f',borderRadius:6}]},
-    options:{...BASE,plugins:{...BASE.plugins,legend:{display:false},tooltip:{...BASE.plugins.tooltip,callbacks:{label(ctx){return` $${num(ctx.parsed.y)}`;}}}},
-      scales:{x:{ticks:{font:{family:'Cairo',size:10},maxRotation:45}},y:{ticks:{font:{family:'Cairo'}}}}}});
-
-  // pay type
-  const ptCounts=countBy(payData,r=>r['النوع']||'غير محدد');
-  const ptEntries=Object.entries(ptCounts).sort((a,b)=>b[1]-a[1]).slice(0,8);
-  mkChart('payTypeChart',{type:'pie',data:{labels:ptEntries.map(e=>e[0]),datasets:[{data:ptEntries.map(e=>e[1]),backgroundColor:PAL}]},
-    options:{...BASE,plugins:{...BASE.plugins,tooltip:tipPct(payData.length)}}});
-
-  // discount type
-  const dtCounts=countBy(payData,r=>r['نوع الخصم']||'بلا خصم');
-  const dtEntries=Object.entries(dtCounts).sort((a,b)=>b[1]-a[1]);
-  mkChart('discountTypeChart',{type:'doughnut',data:{labels:dtEntries.map(e=>e[0]),datasets:[{data:dtEntries.map(e=>e[1]),backgroundColor:PAL}]},
-    options:{...BASE,cutout:'50%',plugins:{...BASE.plugins,tooltip:tipPct(payData.length)}}});
-
-  // revenue by region
-  const revByRegion=sumBy(payData,r=>r['الدولة']||'غير محدد',r=>parseFloat(r['المبلغ بالدولار'])||0);
-  // group by region using appData
-  const regionMap={};
-  appData.forEach(r=>{regionMap[r['بلد الإقامة']||'']=r['فئة البلد']||'باقي الدول';});
-  const revByReg={};
-  Object.entries(revByRegion).forEach(([country,rev])=>{
-    const reg=regionMap[country]||'باقي الدول';
-    revByReg[reg]=(revByReg[reg]||0)+rev;
-  });
-  const regEntries=Object.entries(revByReg).sort((a,b)=>b[1]-a[1]);
-  mkChart('revenueByRegionChart',{type:'bar',data:{labels:regEntries.map(e=>e[0]),datasets:[{label:'الإيرادات ($)',data:regEntries.map(e=>Math.round(e[1])),backgroundColor:PAL,borderRadius:6}]},
-    options:{...BASE,indexAxis:'y',plugins:{...BASE.plugins,legend:{display:false},tooltip:{...BASE.plugins.tooltip,callbacks:{label(ctx){return` $${num(ctx.parsed.x)}`;}}}},
-      scales:{x:{ticks:{font:{family:'Cairo'}}},y:{ticks:{font:{family:'Cairo',size:11}}}}}});
-
-  // revenue by country table
-  const revByCt=sumBy(payData,r=>r['الدولة']||'غير محدد',r=>parseFloat(r['المبلغ بالدولار'])||0);
-  const cntByCt=countBy(payData,r=>r['الدولة']||'غير محدد');
-  const ctList=Object.entries(revByCt).sort((a,b)=>b[1]-a[1]).slice(0,10);
-  document.querySelector('#revenueCountryTable tbody').innerHTML=ctList.map(([ct,rev],i)=>`
-    <tr><td>${i+1}</td><td>${ct}</td><td>${num(cntByCt[ct]||0)}</td>
-    <td><strong>$${num(Math.round(rev))}</strong></td>
-    <td>$${num(Math.round(rev/Math.max(1,cntByCt[ct]||1)))}</td></tr>`).join('');
-}
-
-// ── STUDENTS ──────────────────────────────────────────────────
+// ── STUDENTS / APPLICANTS ──────────────────────────────────
 function buildStudents(){
-  const total=appData.length;
-  const AGE=['الفئة العمرية'];
-  const ac=countBy(appData,r=>r['الفئة العمرية']||'غير محدد');
-  const ageOrder=['أقل من 18','18-24','25-34','35-44','45-54','55'];
-  const sortedAge=Object.entries(ac).sort((a,b)=>{
-    const ai=ageOrder.findIndex(x=>a[0].startsWith(x));
-    const bi=ageOrder.findIndex(x=>b[0].startsWith(x));
-    return(ai<0?99:ai)-(bi<0?99:bi);
-  });
-  mkChart('ageChart',{type:'bar',data:{labels:sortedAge.map(e=>e[0]),datasets:[{label:'عدد المتقدمين',data:sortedAge.map(e=>e[1]),backgroundColor:'#1a4a6b',borderRadius:6}]},
-    options:{...BASE,plugins:{...BASE.plugins,legend:{display:false},tooltip:tipPct(total)},
-      scales:{x:{ticks:{font:{family:'Cairo',size:11},maxRotation:30}},y:{ticks:{font:{family:'Cairo'}}}}}});
+  const total = appData.length;
+  const males = appData.filter(r=>getCol(r,['النوع'])==='ذكر').length;
+  const females = appData.filter(r=>getCol(r,['النوع'])==='أنثى').length;
 
-  const ec=countBy(appData,r=>r['المستوي التعليمي']||r['المستوى التعليمي']||'غير محدد');
-  const ee=Object.entries(ec).sort((a,b)=>b[1]-a[1]);
-  mkChart('eduChart',{type:'pie',data:{labels:ee.map(e=>e[0]),datasets:[{data:ee.map(e=>e[1]),backgroundColor:PAL}]},
-    options:{...BASE,plugins:{...BASE.plugins,tooltip:tipPct(total)}}});
+  document.getElementById('s-total').textContent = num(total);
+  document.getElementById('s-male').textContent = pct(males,total);
+  document.getElementById('s-male-sub').textContent = num(males)+' متقدم';
+  document.getElementById('s-female').textContent = pct(females,total);
+  document.getElementById('s-female-sub').textContent = num(females)+' متقدمة';
 
-  const wc=countBy(appData,r=>r['هل تعمل بدوام؟']||'غير محدد');
-  const we=Object.entries(wc).sort((a,b)=>b[1]-a[1]);
-  mkChart('workChart',{type:'doughnut',data:{labels:we.map(e=>e[0]),datasets:[{data:we.map(e=>e[1]),backgroundColor:PAL}]},
-    options:{...BASE,cutout:'55%',plugins:{...BASE.plugins,tooltip:tipPct(total)}}});
+  const countries = countBy(appData, r=>normCountry(getCol(r,['بلد الإقامة'])));
+  document.getElementById('s-countries').textContent = Object.keys(countries).length;
 
-  const hc=countBy(appData,r=>r['كم ساعة يمكن أن توفرها للمعهد يوميًا؟']||'غير محدد');
-  const he=Object.entries(hc).sort((a,b)=>b[1]-a[1]);
-  mkChart('hoursChart',{type:'bar',data:{labels:he.map(e=>e[0]),datasets:[{label:'عدد المتقدمين',data:he.map(e=>e[1]),backgroundColor:'#c9a84c',borderRadius:6}]},
-    options:{...BASE,plugins:{...BASE.plugins,legend:{display:false},tooltip:tipPct(total)},
-      scales:{x:{ticks:{font:{family:'Cairo',size:10},maxRotation:30}},y:{ticks:{font:{family:'Cairo'}}}}}});
+  const edu = countBy(appData, r=>getCol(r,['المستوي التعليمي']));
+  const eduTop = topN(edu,1)[0];
+  document.getElementById('s-topedu').textContent = eduTop?.[0] || '—';
+  document.getElementById('s-topedu-sub').textContent = eduTop ? num(eduTop[1])+' متقدم ('+pct(eduTop[1],total)+')' : '—';
 
-  const pc=countBy(appData,r=>r['حالة الطالب']||'غير محدد');
-  const pe=Object.entries(pc).sort((a,b)=>b[1]-a[1]);
-  mkChart('prevExpChart',{type:'bar',data:{labels:pe.map(e=>e[0]),datasets:[{label:'العدد',data:pe.map(e=>e[1]),backgroundColor:PAL,borderRadius:6}]},
-    options:{...BASE,indexAxis:'y',plugins:{...BASE.plugins,legend:{display:false},tooltip:tipPct(total)},
-      scales:{x:{ticks:{font:{family:'Cairo'}}},y:{ticks:{font:{family:'Cairo',size:10}}}}}});
+  const eduE = Object.entries(edu).sort((a,b)=>b[1]-a[1]);
+  mkChart('eduChart',{type:'pie',data:{labels:eduE.map(e=>e[0]),datasets:[{data:eduE.map(e=>e[1]),backgroundColor:PAL}]},
+    options:{...BASE,plugins:{...BASE.plugins,tooltip:tipNum('متقدم')}}});
 
-  const oc=countBy(appData,r=>r['هل تشارك في برامج أو معاهد شرعية أخرى؟']||'غير محدد');
-  const oe=Object.entries(oc).sort((a,b)=>b[1]-a[1]);
-  mkChart('otherProgChart',{type:'doughnut',data:{labels:oe.map(e=>e[0]),datasets:[{data:oe.map(e=>e[1]),backgroundColor:PAL}]},
-    options:{...BASE,plugins:{...BASE.plugins,tooltip:tipPct(total)}}});
+  const work = countBy(appData, r=>getCol(r,['هل تعمل بدوام؟']));
+  const workE = Object.entries(work).sort((a,b)=>b[1]-a[1]);
+  mkChart('workChart',{type:'doughnut',data:{labels:workE.map(e=>e[0]),datasets:[{data:workE.map(e=>e[1]),backgroundColor:PAL}]},
+    options:{...BASE,cutout:'55%',plugins:{...BASE.plugins,tooltip:tipNum('متقدم')}}});
+
+  const hours = countBy(appData, r=>getCol(r,['كم ساعة يمكن أن توفرها للمعهد يوميًا؟']));
+  const hoursE = Object.entries(hours).sort((a,b)=>b[1]-a[1]);
+  mkChart('hoursChart',{type:'bar',data:{labels:hoursE.map(e=>e[0]),datasets:[{label:'عدد المتقدمين',data:hoursE.map(e=>e[1]),backgroundColor:'#e8a020',borderRadius:6}]},
+    options:{...BASE,plugins:{...BASE.plugins,legend:{display:false},tooltip:tipNum('متقدم')},
+      scales:{x:{ticks:{font:{family:'Cairo',size:11}}},y:{ticks:{font:{family:'Cairo'}}}}}});
+
+  const other = countBy(appData, r=>getCol(r,['هل تشارك في برامج أو معاهد شرعية أخرى؟']));
+  const otherE = Object.entries(other).sort((a,b)=>b[1]-a[1]);
+  mkChart('otherProgramsChart',{type:'doughnut',data:{labels:otherE.map(e=>e[0]),datasets:[{data:otherE.map(e=>e[1]),backgroundColor:['#2d6a4f','#1a4f7a','#e8a020','#8a9ab0']}]},
+    options:{...BASE,cutout:'60%',plugins:{...BASE.plugins,tooltip:tipNum('متقدم')}}});
+
+  const ctryList = Object.entries(countries).sort((a,b)=>b[1]-a[1]);
+  document.getElementById('countryTableBody').innerHTML = ctryList.map((e,i)=>
+    `<tr><td>${i+1}</td><td>${e[0]}</td><td><strong>${num(e[1])}</strong></td><td><span class="badge badge-blue">${pct(e[1],total)}</span></td></tr>`
+  ).join('');
 }
 
-// ── GEO ───────────────────────────────────────────────────────
-function buildGeo(){
-  const total=appData.length;
-  const paidEmails=getPaidEmails();
-  const paidByCountry=countBy(appData.filter(r=>paidEmails.has(r['الإيميل']||'')),r=>r['بلد الإقامة']||'غير محدد');
-
-  const rc=countBy(appData,r=>r['فئة البلد']||'باقي الدول');
-  const re=Object.entries(rc).sort((a,b)=>b[1]-a[1]);
-  mkChart('regionChart',{type:'pie',data:{labels:re.map(e=>e[0]),datasets:[{data:re.map(e=>e[1]),backgroundColor:PAL}]},
-    options:{...BASE,plugins:{...BASE.plugins,tooltip:tipPct(total)}}});
-
-  // conversion by region
-  const paidByRegion=countBy(appData.filter(r=>paidEmails.has(r['الإيميل']||'')),r=>r['فئة البلد']||'باقي الدول');
-  const convData=re.map(([reg,cnt])=>({reg,cnt,paid:paidByRegion[reg]||0}));
-  mkChart('regionConversionChart',{type:'bar',data:{
-    labels:convData.map(d=>d.reg),
-    datasets:[
-      {label:'المتقدمون',data:convData.map(d=>d.cnt),backgroundColor:'rgba(26,74,107,0.3)',borderRadius:4},
-      {label:'الطلاب الفعليون',data:convData.map(d=>d.paid),backgroundColor:'#2d6a4f',borderRadius:4}
-    ]},options:{...BASE,scales:{x:{ticks:{font:{family:'Cairo',size:10},maxRotation:30}},y:{ticks:{font:{family:'Cairo'}}}}}});
-
-  const cc=countBy(appData,r=>r['بلد الإقامة']||'غير محدد');
-  const ctList=Object.entries(cc).sort((a,b)=>b[1]-a[1]);
-  document.querySelector('#geoTable tbody').innerHTML=ctList.map(([ct,cnt],i)=>{
-    const pd=paidByCountry[ct]||0;
-    const reg=appData.find(r=>r['بلد الإقامة']===ct)?.['فئة البلد']||'—';
-    return`<tr><td>${i+1}</td><td>${ct}</td><td>${num(cnt)}</td><td>${num(pd)}</td>
-      <td><span class="badge ${pd/cnt>0.3?'badge-green':'badge-blue'}">${pct(pd,cnt)}</span></td>
-      <td><span class="badge badge-gold">${reg}</span></td></tr>`;}).join('');
-}
-
-// ── MARKETING ─────────────────────────────────────────────────
+// ── MARKETING ───────────────────────────────────────────────
 function buildMarketing(){
-  const total=appData.length;
-  const paidEmails=getPaidEmails();
-  const SRC='من أين عرفت المعهد؟';
+  const total = appData.length;
+  const source = countBy(appData, r=>getCol(r,['من أين عرفت المعهد؟']));
+  const sourceE = Object.entries(source).sort((a,b)=>b[1]-a[1]);
 
-  const sc=countBy(appData,r=>r[SRC]||'غير محدد');
-  const se=Object.entries(sc).sort((a,b)=>b[1]-a[1]);
-  mkChart('sourceChart',{type:'bar',data:{labels:se.map(e=>e[0]),datasets:[{label:'المتقدمون',data:se.map(e=>e[1]),backgroundColor:PAL,borderRadius:6}]},
-    options:{...BASE,indexAxis:'y',plugins:{...BASE.plugins,legend:{display:false},tooltip:tipPct(total)},
+  mkChart('sourceChart',{type:'bar',data:{labels:sourceE.map(e=>e[0]),datasets:[{label:'عدد المتقدمين',data:sourceE.map(e=>e[1]),backgroundColor:PAL,borderRadius:5}]},
+    options:{...BASE,indexAxis:'y',plugins:{...BASE.plugins,legend:{display:false},tooltip:tipNum('متقدم')},
       scales:{x:{ticks:{font:{family:'Cairo'}}},y:{ticks:{font:{family:'Cairo',size:11}}}}}});
 
-  // source table with conversion
-  const paidBySrc=countBy(appData.filter(r=>paidEmails.has(r['الإيميل']||'')),r=>r[SRC]||'غير محدد');
-  document.querySelector('#sourceTable tbody').innerHTML=se.map(([src,cnt])=>{
-    const pd=paidBySrc[src]||0;
-    return`<tr><td>${src}</td><td>${num(cnt)}</td><td><span class="badge badge-blue">${pct(cnt,total)}</span></td>
-      <td><span class="badge ${pd/cnt>0.1?'badge-green':'badge-gold'}">${pct(pd,cnt)}</span></td></tr>`;}).join('');
+  document.getElementById('sourceTableBody').innerHTML = sourceE.map(e=>
+    `<tr><td>${e[0]}</td><td><strong>${num(e[1])}</strong></td><td><span class="badge badge-blue">${pct(e[1],total)}</span></td></tr>`
+  ).join('');
 
-  // source conversion chart
-  const srcTop8=se.slice(0,8);
-  mkChart('sourceConvChart',{type:'bar',data:{
-    labels:srcTop8.map(e=>e[0]),
-    datasets:[
-      {label:'المتقدمون',data:srcTop8.map(e=>e[1]),backgroundColor:'rgba(26,74,107,0.25)',borderRadius:4},
-      {label:'الطلاب الفعليون',data:srcTop8.map(([src])=>paidBySrc[src]||0),backgroundColor:'#2d6a4f',borderRadius:4}
-    ]},options:{...BASE,indexAxis:'y',scales:{x:{ticks:{font:{family:'Cairo'}}},y:{ticks:{font:{family:'Cairo',size:10}}}}}});
+  const srcTop = sourceE.slice(0,6).map(e=>e[0]);
+  mkChart('sourceGenderChart',{type:'bar',data:{labels:srcTop,datasets:[
+    {label:'ذكور',data:srcTop.map(s=>appData.filter(r=>getCol(r,['من أين عرفت المعهد؟'])===s && getCol(r,['النوع'])==='ذكر').length),backgroundColor:'#1a4f7a',borderRadius:4},
+    {label:'إناث',data:srcTop.map(s=>appData.filter(r=>getCol(r,['من أين عرفت المعهد؟'])===s && getCol(r,['النوع'])==='أنثى').length),backgroundColor:'#e8a020',borderRadius:4}
+  ]},options:{...BASE,indexAxis:'y',plugins:{...BASE.plugins,tooltip:tipNum('متقدم')},
+    scales:{x:{ticks:{font:{family:'Cairo'}}},y:{ticks:{font:{family:'Cairo',size:11}}}}}});
 
-  // source × gender
-  const srcTop6=se.slice(0,6).map(e=>e[0]);
-  const mBySrc=srcTop6.map(s=>appData.filter(r=>r[SRC]===s&&(r['النوع']||'').includes('ذكر')).length);
-  const fBySrc=srcTop6.map(s=>appData.filter(r=>r[SRC]===s&&(r['النوع']||'').includes('أنث')).length);
-  mkChart('sourceGenderChart',{type:'bar',data:{labels:srcTop6,datasets:[
-    {label:'ذكور',data:mBySrc,backgroundColor:'#1a4a6b',borderRadius:4},
-    {label:'إناث',data:fBySrc,backgroundColor:'#c9a84c',borderRadius:4}
-  ]},options:{...BASE,indexAxis:'y',scales:{x:{ticks:{font:{family:'Cairo'}}},y:{ticks:{font:{family:'Cairo',size:10}}}}}});
+  // Trend chart from registration dates
+  const dateCount = {};
+  appData.forEach(r=>{
+    const d = getCol(r,['تاريخ التسجيل']);
+    if(d==='غير محدد') return;
+    const dateOnly = d.split(' ')[0];
+    dateCount[dateOnly] = (dateCount[dateOnly]||0)+1;
+  });
+  const dates = Object.keys(dateCount).sort((a,b)=>new Date(a)-new Date(b));
+  let cum=0;
+  const cumData = dates.map(d=>{cum+=dateCount[d];return cum;});
+  mkChart('trendChart',{type:'line',data:{labels:dates,datasets:[{
+    label:'إجمالي المتقدمين',data:cumData,
+    borderColor:'#1a4f7a',backgroundColor:'rgba(26,79,122,0.1)',
+    fill:true,tension:0.3,pointRadius:1
+  }]},options:{...BASE,plugins:{...BASE.plugins,legend:{display:false},tooltip:{titleFont:{family:'Cairo'},bodyFont:{family:'Cairo'},callbacks:{label(ctx){return ` الإجمالي: ${num(ctx.parsed.y)}`;}}}},
+    scales:{x:{ticks:{font:{family:'Cairo',size:9},maxRotation:45,maxTicksLimit:15}},y:{ticks:{font:{family:'Cairo'}}}}}});
 }
 
-// ── RECOMMENDATIONS ───────────────────────────────────────────
+// ── RECOMMENDATIONS ─────────────────────────────────────────
 function buildRecommendations(){
-  const total=appData.length;
-  const paidEmails=getPaidEmails();
-  const paid=paidEmails.size;
-  const totalRev=payData.reduce((s,r)=>s+(parseFloat(r['المبلغ بالدولار'])||0),0);
-  const cc=countBy(appData,r=>r['بلد الإقامة']||'');
-  const topC=topN(cc,1)[0];
-  const sc=countBy(appData,r=>r['من أين عرفت المعهد؟']||'');
-  const topS=topN(sc,2);
-  const under24=appData.filter(r=>r['أقل من 24 ساعة']==='1'||r['أقل من 24 ساعة']===1||r['أقل من 24 ساعة']==='TRUE').length;
-  const rc=countBy(appData,r=>r['فئة البلد']||'');
-  const topR=topN(rc,1)[0];
+  const totalApp = appData.length;
+  const firstPayments = payData.filter(r=>['كاش','قسط أول'].includes(getCol(r,['نوع  القسط'])));
+  const totalStudents = new Set([...firstPayments.map(r=>getCol(r,['الرقم الأكاديمي'])), ...payData.filter(r=>getCol(r,['نظام السداد'])==='إعفاء كلي').map(r=>getCol(r,['الرقم الأكاديمي']))]).size;
+  const totalRevenue = payData.reduce((s,r)=>s+getNum(r,['المبلغ بالدولار']),0);
+  const cashRev = payData.filter(r=>getCol(r,['نظام السداد'])==='كاش').reduce((s,r)=>s+getNum(r,['المبلغ بالدولار']),0);
+  const discounted = payData.filter(r=>getCol(r,['نوع الخصم'])!=='بلا خصم' && getCol(r,['نوع الخصم'])!=='غير محدد');
+  const discountedStudents = new Set(discounted.map(r=>getCol(r,['الرقم الأكاديمي']))).size;
+  const countries = countBy(appData, r=>normCountry(getCol(r,['بلد الإقامة'])));
+  const topCountry = topN(countries,1)[0];
+  const source = countBy(appData, r=>getCol(r,['من أين عرفت المعهد؟']));
+  const topSources = topN(source,2);
+  const ctryRev = sumBy(payData, r=>normCountry(getCol(r,['الدولة'])), r=>getNum(r,['المبلغ بالدولار']));
+  const topRevCountry = topN(ctryRev,1)[0];
+  const noWork = appData.filter(r=>getCol(r,['هل تعمل بدوام؟']).includes('لا')).length;
+  const providers = countBy(payData, r=>getCol(r,['النوع']));
+  const topProvider = topN(providers,1)[0];
+  const notConverted = totalApp - totalStudents;
+  const conversionRate = pct(totalStudents,totalApp);
 
-  document.getElementById('rec-content').innerHTML=`
-  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:24px">
-    <div style="background:var(--primary);color:white;border-radius:14px;padding:20px;text-align:center">
-      <div style="font-size:36px;font-weight:900">${num(total)}</div><div style="font-size:13px;opacity:0.85;margin-top:4px">إجمالي المتقدمين</div></div>
-    <div style="background:var(--green);color:white;border-radius:14px;padding:20px;text-align:center">
-      <div style="font-size:36px;font-weight:900">${num(paid)}</div><div style="font-size:13px;opacity:0.85;margin-top:4px">طالب فعلي (دفع)</div></div>
-    <div style="background:var(--gold);color:white;border-radius:14px;padding:20px;text-align:center">
-      <div style="font-size:36px;font-weight:900">${pct(paid,total)}</div><div style="font-size:13px;opacity:0.85;margin-top:4px">معدل التحويل</div></div>
-    <div style="background:#457b9d;color:white;border-radius:14px;padding:20px;text-align:center">
-      <div style="font-size:36px;font-weight:900">$${num(Math.round(totalRev))}</div><div style="font-size:13px;opacity:0.85;margin-top:4px">إجمالي الإيرادات</div></div>
+  document.getElementById('recommendations-content').innerHTML = `
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:24px">
+    <div style="background:var(--primary);color:white;border-radius:14px;padding:20px;text-align:center"><div style="font-size:34px;font-weight:900">${conversionRate}</div><div style="font-size:12px;opacity:0.85;margin-top:3px">معدل التحويل</div></div>
+    <div style="background:var(--accent);color:white;border-radius:14px;padding:20px;text-align:center"><div style="font-size:34px;font-weight:900">${usd(totalRevenue)}</div><div style="font-size:12px;opacity:0.85;margin-top:3px">إجمالي الإيرادات</div></div>
+    <div style="background:var(--green);color:white;border-radius:14px;padding:20px;text-align:center"><div style="font-size:34px;font-weight:900">${pct(cashRev,totalRevenue)}</div><div style="font-size:12px;opacity:0.85;margin-top:3px">من الكاش</div></div>
+    <div style="background:var(--teal);color:white;border-radius:14px;padding:20px;text-align:center"><div style="font-size:34px;font-weight:900">${pct(discountedStudents,totalStudents)}</div><div style="font-size:12px;opacity:0.85;margin-top:3px">حصلوا على خصم</div></div>
+    <div style="background:var(--purple);color:white;border-radius:14px;padding:20px;text-align:center"><div style="font-size:34px;font-weight:900">${Object.keys(countries).length}</div><div style="font-size:12px;opacity:0.85;margin-top:3px">دولة مشاركة</div></div>
   </div>
-  <h3 style="font-size:16px;font-weight:800;color:var(--primary);margin-bottom:14px">📋 توصيات للإدارة</h3>
+
+  <h3 style="font-size:15px;font-weight:800;color:var(--primary);margin-bottom:13px">🔄 توصيات التحويل والمبيعات</h3>
   <div class="insights-grid" style="margin-bottom:22px">
-    <div class="insight-card"><div class="insight-icon blue">📊</div><div>
-      <div class="insight-title">معدل التحويل ${pct(paid,total)} يستحق التحليل</div>
-      <div class="insight-text">من كل 100 متقدم، ${Math.round(paid/total*100)} فقط يصبحون طلاباً فعليين. تحليل أسباب عدم الدفع عند الـ ${100-Math.round(paid/total*100)} الباقين قد يكشف فرصاً لزيادة الإيرادات.</div>
+    <div class="insight-card"><div class="insight-icon blue">🚨</div><div>
+      <div class="insight-title">${pct(notConverted,totalApp)} من المتقدمين لم يدفعوا</div>
+      <div class="insight-text">${num(notConverted)} شخص تقدموا ولم يتحولوا لطلاب. هذه قاعدة ضخمة للمتابعة. ضع سلسلة رسائل تذكيرية (تليجرام + إيميل) للمترددين.</div>
     </div></div>
-    <div class="insight-card"><div class="insight-icon green">⚡</div><div>
-      <div class="insight-title">${pct(under24,paid)} يدفعون خلال 24 ساعة</div>
-      <div class="insight-text">هؤلاء هم أعلى المتحولين قيمة — استهدفهم برسائل ترحيب فورية ومحتوى تمهيدي يزيد من إحساسهم بالقيمة قبل بدء الدروس.</div>
+    <div class="insight-card"><div class="insight-icon gold">📅</div><div>
+      <div class="insight-title">نظام الأقساط فرصة للتوسع</div>
+      <div class="insight-text">خيار التقسيط يسهّل اتخاذ القرار للمتقدم المتردد بسبب التكلفة. ادرس توسيع نطاقه وتسهيل الوصول إليه لرفع معدل التحويل.</div>
     </div></div>
-    <div class="insight-card"><div class="insight-icon gold">🌍</div><div>
-      <div class="insight-title">أبرز دولة: ${topC?.[0]||'—'} (${topC?.[1]||0} متقدم)</div>
-      <div class="insight-text">وأبرز منطقة: ${topR?.[0]||'—'}. التركيز على هذه الأسواق بمحتوى مخصص قد يرفع معدل التحويل بشكل ملحوظ.</div>
+    <div class="insight-card"><div class="insight-icon green">🏆</div><div>
+      <div class="insight-title">تابع أداء كل أسبوع</div>
+      <div class="insight-text">قارن الأسابيع ذات الإيرادات الأعلى بالحملات التسويقية المرتبطة بها لتكرار النجاح في الدفعات القادمة.</div>
     </div></div>
   </div>
-  <h3 style="font-size:16px;font-weight:800;color:var(--primary);margin-bottom:14px">📣 توصيات للتسويق</h3>
+
+  <h3 style="font-size:15px;font-weight:800;color:var(--primary);margin-bottom:13px">💰 توصيات الإيرادات والتسعير</h3>
   <div class="insights-grid" style="margin-bottom:22px">
-    <div class="insight-card"><div class="insight-icon blue">🏆</div><div>
-      <div class="insight-title">المصدر الأول: ${topS[0]?.[0]||'—'}</div>
-      <div class="insight-text">يجلب ${pct(topS[0]?.[1]||0,total)} من المتقدمين. ركّز الميزانية التسويقية هنا أولاً مع قياس معدل التحويل من هذا المصدر تحديداً.</div>
+    <div class="insight-card"><div class="insight-icon purple">🏷️</div><div>
+      <div class="insight-title">${pct(discountedStudents,totalStudents)} يحصلون على خصم</div>
+      <div class="insight-text">${num(discountedStudents)} طالب حصلوا على خصم بنسب مختلفة. راجع سياسة الخصم — هل ضروري لإتمام الدفع أم يُمنح بسهولة؟</div>
+    </div></div>
+    <div class="insight-card"><div class="insight-icon blue">🌍</div><div>
+      <div class="insight-title">${topRevCountry?.[0]||'—'} الأعلى إيراداً</div>
+      <div class="insight-text">إجمالي ${usd(topRevCountry?.[1]||0)} من هذه الدولة. قد يختلف ترتيب الدول بين الأكثر عدداً والأعلى إيراداً بسبب فروق العملات.</div>
     </div></div>
     <div class="insight-card"><div class="insight-icon gold">📱</div><div>
-      <div class="insight-title">المصدر الثاني: ${topS[1]?.[0]||'—'}</div>
-      <div class="insight-text">يجلب ${pct(topS[1]?.[1]||0,total)} من المتقدمين. قارن معدل التحويل بينه وبين المصدر الأول — القناة الأعلى تحويلاً تستحق الاستثمار الأكبر.</div>
-    </div></div>
-    <div class="insight-card"><div class="insight-icon green">💰</div><div>
-      <div class="insight-title">متوسط الإيراد للطالب $${num(Math.round(totalRev/Math.max(1,paid)))}</div>
-      <div class="insight-text">هذا الرقم مفيد لتحديد الحد الأقصى للإنفاق على اكتساب الطالب. إذا تكلفة اكتساب الطالب أقل من هذا الرقم، الحملة مجدية.</div>
+      <div class="insight-title">${topProvider?.[0]||'—'} الوسيلة الأكثر استخداماً</div>
+      <div class="insight-text">${num(topProvider?.[1]||0)} معاملة عبرها. تأكد من أن تجربة الدفع سلسة وبدون احتكاك لتخفيض التسرب عند الدفع.</div>
     </div></div>
   </div>
-  <h3 style="font-size:16px;font-weight:800;color:var(--primary);margin-bottom:14px">⚙️ توصيات للتشغيل</h3>
+
+  <h3 style="font-size:15px;font-weight:800;color:var(--primary);margin-bottom:13px">📣 توصيات التسويق والاستهداف</h3>
   <div class="insights-grid">
-    <div class="insight-card"><div class="insight-icon blue">📅</div><div>
-      <div class="insight-title">تنويع خيارات الدفع نقطة قوة</div>
-      <div class="insight-text">وجود الكاش والأقساط والإعفاءات يتيح الوصول لشرائح متنوعة. تأكد من وضوح خيارات الدفع في صفحة التسجيل لتقليل التردد.</div>
+    <div class="insight-card"><div class="insight-icon blue">🎯</div><div>
+      <div class="insight-title">المصدر الأول: ${topSources[0]?.[0]||'—'}</div>
+      <div class="insight-text">يمثل ${pct(topSources[0]?.[1]||0,totalApp)} من التسجيلات. كثّف الحضور والمحتوى وضخ ميزانية إضافية لتعظيم العائد.</div>
     </div></div>
-    <div class="insight-card"><div class="insight-icon gold">🌍</div><div>
-      <div class="insight-title">تنوع العملات يتطلب إدارة دقيقة</div>
-      <div class="insight-text">الطلاب يدفعون بعملات مختلفة (دولار، جنيه إسترليني، يورو، درهم...). استخدام المبلغ بالدولار كمعيار موحد للمقارنة والتقارير ضروري.</div>
+    <div class="insight-card"><div class="insight-icon green">🌍</div><div>
+      <div class="insight-title">${topCountry?.[0]||'—'} الأكثر تسجيلاً</div>
+      <div class="insight-text">${num(topCountry?.[1]||0)} متقدم من هذه الدولة. ادرس التوقيتات المناسبة للمحاضرات المباشرة لتغطية الفوارق الزمنية.</div>
     </div></div>
-    <div class="insight-card"><div class="insight-icon green">📊</div><div>
-      <div class="insight-title">تابع هذه اللوحة أسبوعياً</div>
-      <div class="insight-text">لوحة الإيرادات الأسبوعية تكشف مواسم التسجيل والدفع — استخدمها لتوقيت الحملات التسويقية وقرارات الخصومات والعروض.</div>
+    <div class="insight-card"><div class="insight-icon gold">⚙️</div><div>
+      <div class="insight-title">${pct(noWork,totalApp)} من المتقدمين لا يعملون</div>
+      <div class="insight-text">مرونة وقتية لدى نسبة من المتقدمين، لكن راعِ العاملين بدوام جزئي أو كلي بجداول مسائية أو نهاية أسبوع.</div>
     </div></div>
   </div>`;
 }
 
-// ── INIT ─────────────────────────────────────────────────────
+// ── INIT ────────────────────────────────────────────────────
 loadAll();
-setInterval(loadAll,10*60*1000);
+setInterval(loadAll, 10*60*1000);
 </script>
 </body>
 </html>
