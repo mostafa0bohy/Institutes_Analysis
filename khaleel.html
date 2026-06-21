@@ -111,7 +111,7 @@ body{font-family:'Cairo',sans-serif;background:var(--cream);color:var(--text-pri
     </div>
     <div class="header-status">
       <div class="status-dot loading" id="statusDot"></div>
-      <span id="statusText">جاري تحميل البيانات...</span>
+      <span id="statusText">جارٍ تحميل البيانات...</span>
     </div>
   </div>
 </div>
@@ -128,7 +128,7 @@ body{font-family:'Cairo',sans-serif;background:var(--cream);color:var(--text-pri
 
 <div class="container">
   <div class="update-bar">
-    <div class="update-info"><span>🕐</span><span id="lastUpdate">جاري التحميل...</span></div>
+    <div class="update-info"><span>🕐</span><span id="lastUpdate">جارٍ التحميل...</span></div>
     <button class="refresh-btn" onclick="loadAll()">🔄 تحديث البيانات</button>
   </div>
 
@@ -137,16 +137,16 @@ body{font-family:'Cairo',sans-serif;background:var(--cream);color:var(--text-pri
   <div class="section-header"><h2>🏠 النظرة <span>العامة</span></h2></div>
   <div class="kpi-grid">
     <div class="kpi-card"><div class="kpi-label">المتقدمون</div><div class="kpi-value" id="kpi-applicants">—</div><div class="kpi-sub">إجمالي طلبات التسجيل</div><div class="kpi-icon">📋</div></div>
-    <div class="kpi-card gr"><div class="kpi-label">الطلاب الفعليون</div><div class="kpi-value" id="kpi-students">—</div><div class="kpi-sub">التحقوا ودفعوا</div><div class="kpi-icon">👥</div></div>
-    <div class="kpi-card ac"><div class="kpi-label">معدل التحويل</div><div class="kpi-value" id="kpi-conversion">—</div><div class="kpi-sub">من المتقدم للطالب</div><div class="kpi-icon">🔄</div></div>
-    <div class="kpi-card tl"><div class="kpi-label">إجمالي الإيرادات</div><div class="kpi-value" id="kpi-revenue">—</div><div class="kpi-sub">كاش + أقساط محصّلة</div><div class="kpi-icon">💰</div></div>
-    <div class="kpi-card pu"><div class="kpi-label">متوسط الدفع للطالب</div><div class="kpi-value" id="kpi-avgpay">—</div><div class="kpi-sub">لكل طالب دافع</div><div class="kpi-icon">📊</div></div>
-    <div class="kpi-card"><div class="kpi-label">الإعفاء الكلي</div><div class="kpi-value" id="kpi-exempt">—</div><div class="kpi-sub">طلاب معفيون من الرسوم</div><div class="kpi-icon">🎁</div></div>
+    <div class="kpi-card gr"><div class="kpi-label">الطلاب الفعليون</div><div class="kpi-value" id="kpi-students">—</div><div class="kpi-sub">أتموا التسجيل ودفعوا الرسوم</div><div class="kpi-icon">👥</div></div>
+    <div class="kpi-card ac"><div class="kpi-label">معدل التحويل</div><div class="kpi-value" id="kpi-conversion">—</div><div class="kpi-sub">من المتقدم إلى الطالب الفعلي</div><div class="kpi-icon">🔄</div></div>
+    <div class="kpi-card tl"><div class="kpi-label">إجمالي الإيرادات</div><div class="kpi-value" id="kpi-revenue">—</div><div class="kpi-sub">كاش وأقساط محصَّلة</div><div class="kpi-icon">💰</div></div>
+    <div class="kpi-card pu"><div class="kpi-label">متوسط الدفع للطالب</div><div class="kpi-value" id="kpi-avgpay">—</div><div class="kpi-sub">لكل طالب مدفوع عنه</div><div class="kpi-icon">📊</div></div>
+    <div class="kpi-card"><div class="kpi-label">الإعفاء الكلي</div><div class="kpi-value" id="kpi-exempt">—</div><div class="kpi-sub">طلاب حصلوا على إعفاء كامل</div><div class="kpi-icon">🎁</div></div>
   </div>
   <div class="charts-grid">
     <div class="chart-card col-8">
       <div class="chart-title">الإيرادات الأسبوعية</div>
-      <div class="chart-subtitle">إجمالي المحصّل (كاش + أقساط) أسبوعاً بأسبوع</div>
+      <div class="chart-subtitle">إجمالي المحصَّل (كاش وأقساط) أسبوعاً بأسبوع</div>
       <div class="chart-wrap"><canvas id="overviewRevenueChart"></canvas></div>
     </div>
     <div class="chart-card col-4">
@@ -158,12 +158,12 @@ body{font-family:'Cairo',sans-serif;background:var(--cream);color:var(--text-pri
   <div class="charts-grid">
     <div class="chart-card col-6">
       <div class="chart-title">الإيرادات حسب الدولة — أبرز 10</div>
-      <div class="chart-subtitle">إجمالي المبالغ المحصّلة بالدولار</div>
+      <div class="chart-subtitle">إجمالي الإيرادات المحصَّلة بالدولار</div>
       <div class="chart-wrap"><canvas id="overviewCountryRevChart"></canvas></div>
     </div>
     <div class="chart-card col-6">
       <div class="chart-title">التوزيع الجغرافي للمتقدمين — أبرز 10 دول</div>
-      <div class="chart-subtitle">بلد إقامة المتقدمين</div>
+      <div class="chart-subtitle">الدول التي ينتمي إليها المتقدمون</div>
       <div class="chart-wrap"><canvas id="overviewCountryAppChart"></canvas></div>
     </div>
   </div>
@@ -173,7 +173,7 @@ body{font-family:'Cairo',sans-serif;background:var(--cream);color:var(--text-pri
 <div class="section" id="section-conversion">
   <div class="section-header"><h2>🔄 قمع <span>التحويل</span></h2></div>
   <div class="kpi-grid">
-    <div class="kpi-card"><div class="kpi-label">المتقدمون</div><div class="kpi-value" id="c-applicants">—</div><div class="kpi-sub">ملأوا استمارة التسجيل</div><div class="kpi-icon">📋</div></div>
+    <div class="kpi-card"><div class="kpi-label">المتقدمون</div><div class="kpi-value" id="c-applicants">—</div><div class="kpi-sub">تقدّموا بطلب تسجيل</div><div class="kpi-icon">📋</div></div>
     <div class="kpi-card ac"><div class="kpi-label">دفعوا كاش</div><div class="kpi-value" id="c-cash">—</div><div class="kpi-sub" id="c-cash-pct">—</div><div class="kpi-icon">💵</div></div>
     <div class="kpi-card gr"><div class="kpi-label">دفعوا قسط أول</div><div class="kpi-value" id="c-inst">—</div><div class="kpi-sub" id="c-inst-pct">—</div><div class="kpi-icon">📅</div></div>
     <div class="kpi-card tl"><div class="kpi-label">معفيون كلياً</div><div class="kpi-value" id="c-exempt">—</div><div class="kpi-sub" id="c-exempt-pct">—</div><div class="kpi-icon">🎁</div></div>
@@ -182,19 +182,19 @@ body{font-family:'Cairo',sans-serif;background:var(--cream);color:var(--text-pri
   <div class="charts-grid">
     <div class="chart-card col-6">
       <div class="chart-title">قمع التحويل المرئي</div>
-      <div class="chart-subtitle">من التقدم للالتحاق الفعلي</div>
+      <div class="chart-subtitle">من مرحلة التقدم حتى الالتحاق الفعلي</div>
       <div id="funnelViz"></div>
     </div>
     <div class="chart-card col-6">
       <div class="chart-title">معدلات التحويل</div>
-      <div class="chart-subtitle">النسب المئوية لكل مرحلة</div>
+      <div class="chart-subtitle">النسب المئوية لكل مرحلة من مراحل التحويل</div>
       <div class="chart-wrap"><canvas id="conversionRatesChart"></canvas></div>
     </div>
   </div>
   <div class="charts-grid">
     <div class="chart-card col-12">
       <div class="chart-title">تحليل قمع التحويل</div>
-      <div class="chart-subtitle">فهم الأعداد والنسب بشكل أعمق</div>
+      <div class="chart-subtitle">تفصيل الأعداد والنسب لكل مرحلة</div>
       <table class="data-table">
         <thead><tr><th>المرحلة</th><th>العدد</th><th>% من المتقدمين</th><th>% من الطلاب</th><th>الحالة</th></tr></thead>
         <tbody id="funnelTableBody"></tbody>
@@ -207,35 +207,35 @@ body{font-family:'Cairo',sans-serif;background:var(--cream);color:var(--text-pri
 <div class="section" id="section-revenue">
   <div class="section-header"><h2>💰 تحليل <span>الإيرادات</span></h2></div>
   <div class="kpi-grid">
-    <div class="kpi-card tl"><div class="kpi-label">إجمالي الإيرادات</div><div class="kpi-value" id="r-total">—</div><div class="kpi-sub">كاش + أقساط</div><div class="kpi-icon">💰</div></div>
+    <div class="kpi-card tl"><div class="kpi-label">إجمالي الإيرادات</div><div class="kpi-value" id="r-total">—</div><div class="kpi-sub">كاش وأقساط</div><div class="kpi-icon">💰</div></div>
     <div class="kpi-card"><div class="kpi-label">إيرادات الكاش</div><div class="kpi-value" id="r-cash">—</div><div class="kpi-sub" id="r-cash-pct">—</div><div class="kpi-icon">💵</div></div>
     <div class="kpi-card ac"><div class="kpi-label">إيرادات الأقساط</div><div class="kpi-value" id="r-inst">—</div><div class="kpi-sub" id="r-inst-pct">—</div><div class="kpi-icon">📅</div></div>
-    <div class="kpi-card gr"><div class="kpi-label">متوسط الدفعة</div><div class="kpi-value" id="r-avg">—</div><div class="kpi-sub">لكل طالب دافع</div><div class="kpi-icon">📊</div></div>
+    <div class="kpi-card gr"><div class="kpi-label">متوسط الدفعة</div><div class="kpi-value" id="r-avg">—</div><div class="kpi-sub">لكل طالب مدفوع عنه</div><div class="kpi-icon">📊</div></div>
     <div class="kpi-card pu"><div class="kpi-label">أعلى أسبوع إيراداً</div><div class="kpi-value" id="r-peak">—</div><div class="kpi-sub" id="r-peak-week">—</div><div class="kpi-icon">🏆</div></div>
   </div>
   <div class="charts-grid">
     <div class="chart-card col-8">
-      <div class="chart-title">الإيرادات الأسبوعية (كاش + أقساط)</div>
-      <div class="chart-subtitle">المبالغ المحصّلة أسبوعاً بأسبوع بالدولار</div>
+      <div class="chart-title">الإيرادات الأسبوعية (كاش وأقساط)</div>
+      <div class="chart-subtitle">إجمالي المبالغ المحصَّلة بالدولار أسبوعاً بأسبوع</div>
       <div class="chart-wrap"><canvas id="revenueWeeklyChart"></canvas></div>
     </div>
     <div class="chart-card col-4">
       <div class="chart-title">توزيع الإيرادات</div>
-      <div class="chart-subtitle">كاش مقابل أقساط</div>
+      <div class="chart-subtitle">نسبة الكاش مقابل الأقساط</div>
       <div class="chart-wrap"><canvas id="revenueSplitChart"></canvas></div>
     </div>
   </div>
   <div class="charts-grid">
     <div class="chart-card col-7">
       <div class="chart-title">الإيرادات حسب الدولة</div>
-      <div class="chart-subtitle">أعلى 10 دول في المبالغ المحصّلة</div>
+      <div class="chart-subtitle">أعلى 10 دول من حيث الإيرادات المحصَّلة</div>
       <div class="chart-wrap"><canvas id="revenueCountryChart"></canvas></div>
     </div>
     <div class="chart-card col-5">
       <div class="chart-title">جدول الإيرادات الأسبوعي</div>
       <div style="overflow-y:auto;max-height:280px;margin-top:8px;">
         <table class="data-table">
-          <thead><tr><th>الأسبوع</th><th>الفترة</th><th>المحصّل ($)</th></tr></thead>
+          <thead><tr><th>الأسبوع</th><th>الفترة</th><th>المحصَّل ($)</th></tr></thead>
           <tbody id="weeklyRevTableBody"></tbody>
         </table>
       </div>
@@ -308,12 +308,12 @@ body{font-family:'Cairo',sans-serif;background:var(--cream);color:var(--text-pri
   <div class="charts-grid">
     <div class="chart-card col-6">
       <div class="chart-title">الساعات اليومية المتاحة</div>
-      <div class="chart-subtitle">كم ساعة يستطيع المتقدم أن يخصص يومياً؟</div>
+      <div class="chart-subtitle">كم ساعة يستطيع المتقدم تخصيصها للدراسة يومياً؟</div>
       <div class="chart-wrap"><canvas id="hoursChart"></canvas></div>
     </div>
     <div class="chart-card col-6">
       <div class="chart-title">المشاركة في برامج شرعية أخرى</div>
-      <div class="chart-subtitle">هل يتابع المتقدم برامج موازية؟</div>
+      <div class="chart-subtitle">هل يشارك المتقدم في برامج شرعية موازية؟</div>
       <div class="chart-wrap"><canvas id="otherProgramsChart"></canvas></div>
     </div>
   </div>
@@ -353,12 +353,12 @@ body{font-family:'Cairo',sans-serif;background:var(--cream);color:var(--text-pri
   <div class="charts-grid">
     <div class="chart-card col-6">
       <div class="chart-title">مصدر التسجيل × الجنس</div>
-      <div class="chart-subtitle">هل يختلف المصدر بين الذكور والإناث؟</div>
+      <div class="chart-subtitle">هل تختلف مصادر التسجيل بين الذكور والإناث؟</div>
       <div class="chart-wrap"><canvas id="sourceGenderChart"></canvas></div>
     </div>
     <div class="chart-card col-6">
       <div class="chart-title">منحنى التسجيل التراكمي</div>
-      <div class="chart-subtitle">إجمالي المتقدمين يوماً بيوم</div>
+      <div class="chart-subtitle">إجمالي المتقدمين التراكمي يوماً بيوم</div>
       <div class="chart-wrap"><canvas id="trendChart"></canvas></div>
     </div>
   </div>
@@ -423,7 +423,7 @@ function getNum(row, names){
   const v = getCol(row, names);
   return parseFloat((v||'0').replace(/[,%\s\u202c\u200f$]/g,''))||0;
 }
-function num(n){return Number(n).toLocaleString('ar-EG');}
+function num(n){return Number(n).toLocaleString('en-US');}
 function usd(n){return '$'+Number(Math.round(n)).toLocaleString('en-US');}
 function pct(n,t){return t?((n/t)*100).toFixed(1)+'%':'0%';}
 function countBy(arr,fn){const m={};arr.forEach(r=>{const k=fn(r)||'غير محدد';m[k]=(m[k]||0)+1;});return m;}
@@ -821,11 +821,11 @@ function buildRecommendations(){
   <div class="insights-grid" style="margin-bottom:22px">
     <div class="insight-card"><div class="insight-icon blue">🚨</div><div>
       <div class="insight-title">${pct(notConverted,totalApp)} من المتقدمين لم يدفعوا</div>
-      <div class="insight-text">${num(notConverted)} شخص تقدموا ولم يتحولوا لطلاب. هذه قاعدة ضخمة للمتابعة. ضع سلسلة رسائل تذكيرية (تليجرام + إيميل) للمترددين.</div>
+      <div class="insight-text">${num(notConverted)} شخص تقدموا ولم يتحولوا لطلاب. هذه قاعدة ضخمة للمتابعة. ضع سلسلة رسائل تذكيرية عبر التليجرام والبريد الإلكتروني لاستعادة المترددين.</div>
     </div></div>
     <div class="insight-card"><div class="insight-icon gold">📅</div><div>
       <div class="insight-title">نظام الأقساط فرصة للتوسع</div>
-      <div class="insight-text">خيار التقسيط يسهّل اتخاذ القرار للمتقدم المتردد بسبب التكلفة. ادرس توسيع نطاقه وتسهيل الوصول إليه لرفع معدل التحويل.</div>
+      <div class="insight-text">خيار التقسيط يُخفِّف عبء التكلفة ويُسهّل القرار لدى المتردد. ادرس تسهيل الوصول إليه وإبرازه في صفحة التسجيل لرفع معدل التحويل.</div>
     </div></div>
     <div class="insight-card"><div class="insight-icon green">🏆</div><div>
       <div class="insight-title">تابع أداء كل أسبوع</div>
@@ -841,11 +841,11 @@ function buildRecommendations(){
     </div></div>
     <div class="insight-card"><div class="insight-icon blue">🌍</div><div>
       <div class="insight-title">${topRevCountry?.[0]||'—'} الأعلى إيراداً</div>
-      <div class="insight-text">إجمالي ${usd(topRevCountry?.[1]||0)} من هذه الدولة. قد يختلف ترتيب الدول بين الأكثر عدداً والأعلى إيراداً بسبب فروق العملات.</div>
+      <div class="insight-text">إجمالي ${usd(topRevCountry?.[1]||0)} من هذه الدولة. قد يتباين ترتيب الدول بين الأكثر تسجيلاً والأعلى إيراداً بسبب فوارق القدرة الشرائية والعملات.</div>
     </div></div>
     <div class="insight-card"><div class="insight-icon gold">📱</div><div>
       <div class="insight-title">${topProvider?.[0]||'—'} الوسيلة الأكثر استخداماً</div>
-      <div class="insight-text">${num(topProvider?.[1]||0)} معاملة عبرها. تأكد من أن تجربة الدفع سلسة وبدون احتكاك لتخفيض التسرب عند الدفع.</div>
+      <div class="insight-text">${num(topProvider?.[1]||0)} معاملة عبرها. احرص على أن تكون تجربة الدفع سلسة وخالية من العقبات للحدّ من التسرب عند مرحلة السداد.</div>
     </div></div>
   </div>
 
@@ -861,7 +861,7 @@ function buildRecommendations(){
     </div></div>
     <div class="insight-card"><div class="insight-icon gold">⚙️</div><div>
       <div class="insight-title">${pct(noWork,totalApp)} من المتقدمين لا يعملون</div>
-      <div class="insight-text">مرونة وقتية لدى نسبة من المتقدمين، لكن راعِ العاملين بدوام جزئي أو كلي بجداول مسائية أو نهاية أسبوع.</div>
+      <div class="insight-text">نسبة من المتقدمين تتمتع بمرونة وقتية، غير أنه ينبغي مراعاة العاملين بدوام جزئي أو كلي عبر جداول مسائية أو في نهاية الأسبوع.</div>
     </div></div>
   </div>`;
 }
