@@ -646,7 +646,26 @@ async function loadAll(){
     appData = app.filter(r => getCol(r,['الدفعة'])===TARGET_BATCH && getCol(r,['الاسم'])!=='غير محدد');
     payData = pay.filter(r => getCol(r,['الدفعة'])===TARGET_BATCH);
 
-    console.log('Applicants (batch5):', appData.length, 'Payments (batch5):', payData.length);
+    console.log('Applicants rows:', appData.length, '| Payments rows:', payData.length);
+    if(appData.length){
+      console.log('APP COLS:', Object.keys(appData[0]));
+      console.log('APP ROW1:', JSON.stringify(appData[0]));
+    }
+    if(payData.length){
+      console.log('PAY COLS:', Object.keys(payData[0]));
+      console.log('PAY ROW1:', JSON.stringify(payData[0]));
+    }
+    // debug: unique values for key columns
+    const ages = [...new Set(appData.map(r=>r['الفئة العمرية']||'').filter(v=>v))];
+    console.log('AGE VALUES:', ages.slice(0,10));
+    const genders = [...new Set(appData.map(r=>r['النوع']||'').filter(v=>v))];
+    console.log('GENDER VALUES:', genders);
+    const payDates = [...new Set(payData.map(r=>Object.keys(r).find(k=>k.includes('تاريخ'))||''))];
+    console.log('DATE COLS IN PAY:', [...new Set(payData.flatMap(r=>Object.keys(r).filter(k=>k.includes('تاريخ'))))]);
+    const acadIds = [...new Set(payData.map(r=>Object.keys(r).find(k=>k.includes('الرقم'))||''))];
+    console.log('ID COLS IN PAY:', [...new Set(payData.flatMap(r=>Object.keys(r).filter(k=>k.includes('الرقم'))))]);
+    const acadIdsApp = [...new Set(appData.flatMap(r=>Object.keys(r).filter(k=>k.includes('الرقم'))))];
+    console.log('ID COLS IN APP:', acadIdsApp);
 
     const now=new Date().toLocaleString('ar-EG');
     document.getElementById('lastUpdate').textContent='آخر تحديث: '+now;
