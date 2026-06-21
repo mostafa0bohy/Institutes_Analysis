@@ -783,8 +783,9 @@ function buildConversion(){
     datasets:[
       {label:'المتقدمون',data:[maleApp,femApp],backgroundColor:'rgba(26,79,122,0.3)',borderRadius:4},
       {label:'الطلاب الفعليون',data:[maleStu,femStu],backgroundColor:['#1a4f7a','#e8a020'],borderRadius:4}
-    ]},options:{...BASE,scales:{x:{ticks:{font:{family:'Cairo'}}},y:{ticks:{font:{family:'Cairo'}}}},
-      plugins:{...BASE.plugins,tooltip:{titleFont:{family:'Cairo'},bodyFont:{family:'Cairo'},callbacks:{label(ctx){const v=ctx.parsed.y;const tot=ctx.datasetIndex===0?(ctx.dataIndex===0?maleApp:femApp):(ctx.dataIndex===0?maleApp:femApp);return ` ${ctx.dataset.label}: ${num(v)}`;}}}}}}});
+    ]},options:{...BASE,
+      plugins:{...BASE.plugins,tooltip:{titleFont:{family:'Cairo'},bodyFont:{family:'Cairo'},callbacks:{label(ctx){return ` ${ctx.dataset.label}: ${num(ctx.parsed.y)}`;}}}}
+      ,scales:{x:{ticks:{font:{family:'Cairo'}}},y:{ticks:{font:{family:'Cairo'}}}}}});
 
   // Conversion by age
   const AGE_COL=['الفئة العمرية'];
