@@ -370,7 +370,20 @@ function parseCSV(txt){
   const hdrs=parseRow(lines[0]).map(h=>h.trim());
   return lines.slice(1).map(l=>{const v=parseRow(l);const o={};hdrs.forEach((h,i)=>o[h]=(v[i]||'').trim());return o;}).filter(r=>Object.values(r).some(v=>v));
 }
-async function fetchCSV(url){const r=await fetch(url+'&nocache='+Date.now());return parseCSV(await r.text());}
+async function fetchCSV(url){
+  // CORS proxy عشان يشتغل من GitHub Pages
+  const proxy = 'https://corsproxy.io/?';
+  let text = '';
+  try {
+    const r = await fetch(proxy + encodeURIComponent(url) + '&nocache=' + Date.now());
+    text = await r.text();
+  } catch(e) {
+    // fallback: direct fetch
+    const r = await fetch(url + '&nocache=' + Date.now());
+    text = await r.text();
+  }
+  return parseCSV(text);
+}
 
 // ── helpers ─────────────────────────────────────────────────
 function num(n){return Number(n).toLocaleString('en-US');}
@@ -400,9 +413,15 @@ async function loadAll(){
     appData = app.filter(r=>r['الاسم']&&r['الاسم'].trim());
     payData = pay.filter(r=>r['الاسم']&&r['الاسم'].trim()&&r['الحالة']==='ناجحة');
 
-    console.log('applicants:',appData.length,'payments:',payData.length);
-    if(appData.length>0) console.log('APP COLS:',Object.keys(appData[0]));
-    if(payData.length>0) console.log('PAY COLS:',Object.keys(payData[0]));
+    // لو مفيش بيانات جرب بدون فلتر الحالة
+    if(!payData.length) payData = pay.filter(r=>Object.values(r).some(v=>v));
+    if(!appData.length) appData = app.filter(r=>Object.values(r).some(v=>v));
+
+    console.log('applicants rows:', appData.length, '| payments rows:', payData.length);
+    if(appData.length) console.log('APP COLS:', Object.keys(appData[0]));
+    if(payData.length) console.log('PAY COLS:', Object.keys(payData[0]));
+    if(appData.length) console.log('APP ROW1:', JSON.stringify(appData[0]));
+    if(payData.length) console.log('PAY ROW1:', JSON.stringify(payData[0]));
 
     const now=new Date().toLocaleString('ar-EG');
     document.getElementById('lastUpdate').textContent='آخر تحديث: '+now;
